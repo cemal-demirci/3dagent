@@ -6,43 +6,131 @@ const { WebSocketServer } = require("ws");
 
 const ADAPTER_PORT = parseInt(process.env.DEMO_ADAPTER_PORT || "18789", 10);
 const MAIN_KEY = "main";
-const MODELS = [{ id: "demo/mock-office", name: "Mock Office", provider: "demo" }];
 
+// ---------------------------------------------------------------------------
+// AI Provider clients — initialized lazily when keys arrive from the UI
+// ---------------------------------------------------------------------------
+let anthropicClient = null;
+let geminiClient = null;
+let openaiClient = null;
+
+/** Keys stored in memory (set via ai.keys.set from UI) */
+const aiKeys = { anthropic: "", gemini: "", openai: "" };
+
+function initAnthropicClient(apiKey) {
+  try {
+    const Anthropic = require("@anthropic-ai/sdk");
+    anthropicClient = new Anthropic({ apiKey });
+    console.log("[demo-gateway] Anthropic client initialized.");
+  } catch (err) {
+    console.error("[demo-gateway] Anthropic SDK error:", err.message);
+    anthropicClient = null;
+  }
+}
+
+function initGeminiClient(apiKey) {
+  try {
+    const { GoogleGenerativeAI } = require("@google/generative-ai");
+    geminiClient = new GoogleGenerativeAI(apiKey);
+    console.log("[demo-gateway] Gemini client initialized.");
+  } catch (err) {
+    console.error("[demo-gateway] Gemini SDK error:", err.message);
+    geminiClient = null;
+  }
+}
+
+function initOpenAIClient(apiKey) {
+  try {
+    const OpenAI = require("openai");
+    openaiClient = new OpenAI({ apiKey });
+    console.log("[demo-gateway] OpenAI client initialized.");
+  } catch (err) {
+    console.error("[demo-gateway] OpenAI SDK error:", err.message);
+    openaiClient = null;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Agent definitions with provider/model assignments
+// ---------------------------------------------------------------------------
 const agents = new Map([
-  [
-    "demo-orchestrator",
-    {
-      id: "demo-orchestrator",
-      name: "Avery",
-      role: "Orchestrator",
-      workspace: "/demo/orchestrator",
-    },
-  ],
-  [
-    "demo-researcher",
-    {
-      id: "demo-researcher",
-      name: "Mika",
-      role: "Research",
-      workspace: "/demo/research",
-    },
-  ],
-  [
-    "demo-builder",
-    {
-      id: "demo-builder",
-      name: "Rune",
-      role: "Builder",
-      workspace: "/demo/builder",
-    },
-  ],
+  ["demo-orchestrator", {
+    id: "demo-orchestrator",
+    name: "Demir",
+    role: "DevOps & Infrastructure",
+    workspace: "/demo/devops",
+    provider: "anthropic",
+    model: "claude-sonnet-4-20250514",
+  }],
+  ["volt-iot", {
+    id: "volt-iot",
+    name: "Volt",
+    role: "IoT & Embedded",
+    workspace: "/demo/iot",
+    provider: "gemini",
+    model: "gemini-2.0-flash",
+  }],
+  ["atlas-backend", {
+    id: "atlas-backend",
+    name: "Atlas",
+    role: "Backend",
+    workspace: "/demo/backend",
+    provider: "openai",
+    model: "gpt-4o",
+  }],
+  ["pixel-frontend", {
+    id: "pixel-frontend",
+    name: "Pixel",
+    role: "Frontend & Mobile",
+    workspace: "/demo/frontend",
+    provider: "anthropic",
+    model: "claude-sonnet-4-20250514",
+  }],
+  ["akis-video", {
+    id: "akis-video",
+    name: "Akis",
+    role: "Video & Streaming",
+    workspace: "/demo/video",
+    provider: "gemini",
+    model: "gemini-2.0-flash",
+  }],
+  ["zeka-ai", {
+    id: "zeka-ai",
+    name: "Zeka",
+    role: "AI & Automation",
+    workspace: "/demo/ai",
+    provider: "openai",
+    model: "gpt-4o",
+  }],
 ]);
 
+// ---------------------------------------------------------------------------
+// Turkish system prompts per role
+// ---------------------------------------------------------------------------
+const AGENT_SYSTEM_PROMPTS = {
+  "DevOps & Infrastructure": `Sen Demir adında bir DevOps ve altyapı uzmanısın. Docker, Jenkins, Linux server yönetimi, CI/CD pipeline'lar, Nginx, network konfigürasyonu ve deployment konularında uzmansın. Türkçe yanıt ver. Kısa ve teknik ol.`,
+  "IoT & Embedded": `Sen Volt adında bir IoT ve gömülü sistem uzmanısın. ESP32, PlatformIO, SHT31/ADS1115/TSL2591 sensörler, aktüatörler, MQTT protokolü ve firmware geliştirme konularında uzmansın. Türkçe yanıt ver. Kısa ve teknik ol.`,
+  "Backend": `Sen Atlas adında bir backend geliştiricisisin. Node.js, Express, PostgreSQL, MQTT broker, WebSocket, REST API tasarımı ve veritabanı yönetimi konularında uzmansın. Türkçe yanıt ver. Kısa ve teknik ol.`,
+  "Frontend & Mobile": `Sen Pixel adında bir frontend ve mobil geliştiricisisin. React, Next.js, Tailwind CSS, React Native, Expo ve responsive tasarım konularında uzmansın. Türkçe yanıt ver. Kısa ve teknik ol.`,
+  "Video & Streaming": `Sen Akış adında bir video ve streaming uzmanısın. FFmpeg, HLS/RTMP transcoding, WebRTC, CDN routing, video analytics ve canlı yayın altyapısı konularında uzmansın. Türkçe yanıt ver. Kısa ve teknik ol.`,
+  "AI & Automation": `Sen Zeka adında bir AI ve otomasyon uzmanısın. n8n workflow, LLM API entegrasyonu (Gemini, Claude, GPT), Telegram bot, web scraping ve otomasyon zincirleri konularında uzmansın. Türkçe yanıt ver. Kısa ve teknik ol.`,
+};
+
+// ---------------------------------------------------------------------------
+// Shared state
+// ---------------------------------------------------------------------------
 const files = new Map();
 const sessionSettings = new Map();
 const conversationHistory = new Map();
 const activeRuns = new Map();
 const activeSendEventFns = new Set();
+
+// Task board (in-memory)
+const tasks = new Map();
+
+// Cron jobs (in-memory + timers)
+const cronJobs = new Map();
+const cronTimers = new Map();
 
 function randomId() {
   return randomUUID().replace(/-/g, "");
@@ -79,37 +167,337 @@ function broadcastEvent(frame) {
   }
 }
 
+const ROLE_EMOJI = {
+  "DevOps & Infrastructure": "\u{1F6E0}\u{FE0F}",
+  "IoT & Embedded": "\u{26A1}",
+  "Backend": "\u{1F5C4}\u{FE0F}",
+  "Frontend & Mobile": "\u{1F3A8}",
+  "Video & Streaming": "\u{1F3AC}",
+  "AI & Automation": "\u{1F9E0}",
+};
+
+// ---------------------------------------------------------------------------
+// Auto-load AI keys from environment variables
+// ---------------------------------------------------------------------------
+const ENV_KEY_MAP = {
+  anthropic: ["ANTHROPIC_API_KEY", "CLAUDE_API_KEY"],
+  gemini: ["GEMINI_API_KEY", "GOOGLE_API_KEY"],
+  openai: ["OPENAI_API_KEY"],
+};
+
+function autoLoadKeysFromEnv() {
+  for (const [provider, envNames] of Object.entries(ENV_KEY_MAP)) {
+    for (const envName of envNames) {
+      const key = process.env[envName]?.trim();
+      if (key) {
+        aiKeys[provider] = key;
+        if (provider === "anthropic") initAnthropicClient(key);
+        else if (provider === "gemini") initGeminiClient(key);
+        else if (provider === "openai") initOpenAIClient(key);
+        break;
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Cron scheduling helpers
+// ---------------------------------------------------------------------------
+function scheduleCronJob(job) {
+  clearCronTimer(job.id);
+  if (!job.enabled) return;
+
+  const schedule = job.schedule;
+  if (!schedule) return;
+
+  if (schedule.kind === "every" && schedule.everyMs > 0) {
+    job.state.nextRunAtMs = Date.now() + schedule.everyMs;
+    const timer = setInterval(() => executeCronJob(job), schedule.everyMs);
+    cronTimers.set(job.id, timer);
+  } else if (schedule.kind === "at" && schedule.at) {
+    const atMs = new Date(schedule.at).getTime();
+    const delay = atMs - Date.now();
+    if (delay > 0) {
+      job.state.nextRunAtMs = atMs;
+      const timer = setTimeout(() => {
+        executeCronJob(job);
+        cronTimers.delete(job.id);
+        if (job.deleteAfterRun) cronJobs.delete(job.id);
+      }, delay);
+      cronTimers.set(job.id, timer);
+    }
+  } else if (schedule.kind === "cron" && schedule.expr) {
+    // Simple cron: parse "M H * * *" for minute/hour scheduling
+    const nextMs = nextCronRun(schedule.expr);
+    if (nextMs) {
+      job.state.nextRunAtMs = nextMs;
+      const delay = nextMs - Date.now();
+      const timer = setTimeout(() => {
+        executeCronJob(job);
+        scheduleCronJob(job); // reschedule
+      }, Math.max(delay, 1000));
+      cronTimers.set(job.id, timer);
+    }
+  }
+}
+
+function clearCronTimer(jobId) {
+  const timer = cronTimers.get(jobId);
+  if (timer) {
+    clearTimeout(timer);
+    clearInterval(timer);
+    cronTimers.delete(jobId);
+  }
+}
+
+function nextCronRun(expr) {
+  // Minimal cron parser: "M H * * *" (minute hour)
+  const parts = expr.trim().split(/\s+/);
+  if (parts.length < 2) return null;
+  const minute = parseInt(parts[0], 10);
+  const hour = parseInt(parts[1], 10);
+  if (isNaN(minute) || isNaN(hour)) return null;
+  const now = new Date();
+  const target = new Date(now);
+  target.setHours(hour, minute, 0, 0);
+  if (target <= now) target.setDate(target.getDate() + 1);
+  return target.getTime();
+}
+
+function executeCronJob(job) {
+  job.state.lastStatus = "ok";
+  job.state.lastRunAtMs = Date.now();
+  job.updatedAtMs = Date.now();
+  console.log(`[demo-gateway] Cron job executed: ${job.name} (${job.id})`);
+  // If job has a payload message, send it as a chat to the assigned agent
+  if (job.payload?.message && job.agentId) {
+    const sessionKey = sessionKeyFor(job.agentId);
+    for (const sendFn of activeSendEventFns) {
+      try {
+        sendFn({
+          type: "event",
+          event: "cron.fired",
+          payload: { jobId: job.id, jobName: job.name, agentId: job.agentId, message: job.payload.message },
+        });
+      } catch {}
+    }
+  }
+}
+
 function agentListPayload() {
   return [...agents.values()].map((agent) => ({
     id: agent.id,
     name: agent.name,
     workspace: agent.workspace,
-    identity: { name: agent.name, emoji: "🤖" },
+    identity: { name: agent.name, emoji: ROLE_EMOJI[agent.role] || "\u{1F916}" },
     role: agent.role,
   }));
 }
 
-function buildDemoReply(agent, message) {
-  const normalized = message.trim();
-  const opening =
-    agent.role === "Orchestrator"
-      ? `${agent.name} here. Demo office is live and the team is synced.`
-      : `${agent.name} reporting in from the ${agent.role.toLowerCase()} desk.`;
-  const action =
-    agent.role === "Research"
-      ? "I would break this down into sources, constraints, and next questions."
-      : agent.role === "Builder"
-        ? "I would turn that into concrete implementation steps and validation."
-        : "I can coordinate the team, route work, and summarize progress.";
-  return `${opening} You said: "${normalized}". ${action}`;
+// ---------------------------------------------------------------------------
+// Dynamic MODELS list — built from available providers
+// ---------------------------------------------------------------------------
+function buildModelsList() {
+  const models = [];
+  if (anthropicClient) {
+    models.push({ id: "anthropic/claude-sonnet-4", name: "Claude Sonnet 4", provider: "anthropic", reasoning: true });
+  }
+  if (geminiClient) {
+    models.push({ id: "google/gemini-2.0-flash", name: "Gemini 2.0 Flash", provider: "google" });
+  }
+  if (openaiClient) {
+    models.push({ id: "openai/gpt-4o", name: "GPT-4o", provider: "openai" });
+  }
+  models.push({ id: "demo/mock-office", name: "Mock (Yedek)", provider: "demo" });
+  return models;
 }
 
+// ---------------------------------------------------------------------------
+// AI Streaming Functions
+// ---------------------------------------------------------------------------
+
+async function streamAnthropicReply(agent, history, userMessage, abortSignal, emitDelta) {
+  const systemPrompt = AGENT_SYSTEM_PROMPTS[agent.role] || `Sen ${agent.name} adında bir asistansın. Türkçe yanıt ver.`;
+  const messages = history.map((m) => ({ role: m.role, content: m.content }));
+  messages.push({ role: "user", content: userMessage });
+
+  const stream = anthropicClient.messages.stream({
+    model: agent.model || "claude-sonnet-4-20250514",
+    max_tokens: 4096,
+    system: systemPrompt,
+    messages,
+  });
+
+  let fullText = "";
+  for await (const event of stream) {
+    if (abortSignal.aborted) break;
+    if (event.type === "content_block_delta" && event.delta?.type === "text_delta") {
+      fullText += event.delta.text;
+      emitDelta(fullText);
+    }
+  }
+  return fullText;
+}
+
+async function streamGeminiReply(agent, history, userMessage, abortSignal, emitDelta) {
+  const systemPrompt = AGENT_SYSTEM_PROMPTS[agent.role] || `Sen ${agent.name} adında bir asistansın. Türkçe yanıt ver.`;
+  const model = geminiClient.getGenerativeModel({
+    model: agent.model || "gemini-2.0-flash",
+    systemInstruction: systemPrompt,
+  });
+
+  const chatHistory = history.map((m) => ({
+    role: m.role === "assistant" ? "model" : "user",
+    parts: [{ text: m.content }],
+  }));
+
+  const chat = model.startChat({ history: chatHistory });
+  const result = await chat.sendMessageStream(userMessage);
+
+  let fullText = "";
+  for await (const chunk of result.stream) {
+    if (abortSignal.aborted) break;
+    const text = chunk.text();
+    if (text) {
+      fullText += text;
+      emitDelta(fullText);
+    }
+  }
+  return fullText;
+}
+
+async function streamOpenAIReply(agent, history, userMessage, abortSignal, emitDelta) {
+  const systemPrompt = AGENT_SYSTEM_PROMPTS[agent.role] || `Sen ${agent.name} adında bir asistansın. Türkçe yanıt ver.`;
+  const messages = [
+    { role: "system", content: systemPrompt },
+    ...history.map((m) => ({ role: m.role, content: m.content })),
+    { role: "user", content: userMessage },
+  ];
+
+  const stream = await openaiClient.chat.completions.create({
+    model: agent.model || "gpt-4o",
+    messages,
+    stream: true,
+  });
+
+  let fullText = "";
+  for await (const chunk of stream) {
+    if (abortSignal.aborted) break;
+    const delta = chunk.choices?.[0]?.delta?.content;
+    if (delta) {
+      fullText += delta;
+      emitDelta(fullText);
+    }
+  }
+  return fullText;
+}
+
+// ---------------------------------------------------------------------------
+// Provider selection: agent's preferred provider -> any available -> null (mock)
+// ---------------------------------------------------------------------------
+function selectStreamFunction(agent) {
+  // Try the agent's assigned provider first
+  if (agent.provider === "anthropic" && anthropicClient) return streamAnthropicReply;
+  if (agent.provider === "gemini" && geminiClient) return streamGeminiReply;
+  if (agent.provider === "openai" && openaiClient) return streamOpenAIReply;
+  // Fallback: try any available provider
+  if (anthropicClient) return streamAnthropicReply;
+  if (geminiClient) return streamGeminiReply;
+  if (openaiClient) return streamOpenAIReply;
+  return null; // No keys configured -> mock
+}
+
+// ---------------------------------------------------------------------------
+// Mock reply (fallback when no AI keys configured)
+// ---------------------------------------------------------------------------
+function buildDemoReply(agent, message) {
+  const normalized = message.trim();
+  const replyMap = {
+    "DevOps & Infrastructure": {
+      opening: `${agent.name} burada. Sunucular, Docker container'lar ve CI/CD pipeline'lar kontrol altinda.`,
+      action: "Docker compose, Jenkins pipeline, Linux server, network ve deployment konularinda yardimci olabilirim. Hangi sunucuyu kontrol edelim?",
+    },
+    "IoT & Embedded": {
+      opening: `${agent.name} aktif. ESP32 firmware ve sensor sistemleri hazir.`,
+      action: "PlatformIO, ESP32, SHT31/ADS1115/TSL2591 sensorler, aktuatorler ve MQTT protokolu konusunda calisabilirim. Firmware'da ne uzerinde calisalim?",
+    },
+    "Backend": {
+      opening: `${agent.name} backend masasinda. API'ler ve veritabani hazir.`,
+      action: "Node.js, Express, PostgreSQL, MQTT broker, WebSocket ve REST API tasarimi konularinda destek verebilirim. Hangi endpoint uzerinde calisiyoruz?",
+    },
+    "Frontend & Mobile": {
+      opening: `${agent.name} UI masasinda. Arayuzler ve komponentler hazirlaniyor.`,
+      action: "React, Next.js, Tailwind CSS, React Native/Expo ve responsive tasarim konularinda calisabilirim. Hangi ekrani gelistirelim?",
+    },
+    "Video & Streaming": {
+      opening: `${agent.name} yayin masasinda. Stream altyapisi aktif.`,
+      action: "FFmpeg, HLS/RTMP transcoding, WebRTC, CDN routing ve video analytics konularinda destek verebilirim. Hangi stream uzerinde calisalim?",
+    },
+    "AI & Automation": {
+      opening: `${agent.name} otomasyon merkezinde. Workflow'lar ve AI modelleri hazir.`,
+      action: "n8n workflow, Gemini/Claude API, Telegram bot, web scraping ve otomasyon zincirleri konusunda yardimci olabilirim. Hangi otomasyon uzerinde calisiyoruz?",
+    },
+  };
+  const entry = replyMap[agent.role] || {
+    opening: `${agent.name} burada.`,
+    action: "Nasil yardimci olabilirim?",
+  };
+  return `${entry.opening} Mesajiniz: "${normalized}". ${entry.action}`;
+}
+
+// ---------------------------------------------------------------------------
+// Main method handler
+// ---------------------------------------------------------------------------
 async function handleMethod(method, params, id, sendEvent) {
   const p = params || {};
 
   switch (method) {
+    // -----------------------------------------------------------------------
+    // AI Keys management (UI-driven)
+    // -----------------------------------------------------------------------
+    case "ai.keys.set": {
+      const provider = typeof p.provider === "string" ? p.provider.trim() : "";
+      const apiKey = typeof p.apiKey === "string" ? p.apiKey.trim() : "";
+      if (!provider || !["anthropic", "gemini", "openai"].includes(provider)) {
+        return resErr(id, "invalid_provider", "Provider must be anthropic, gemini, or openai.");
+      }
+      aiKeys[provider] = apiKey;
+      if (apiKey) {
+        if (provider === "anthropic") initAnthropicClient(apiKey);
+        else if (provider === "gemini") initGeminiClient(apiKey);
+        else if (provider === "openai") initOpenAIClient(apiKey);
+      } else {
+        // Clear client when key is removed
+        if (provider === "anthropic") anthropicClient = null;
+        else if (provider === "gemini") geminiClient = null;
+        else if (provider === "openai") openaiClient = null;
+      }
+      return resOk(id, {
+        provider,
+        configured: Boolean(apiKey),
+        availableProviders: {
+          anthropic: Boolean(anthropicClient),
+          gemini: Boolean(geminiClient),
+          openai: Boolean(openaiClient),
+        },
+      });
+    }
+
+    case "ai.keys.get": {
+      return resOk(id, {
+        providers: {
+          anthropic: { configured: Boolean(aiKeys.anthropic), active: Boolean(anthropicClient) },
+          gemini: { configured: Boolean(aiKeys.gemini), active: Boolean(geminiClient) },
+          openai: { configured: Boolean(aiKeys.openai), active: Boolean(openaiClient) },
+        },
+      });
+    }
+
+    // -----------------------------------------------------------------------
+    // Agent methods
+    // -----------------------------------------------------------------------
     case "agents.list":
-      return resOk(id, { defaultId: "demo-orchestrator", mainKey: MAIN_KEY, agents: agentListPayload() });
+      return resOk(id, { defaultId: "demo-orchestrator", mainKey: MAIN_KEY, agents: agentListPayload(), meta: { teamName: "Cemal'in AI Ekibi" } });
 
     case "agents.create": {
       const name = typeof p.name === "string" && p.name.trim() ? p.name.trim() : "Demo Agent";
@@ -121,6 +509,8 @@ async function handleMethod(method, params, id, sendEvent) {
         name,
         role,
         workspace: `/demo/${slug}`,
+        provider: "anthropic",
+        model: "claude-sonnet-4-20250514",
       });
       broadcastEvent({
         type: "event",
@@ -187,20 +577,139 @@ async function handleMethod(method, params, id, sendEvent) {
       return resOk(id, { ok: true });
 
     case "models.list":
-      return resOk(id, { models: MODELS });
+      return resOk(id, { models: buildModelsList() });
 
+    // -----------------------------------------------------------------------
+    // Skills — report task-manager and soundclaw as installed
+    // -----------------------------------------------------------------------
     case "skills.status":
-      return resOk(id, { skills: [] });
+      return resOk(id, {
+        skills: [
+          { id: "task-manager", name: "Task Manager", installed: true, version: "1.0.0" },
+          { id: "soundclaw", name: "Soundclaw", installed: true, version: "1.0.0" },
+        ],
+      });
 
-    case "cron.list":
-      return resOk(id, { jobs: [] });
+    // -----------------------------------------------------------------------
+    // Setup status — for onboarding wizard AI configuration
+    // -----------------------------------------------------------------------
+    case "setup.status": {
+      return resOk(id, {
+        providers: {
+          anthropic: { configured: Boolean(aiKeys.anthropic), active: Boolean(anthropicClient) },
+          gemini: { configured: Boolean(aiKeys.gemini), active: Boolean(geminiClient) },
+          openai: { configured: Boolean(aiKeys.openai), active: Boolean(openaiClient) },
+        },
+        skills: ["task-manager", "soundclaw"],
+        features: { kanban: true, jukebox: true, cron: true },
+        needsSetup: !aiKeys.anthropic && !aiKeys.gemini && !aiKeys.openai,
+      });
+    }
 
-    case "cron.add":
-    case "cron.run":
-    case "cron.remove":
-      return resErr(id, "unsupported_method", `Demo runtime does not support ${method}.`);
+    // -----------------------------------------------------------------------
+    // Tasks — in-memory Kanban board
+    // -----------------------------------------------------------------------
+    case "tasks.list": {
+      const includeArchived = p.includeArchived !== false;
+      const list = [...tasks.values()].filter((t) => includeArchived || !t.isArchived);
+      return resOk(id, { tasks: list });
+    }
+
+    case "tasks.create": {
+      const task = {
+        id: randomId(),
+        title: p.title || "Untitled",
+        description: p.description || "",
+        status: p.status || "todo",
+        source: p.source || "claw3d_manual",
+        sourceEventId: p.sourceEventId || null,
+        assignedAgentId: p.assignedAgentId || null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        playbookJobId: p.playbookJobId || null,
+        runId: p.runId || null,
+        channel: p.channel || null,
+        externalThreadId: p.externalThreadId || null,
+        lastActivityAt: null,
+        notes: p.notes || [],
+        isArchived: false,
+        isInferred: false,
+      };
+      tasks.set(task.id, task);
+      broadcastEvent({ type: "event", event: "tasks.changed", payload: { action: "created", task } });
+      return resOk(id, task);
+    }
+
+    case "tasks.update": {
+      const task = tasks.get(p.id);
+      if (!task) return resErr(id, "not_found", "Task not found");
+      if (p.title !== undefined) task.title = p.title;
+      if (p.description !== undefined) task.description = p.description;
+      if (p.status !== undefined) task.status = p.status;
+      if (p.assignedAgentId !== undefined) task.assignedAgentId = p.assignedAgentId;
+      if (p.notes !== undefined) task.notes = p.notes;
+      if (p.archived !== undefined) task.isArchived = p.archived;
+      if (p.source !== undefined) task.source = p.source;
+      if (p.channel !== undefined) task.channel = p.channel;
+      if (p.playbookJobId !== undefined) task.playbookJobId = p.playbookJobId;
+      if (p.runId !== undefined) task.runId = p.runId;
+      task.updatedAt = new Date().toISOString();
+      task.lastActivityAt = new Date().toISOString();
+      broadcastEvent({ type: "event", event: "tasks.changed", payload: { action: "updated", task } });
+      return resOk(id, task);
+    }
+
+    case "tasks.delete": {
+      const existed = tasks.delete(p.id);
+      if (existed) {
+        broadcastEvent({ type: "event", event: "tasks.changed", payload: { action: "deleted", taskId: p.id } });
+      }
+      return resOk(id, { ok: true, removed: existed });
+    }
+
+    // -----------------------------------------------------------------------
+    // Cron — in-memory job store with real scheduling
+    // -----------------------------------------------------------------------
+    case "cron.list": {
+      return resOk(id, { jobs: [...cronJobs.values()] });
+    }
+
+    case "cron.add": {
+      const job = {
+        id: randomId(),
+        name: p.name || "Untitled Job",
+        agentId: p.agentId || null,
+        description: p.description || "",
+        enabled: p.enabled !== false,
+        deleteAfterRun: p.deleteAfterRun || false,
+        updatedAtMs: Date.now(),
+        schedule: p.schedule || null,
+        sessionTarget: p.sessionTarget || "main",
+        wakeMode: p.wakeMode || "now",
+        payload: p.payload || null,
+        delivery: p.delivery || undefined,
+        state: { nextRunAtMs: null, lastStatus: null, lastRunAtMs: null },
+      };
+      cronJobs.set(job.id, job);
+      if (job.enabled && job.schedule) scheduleCronJob(job);
+      return resOk(id, job);
+    }
+
+    case "cron.run": {
+      const job = cronJobs.get(p.id);
+      if (!job) return resErr(id, "not_found", "Job not found");
+      executeCronJob(job);
+      return resOk(id, { ok: true, ran: true });
+    }
+
+    case "cron.remove": {
+      clearCronTimer(p.id);
+      const existed = cronJobs.delete(p.id);
+      return resOk(id, { ok: true, removed: existed });
+    }
 
     case "sessions.list": {
+      const currentModels = buildModelsList();
       const sessions = [...agents.values()].map((agent) => {
         const sessionKey = sessionKeyFor(agent.id);
         const history = getHistory(sessionKey);
@@ -211,7 +720,7 @@ async function handleMethod(method, params, id, sendEvent) {
           updatedAt: history.length > 0 ? Date.now() : null,
           displayName: "Main",
           origin: { label: agent.name, provider: "demo" },
-          model: settings.model || MODELS[0].id,
+          model: settings.model || currentModels[0]?.id || "demo/mock-office",
           modelProvider: "demo",
         };
       });
@@ -242,11 +751,12 @@ async function handleMethod(method, params, id, sendEvent) {
       if (p.model !== undefined) next.model = p.model;
       if (p.thinkingLevel !== undefined) next.thinkingLevel = p.thinkingLevel;
       sessionSettings.set(key, next);
+      const currentModels = buildModelsList();
       return resOk(id, {
         ok: true,
         key,
         entry: { thinkingLevel: next.thinkingLevel },
-        resolved: { model: next.model || MODELS[0].id, modelProvider: "demo" },
+        resolved: { model: next.model || currentModels[0]?.id || "demo/mock-office", modelProvider: "demo" },
       });
     }
 
@@ -256,6 +766,9 @@ async function handleMethod(method, params, id, sendEvent) {
       return resOk(id, { ok: true });
     }
 
+    // -----------------------------------------------------------------------
+    // Chat — uses real AI when keys are configured, falls back to mock
+    // -----------------------------------------------------------------------
     case "chat.send": {
       const sessionKey = typeof p.sessionKey === "string" ? p.sessionKey : sessionKeyFor("demo-orchestrator");
       const agentId = sessionKey.startsWith("agent:") ? sessionKey.split(":")[1] : "demo-orchestrator";
@@ -264,16 +777,19 @@ async function handleMethod(method, params, id, sendEvent) {
       const runId = typeof p.idempotencyKey === "string" && p.idempotencyKey ? p.idempotencyKey : randomId();
       if (!message) return resOk(id, { status: "no-op", runId });
 
-      const reply = buildDemoReply(agent, message);
       let aborted = false;
+      const abortController = { aborted: false };
       activeRuns.set(runId, {
         runId,
         sessionKey,
         agentId,
         abort() {
           aborted = true;
+          abortController.aborted = true;
         },
       });
+
+      const streamFn = selectStreamFunction(agent);
 
       setImmediate(async () => {
         let seq = 0;
@@ -287,24 +803,55 @@ async function handleMethod(method, params, id, sendEvent) {
         };
 
         try {
-          const words = reply.split(" ");
-          let partial = "";
-          for (const word of words) {
-            if (aborted) break;
-            partial = partial ? `${partial} ${word}` : word;
-            emitChat("delta", { message: { role: "assistant", content: partial } });
-            await new Promise((resolve) => setTimeout(resolve, 45));
+          if (streamFn) {
+            // ---- Real AI streaming ----
+            const history = getHistory(sessionKey);
+            let fullText = "";
+
+            try {
+              fullText = await streamFn(agent, history, message, abortController, (partial) => {
+                if (!aborted) {
+                  emitChat("delta", { message: { role: "assistant", content: partial } });
+                }
+              });
+            } catch (aiError) {
+              console.error(`[demo-gateway] AI error (${agent.provider}):`, aiError.message);
+              // Fallback to mock on AI error
+              fullText = buildDemoReply(agent, message) + `\n\n_(AI hatası: ${aiError.message}. Mock yanıt gösterildi.)_`;
+              emitChat("delta", { message: { role: "assistant", content: fullText } });
+            }
+
+            if (aborted) {
+              emitChat("aborted", {});
+              return;
+            }
+
+            history.push({ role: "user", content: message });
+            history.push({ role: "assistant", content: fullText });
+            emitChat("final", { stopReason: "end_turn", message: { role: "assistant", content: fullText } });
+          } else {
+            // ---- Mock word-by-word streaming ----
+            const reply = buildDemoReply(agent, message);
+            const words = reply.split(" ");
+            let partial = "";
+            for (const word of words) {
+              if (aborted) break;
+              partial = partial ? `${partial} ${word}` : word;
+              emitChat("delta", { message: { role: "assistant", content: partial } });
+              await new Promise((resolve) => setTimeout(resolve, 45));
+            }
+
+            if (aborted) {
+              emitChat("aborted", {});
+              return;
+            }
+
+            const history = getHistory(sessionKey);
+            history.push({ role: "user", content: message });
+            history.push({ role: "assistant", content: reply });
+            emitChat("final", { stopReason: "end_turn", message: { role: "assistant", content: reply } });
           }
 
-          if (aborted) {
-            emitChat("aborted", {});
-            return;
-          }
-
-          const history = getHistory(sessionKey);
-          history.push({ role: "user", content: message });
-          history.push({ role: "assistant", content: reply });
-          emitChat("final", { stopReason: "end_turn", message: { role: "assistant", content: reply } });
           sendEvent({
             type: "event",
             event: "presence",
@@ -327,23 +874,23 @@ async function handleMethod(method, params, id, sendEvent) {
     case "chat.abort": {
       const runId = typeof p.runId === "string" ? p.runId.trim() : "";
       const sessionKey = typeof p.sessionKey === "string" ? p.sessionKey.trim() : "";
-      let aborted = 0;
+      let abortedCount = 0;
       if (runId) {
         const handle = activeRuns.get(runId);
         if (handle) {
           handle.abort();
           activeRuns.delete(runId);
-          aborted += 1;
+          abortedCount += 1;
         }
       } else if (sessionKey) {
         for (const [activeRunId, handle] of activeRuns.entries()) {
           if (handle.sessionKey !== sessionKey) continue;
           handle.abort();
           activeRuns.delete(activeRunId);
-          aborted += 1;
+          abortedCount += 1;
         }
       }
-      return resOk(id, { ok: true, aborted });
+      return resOk(id, { ok: true, aborted: abortedCount });
     }
 
     case "chat.history": {
@@ -386,13 +933,23 @@ async function handleMethod(method, params, id, sendEvent) {
   }
 }
 
-function startAdapter() {
+// ---------------------------------------------------------------------------
+// WebSocket server
+// ---------------------------------------------------------------------------
+function startAdapter(options = {}) {
+  const port = options.port != null ? options.port : ADAPTER_PORT;
+  const silent = options.silent || false;
+
+  // Auto-load AI keys from environment variables on startup
+  autoLoadKeysFromEnv();
+
   const httpServer = http.createServer((req, res) => {
     res.writeHead(200, { "Content-Type": "text/plain" });
     res.end("Claw3D Demo Gateway Adapter\n");
   });
 
   const wss = new WebSocketServer({ server: httpServer });
+  wss.on("error", () => {}); // Prevent unhandled WSS errors (httpServer handler manages them)
   wss.on("connection", (ws) => {
     let connected = false;
     let globalSeq = 0;
@@ -460,6 +1017,16 @@ function startAdapter() {
                 "skills.status",
                 "models.list",
                 "cron.list",
+                "cron.add",
+                "cron.run",
+                "cron.remove",
+                "tasks.list",
+                "tasks.create",
+                "tasks.update",
+                "tasks.delete",
+                "ai.keys.set",
+                "ai.keys.get",
+                "setup.status",
               ],
               events: ["chat", "presence", "heartbeat"],
             },
@@ -497,14 +1064,30 @@ function startAdapter() {
     ws.on("error", () => activeSendEventFns.delete(sendEventFn));
   });
 
-  httpServer.listen(ADAPTER_PORT, "127.0.0.1", () => {
-    console.log(`[demo-gateway] Listening on ws://localhost:${ADAPTER_PORT}`);
-    console.log("[demo-gateway] No OpenClaw or Hermes required.");
+  return new Promise((resolve, reject) => {
+    httpServer.on("error", (err) => {
+      if (err.code === "EADDRINUSE") {
+        if (!silent) console.log(`[demo-gateway] Port ${port} zaten kullanımda, atlanıyor.`);
+        resolve(null);
+        return;
+      }
+      reject(err);
+    });
+    httpServer.listen(port, "127.0.0.1", () => {
+      if (!silent) {
+        console.log(`[demo-gateway] ws://localhost:${port} üzerinde dinliyor`);
+        console.log("[demo-gateway] AI anahtarlarını Ayarlar panelinden girebilirsiniz.");
+      }
+      resolve(httpServer);
+    });
   });
 }
 
 if (require.main === module) {
-  startAdapter();
+  startAdapter().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
 }
 
 module.exports = {

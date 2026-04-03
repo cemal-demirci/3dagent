@@ -1,12 +1,15 @@
 /**
- * ConnectStep — Gateway connection form within the onboarding wizard.
+ * ConnectStep — Gateway connection + AI provider setup within the onboarding wizard.
  *
- * Reuses the same fields as GatewayConnectScreen but in a more compact
- * layout suited for the wizard modal.
+ * When disconnected: shows gateway URL/token form.
+ * When connected: shows a compact "connected" badge + AI key configuration cards.
  */
-import { useState } from "react";
-import { CheckCircle2, Eye, EyeOff, Wifi, WifiOff } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { CheckCircle2, Eye, EyeOff, Key, Wifi, WifiOff } from "lucide-react";
 import { RunningAvatarLoader } from "@/features/agents/components/RunningAvatarLoader";
+import { t } from "@/lib/i18n";
+
+type ProviderStatus = { configured: boolean; active: boolean };
 
 export type ConnectStepProps = {
   gatewayUrl: string;
@@ -17,7 +20,14 @@ export type ConnectStepProps = {
   connected: boolean;
   connecting: boolean;
   error: string | null;
+  callGateway?: (method: string, params: unknown) => Promise<unknown>;
 };
+
+const AI_PROVIDERS = [
+  { key: "anthropic" as const, label: t("onboarding.connect.aiSetup.anthropic"), placeholder: "sk-ant-..." },
+  { key: "gemini" as const, label: t("onboarding.connect.aiSetup.gemini"), placeholder: "AIza..." },
+  { key: "openai" as const, label: t("onboarding.connect.aiSetup.openai"), placeholder: "sk-..." },
+] as const;
 
 export const ConnectStep = ({
   gatewayUrl,
@@ -28,19 +38,132 @@ export const ConnectStep = ({
   connected,
   connecting,
   error,
+  callGateway,
 }: ConnectStepProps) => {
   const [showToken, setShowToken] = useState(false);
+  const [providerStatus, setProviderStatus] = useState<Record<string, ProviderStatus>>({});
+  const [keyDrafts, setKeyDrafts] = useState<Record<string, string>>({});
+  const [saving, setSaving] = useState<Record<string, boolean>>({});
+  const [saveFlash, setSaveFlash] = useState<Record<string, boolean>>({});
+
+  // Fetch AI key status when connected
+  const fetchAIStatus = useCallback(async () => {
+    if (!callGateway || !connected) return;
+    try {
+      const result = (await callGateway("ai.keys.get", {})) as {
+        providers: Record<string, ProviderStatus>;
+      };
+      if (result?.providers) setProviderStatus(result.providers);
+    } catch {}
+  }, [callGateway, connected]);
+
+  useEffect(() => {
+    void fetchAIStatus();
+  }, [fetchAIStatus]);
+
+  const handleSaveKey = useCallback(
+    async (provider: string) => {
+      if (!callGateway) return;
+      const apiKey = keyDrafts[provider]?.trim() ?? "";
+      if (!apiKey) return;
+      setSaving((prev) => ({ ...prev, [provider]: true }));
+      try {
+        await callGateway("ai.keys.set", { provider, apiKey });
+        setSaveFlash((prev) => ({ ...prev, [provider]: true }));
+        setKeyDrafts((prev) => ({ ...prev, [provider]: "" }));
+        setTimeout(() => setSaveFlash((prev) => ({ ...prev, [provider]: false })), 1500);
+        await fetchAIStatus();
+      } catch {}
+      setSaving((prev) => ({ ...prev, [provider]: false }));
+    },
+    [callGateway, keyDrafts, fetchAIStatus],
+  );
 
   if (connected) {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 py-8">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/20">
-          <CheckCircle2 className="h-6 w-6 text-amber-300" />
+      <div className="space-y-4">
+        {/* Connected badge */}
+        <div className="flex items-center gap-2 rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-3 py-2.5">
+          <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+          <p className="text-xs font-medium text-emerald-300">{t("onboarding.connect.connected")}</p>
+          <p className="ml-auto text-[10px] text-white/40">{t("onboarding.connect.connectedHint")}</p>
         </div>
-        <p className="text-sm font-semibold text-white">Connected!</p>
-        <p className="text-xs text-white/60">
-          Your gateway is live. Click Next to continue.
-        </p>
+
+        {/* AI Provider Setup */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Key className="h-3.5 w-3.5 text-amber-400" />
+            <h3 className="text-xs font-semibold text-white">{t("onboarding.connect.aiSetup.title")}</h3>
+          </div>
+          <p className="text-[11px] text-white/50">{t("onboarding.connect.aiSetup.description")}</p>
+
+          <div className="space-y-2">
+            {AI_PROVIDERS.map(({ key, label, placeholder }) => {
+              const status = providerStatus[key];
+              const isConfigured = status?.configured ?? false;
+              const isSaving = saving[key] ?? false;
+              const justSaved = saveFlash[key] ?? false;
+
+              return (
+                <div
+                  key={key}
+                  className={`rounded-lg border px-3 py-2.5 transition-colors ${
+                    isConfigured
+                      ? "border-emerald-500/20 bg-emerald-500/5"
+                      : "border-white/8 bg-white/[0.02]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-medium text-white/80">{label}</span>
+                    {isConfigured ? (
+                      <span className="flex items-center gap-1 text-[10px] text-emerald-400">
+                        <CheckCircle2 className="h-3 w-3" />
+                        {t("onboarding.connect.aiSetup.configured")}
+                      </span>
+                    ) : (
+                      <span className="text-[10px] text-white/30">
+                        {t("onboarding.connect.aiSetup.optional")}
+                      </span>
+                    )}
+                  </div>
+                  {!isConfigured && (
+                    <div className="mt-2 flex gap-2">
+                      <input
+                        className="h-7 flex-1 rounded border border-white/10 bg-white/5 px-2 font-mono text-[11px] text-white outline-none placeholder:text-white/25 focus:border-amber-400/50"
+                        type="password"
+                        value={keyDrafts[key] ?? ""}
+                        onChange={(e) =>
+                          setKeyDrafts((prev) => ({ ...prev, [key]: e.target.value }))
+                        }
+                        placeholder={placeholder}
+                        spellCheck={false}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") void handleSaveKey(key);
+                        }}
+                      />
+                      <button
+                        type="button"
+                        className="h-7 rounded bg-amber-500 px-3 text-[10px] font-semibold text-[#1a1206] transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
+                        disabled={isSaving || !keyDrafts[key]?.trim()}
+                        onClick={() => void handleSaveKey(key)}
+                      >
+                        {justSaved ? (
+                          <CheckCircle2 className="h-3 w-3" />
+                        ) : isSaving ? (
+                          t("onboarding.connect.aiSetup.saving")
+                        ) : (
+                          t("onboarding.connect.aiSetup.save")
+                        )}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <p className="text-[10px] text-white/30">{t("onboarding.connect.aiSetup.skipHint")}</p>
+        </div>
       </div>
     );
   }
@@ -49,13 +172,13 @@ export const ConnectStep = ({
     <div className="space-y-4">
       <div className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/[0.02] px-3 py-2.5">
         <WifiOff className="h-4 w-4 text-white/40" />
-        <p className="text-xs text-white/60">Not connected</p>
+        <p className="text-xs text-white/60">{t("onboarding.connect.notConnected")}</p>
       </div>
 
       <div className="space-y-3">
         <label className="flex flex-col gap-1.5">
           <span className="text-[11px] font-medium text-white/80">
-            Gateway URL
+            {t("onboarding.connect.gatewayUrl")}
           </span>
           <input
             className="h-9 rounded-md border border-white/10 bg-white/5 px-3 font-mono text-sm text-white outline-none placeholder:text-white/30 focus:border-amber-400/50"
@@ -69,7 +192,7 @@ export const ConnectStep = ({
 
         <label className="flex flex-col gap-1.5">
           <span className="text-[11px] font-medium text-white/80">
-            Gateway Token
+            {t("onboarding.connect.gatewayToken")}
           </span>
           <div className="relative">
             <input
@@ -84,7 +207,7 @@ export const ConnectStep = ({
               type="button"
               className="absolute inset-y-0 right-1 my-auto flex h-7 w-7 items-center justify-center rounded text-white/50 hover:text-white"
               onClick={() => setShowToken((prev) => !prev)}
-              aria-label={showToken ? "Hide token" : "Show token"}
+              aria-label={showToken ? t("onboarding.connect.hideToken") : t("onboarding.connect.showToken")}
             >
               {showToken ? (
                 <EyeOff className="h-3.5 w-3.5" />
@@ -104,12 +227,12 @@ export const ConnectStep = ({
           {connecting ? (
             <>
               <RunningAvatarLoader size={16} trackWidth={32} inline />
-              Connecting…
+              {t("onboarding.connect.connecting")}
             </>
           ) : (
             <>
               <Wifi className="h-3.5 w-3.5" />
-              Connect
+              {t("onboarding.connect.connectBtn")}
             </>
           )}
         </button>
@@ -123,16 +246,16 @@ export const ConnectStep = ({
 
       <div className="space-y-1.5 text-[11px] text-white/40">
         <p>
-          <strong className="text-white/60">Local?</strong> Use{" "}
+          <strong className="text-white/60">{t("onboarding.connect.hintLocal")}</strong>{" "}
           <code className="text-white/50">ws://localhost:18789</code>
         </p>
         <p>
-          <strong className="text-white/60">Tailscale?</strong> Use{" "}
+          <strong className="text-white/60">{t("onboarding.connect.hintTailscale")}</strong>{" "}
           <code className="text-white/50">wss://your-host.ts.net</code>
         </p>
         <p>
-          <strong className="text-white/60">SSH tunnel?</strong> Forward port
-          18789 first, then use localhost.
+          <strong className="text-white/60">{t("onboarding.connect.hintSSH")}</strong>{" "}
+          {t("onboarding.connect.hintSSHText")}
         </p>
       </div>
     </div>

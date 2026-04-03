@@ -188,6 +188,7 @@ import {
 import { deriveSkillReadinessState } from "@/lib/skills/presentation";
 import type { StandupAgentSnapshot } from "@/lib/office/standup/types";
 import type { SkillStatusEntry } from "@/lib/skills/types";
+import { t } from "@/lib/i18n";
 
 const stringToColor = (str: string) => {
   let hash = 0;
@@ -4202,22 +4203,22 @@ export function OfficeScreen({
       {showGatewayLoadingOverlay ? (
         <div
           className="pointer-events-none absolute inset-0 z-40 flex items-center justify-center bg-[#120a05]/76"
-          aria-label="Connecting to runtime"
+          aria-label={t("office.connectingToRuntime")}
           role="status"
         >
           <div className="rounded-xl border border-amber-700/45 bg-[#1a1008] px-8 py-6 shadow-2xl">
             <RunningAvatarLoader
               size={28}
               trackWidth={76}
-              label="Connecting to your runtime..."
+              label={t("office.connectingToYourRuntime")}
               labelClassName="text-amber-100/80"
             />
           </div>
         </div>
       ) : null}
       {showGatewayConnectOverlay ? (
-        <div className="pointer-events-auto absolute inset-0 z-50 flex items-start justify-center bg-[#120a05]/76 px-4 py-10">
-          <div className="w-full max-w-[860px] rounded-2xl border border-amber-900/55 bg-[#120a05]/98 p-3 shadow-2xl">
+        <div className="pointer-events-auto absolute inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#120a05]/76 px-4 py-10">
+          <div className="w-full max-w-[860px] shrink-0 rounded-2xl border border-amber-900/55 bg-[#120a05]/98 p-3 shadow-2xl">
             <GatewayConnectScreen
               gatewayUrl={gatewayUrl}
               token={token}
@@ -4302,6 +4303,7 @@ export function OfficeScreen({
           onGatewayTokenChange={setToken}
           onGatewayAdapterTypeChange={setSelectedAdapterType}
           onOpenOnboarding={handleOpenOnboarding}
+          callGateway={(method, params) => client.call(method, params)}
           feedEvents={feedEvents}
           gatewayStatus={status}
           runCountByAgentId={runCountByAgentId}
@@ -4646,13 +4648,14 @@ export function OfficeScreen({
           companyCreated={companyCreatedSignal > 0}
           connectionError={gatewayError}
           connecting={status === "connecting"}
+          callGateway={(method, params) => client.call(method, params)}
         />
       ) : null}
 
       {showOpenClawConsole ? (
         <section className="pointer-events-auto fixed bottom-3 left-3 z-30 flex w-[520px] max-w-[calc(100vw-1.5rem)] flex-col overflow-hidden rounded border border-cyan-500/25 bg-black/78 shadow-2xl backdrop-blur">
           <div className="flex items-center justify-between border-b border-cyan-500/15 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.18em] text-cyan-200/80">
-            <span>OpenClaw Event Console</span>
+            <span>{t("console.title")}</span>
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-cyan-100/45">
                 agents {state.agents.length} | events{" "}
@@ -4666,24 +4669,24 @@ export function OfficeScreen({
                 className="rounded border border-cyan-500/20 px-2 py-0.5 text-[9px] text-cyan-100/70 transition-colors hover:border-cyan-400/45 hover:text-cyan-50"
               >
                 {openClawConsoleCopyStatus === "copied"
-                  ? "Copied"
+                  ? t("console.copied")
                   : openClawConsoleCopyStatus === "error"
-                    ? "Copy Failed"
-                    : "Copy JSON"}
+                    ? t("console.copyFailed")
+                    : t("console.copyJson")}
               </button>
               <button
                 type="button"
                 onClick={handleDownloadOpenClawConsoleJson}
                 className="rounded border border-cyan-500/20 px-2 py-0.5 text-[9px] text-cyan-100/70 transition-colors hover:border-cyan-400/45 hover:text-cyan-50"
               >
-                Download JSON
+                {t("console.downloadJson")}
               </button>
               <button
                 type="button"
                 onClick={handleClearOpenClawConsole}
                 className="rounded border border-cyan-500/20 px-2 py-0.5 text-[9px] text-cyan-100/70 transition-colors hover:border-cyan-400/45 hover:text-cyan-50"
               >
-                Clear
+                {t("console.clear")}
               </button>
               <button
                 type="button"
@@ -4692,7 +4695,7 @@ export function OfficeScreen({
                 }
                 className="rounded border border-cyan-500/20 px-2 py-0.5 text-[9px] text-cyan-100/70 transition-colors hover:border-cyan-400/45 hover:text-cyan-50"
               >
-                {openClawConsoleCollapsed ? "Expand" : "Minimize"}
+                {openClawConsoleCollapsed ? t("console.expand") : t("console.minimize")}
               </button>
             </div>
           </div>
@@ -4706,7 +4709,7 @@ export function OfficeScreen({
                   onChange={(event) =>
                     setOpenClawConsoleSearch(event.target.value)
                   }
-                  placeholder="Search logs, payloads, thinking, user text."
+                  placeholder={t("office.searchPlaceholder")}
                   className="min-w-0 flex-1 rounded border border-cyan-500/20 bg-black/35 px-2 py-1 text-[10px] normal-case tracking-normal text-cyan-50 placeholder:text-cyan-100/30 focus:border-cyan-400/40 focus:outline-none"
                 />
                 {openClawConsoleSearch ? (
@@ -4715,7 +4718,7 @@ export function OfficeScreen({
                     onClick={() => setOpenClawConsoleSearch("")}
                     className="rounded border border-cyan-500/20 px-2 py-1 text-[9px] uppercase tracking-[0.16em] text-cyan-100/70 transition-colors hover:border-cyan-400/45 hover:text-cyan-50"
                   >
-                    Reset
+                    {t("office.reset")}
                   </button>
                 ) : null}
               </div>
@@ -4723,7 +4726,7 @@ export function OfficeScreen({
             {openClawLiveStateMatchesSearch ? (
               <div className="rounded border border-cyan-500/10 bg-cyan-950/10 p-2">
                 <div className="mb-1 text-[9px] uppercase tracking-[0.16em] text-cyan-300/70">
-                  Live OpenClaw State
+                  {t("console.liveState")}
                 </div>
                 <pre className="whitespace-pre-wrap break-words text-cyan-100/80">
                   {renderOpenClawHighlightedText(
@@ -4734,17 +4737,17 @@ export function OfficeScreen({
               </div>
             ) : (
               <div className="rounded border border-cyan-500/10 bg-cyan-950/10 p-2 text-cyan-100/45">
-                Live OpenClaw state does not match the current search.
+                {t("console.liveStateNoMatch")}
               </div>
             )}
             <div className="text-[9px] uppercase tracking-[0.16em] text-cyan-300/70">
-              Raw OpenClaw Gateway Events
+              {t("console.rawEvents")}
             </div>
             {filteredOpenClawLogEntries.length === 0 ? (
               <div className="rounded border border-cyan-500/10 bg-cyan-950/10 p-2 text-cyan-100/45">
                 {openClawLogEntries.length === 0
-                  ? "No OpenClaw gateway events received yet."
-                  : "No OpenClaw events match the current search."}
+                  ? t("console.noEventsYet")
+                  : t("console.noEventsMatch")}
               </div>
             ) : (
               filteredOpenClawLogEntries.map((entry) => {
