@@ -11,7 +11,7 @@ export const tr = {
   "connect.chooseBackend": "Bir backend seçin, ardından gateway URL'sine bağlanın.",
   "connect.selectedBackend": "Seçili backend: {type} | Aktif backend: {active}",
   "connect.eachBackendSaves": "Her backend kendi URL ve token bilgisini saklar.",
-  "connect.demoBackend": "Demo backend",
+  "connect.builtinBackend": "Gömülü Gateway",
   "connect.hermesBackend": "Hermes backend",
   "connect.customBackend": "Özel backend",
   "connect.openclawBackend": "OpenClaw backend",
@@ -25,7 +25,7 @@ export const tr = {
   "connect.runLocally": "Yerel olarak çalıştır (isteğe bağlı)",
   "connect.startLocalGateway": "Bu makinede yerel bir gateway işlemi başlatın, ardından bağlanın.",
   "connect.justSeeOffice": "Sadece ofisi görmek mi istiyorsunuz?",
-  "connect.demoHint": "Demo ajanlarla dahili mock gateway'i başlatmak için {command} çalıştırın. Ardından Demo backend'i seçip bağlanın.",
+  "connect.builtinHint": "Dahili gateway'i başlatmak için {command} çalıştırın. Ardından Gömülü Gateway'i seçip bağlanın.",
   "connect.hermesLocalTitle": "Hermes'i yerel kullanıyor musunuz?",
   "connect.hermesLocalHint": "Hermes'i yerel kullanıyorsanız {command} çalıştırın, ardından Hermes backend'i seçin. Varsayılan yerel URL: ws://localhost:18789.",
   "connect.customLocalTitle": "Yerel özel runtime mi kullanıyorsunuz?",
@@ -159,7 +159,7 @@ export const tr = {
   "settings.usedInHeader": "Ofis sahne başlığında kullanılır.",
   "settings.gateway": "Gateway",
   "settings.gatewayDesc": "Aktif backend'i değiştirin ve kayıtlı uç nokta bilgilerini güncelleyin.",
-  "settings.demo": "Demo",
+  "settings.builtin": "Gömülü",
   "settings.hermes": "Hermes",
   "settings.custom": "Özel",
   "settings.openclaw": "OpenClaw",
@@ -514,10 +514,8 @@ export const tr = {
   // ---- Onboarding Types (step titles & descriptions) ----
   "onboarding.step.welcome.title": "Claw3D'ye Hos Geldiniz",
   "onboarding.step.welcome.description": "3D AI ofisiniz",
-  "onboarding.step.prerequisites.title": "Baslamadan Once",
-  "onboarding.step.prerequisites.description": "Ihtiyaciniz olanlar",
-  "onboarding.step.connect.title": "Gateway'inizi Baglayin",
-  "onboarding.step.connect.description": "Runtime orneginize baglanin",
+  "onboarding.step.aiSetup.title": "Yapay Zeka Kurulumu",
+  "onboarding.step.aiSetup.description": "AI saglayicilarinizi baglayin — istege bagli",
   "onboarding.step.agents.title": "Ajanlariniz",
   "onboarding.step.agents.description": "AI ekibinizle tanisin",
   "onboarding.step.company.title": "Sirketinizi Kurun",
@@ -569,9 +567,12 @@ export const tr = {
   "onboarding.connect.hintSSH": "SSH tuneli?",
   "onboarding.connect.hintSSHText": "Once 18789 portunu yonlendirin, ardindan localhost kullanin.",
 
+  // ---- AI Setup Step ----
+  "onboarding.aiSetup.showUrl": "URL ayarla",
+
   // ---- Connect Step — AI Setup ----
   "onboarding.connect.aiSetup.title": "AI Saglayici Yapilandirmasi",
-  "onboarding.connect.aiSetup.description": "Ajanlarinizin gercek AI ile calismasi icin en az bir API anahtari girin. Atlarsaniz demo (mock) yanitlar kullanilir.",
+  "onboarding.connect.aiSetup.description": "Ajanlarinizin gercek AI ile calismasi icin en az bir API anahtari girin. Atlarsaniz yedek yanitlar kullanilir.",
   "onboarding.connect.aiSetup.anthropic": "Claude (Anthropic)",
   "onboarding.connect.aiSetup.gemini": "Gemini (Google)",
   "onboarding.connect.aiSetup.openai": "OpenAI",

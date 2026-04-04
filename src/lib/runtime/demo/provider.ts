@@ -21,12 +21,12 @@ const DEMO_RUNTIME_CAPABILITIES: ReadonlySet<RuntimeCapability> = new Set([
 ]);
 
 export class DemoRuntimeProvider implements RuntimeProvider {
-  readonly id = "demo" as const;
-  readonly label = "Demo";
+  readonly id = "builtin" as const;
+  readonly label = "Built-in";
   readonly metadata = {
     id: this.id,
     label: this.label,
-    runtimeName: "Demo",
+    runtimeName: "Built-in",
   } as const;
   readonly capabilities = DEMO_RUNTIME_CAPABILITIES;
 

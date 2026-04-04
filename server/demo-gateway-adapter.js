@@ -88,49 +88,49 @@ function initOpenAIClient(apiKey) {
 // Agent definitions with provider/model assignments
 // ---------------------------------------------------------------------------
 const agents = new Map([
-  ["demo-orchestrator", {
-    id: "demo-orchestrator",
-    name: "Demir",
+  ["erlik-devops", {
+    id: "erlik-devops",
+    name: "Erlik",
     role: "DevOps & Infrastructure",
     workspace: "/demo/devops",
     provider: "anthropic",
     model: "claude-sonnet-4-20250514",
   }],
-  ["volt-iot", {
-    id: "volt-iot",
-    name: "Volt",
+  ["kayra-iot", {
+    id: "kayra-iot",
+    name: "Kayra",
     role: "IoT & Embedded",
     workspace: "/demo/iot",
     provider: "gemini",
     model: "gemini-2.0-flash",
   }],
-  ["atlas-backend", {
-    id: "atlas-backend",
-    name: "Atlas",
+  ["ulgen-backend", {
+    id: "ulgen-backend",
+    name: "Ülgen",
     role: "Backend",
     workspace: "/demo/backend",
     provider: "openai",
     model: "gpt-4o",
   }],
-  ["pixel-frontend", {
-    id: "pixel-frontend",
-    name: "Pixel",
+  ["umay-frontend", {
+    id: "umay-frontend",
+    name: "Umay",
     role: "Frontend & Mobile",
     workspace: "/demo/frontend",
     provider: "anthropic",
     model: "claude-sonnet-4-20250514",
   }],
-  ["akis-video", {
-    id: "akis-video",
-    name: "Akis",
+  ["asena-video", {
+    id: "asena-video",
+    name: "Asena",
     role: "Video & Streaming",
     workspace: "/demo/video",
     provider: "gemini",
     model: "gemini-2.0-flash",
   }],
-  ["zeka-ai", {
-    id: "zeka-ai",
-    name: "Zeka",
+  ["tengri-ai", {
+    id: "tengri-ai",
+    name: "Tengri",
     role: "AI & Automation",
     workspace: "/demo/ai",
     provider: "openai",
@@ -142,12 +142,12 @@ const agents = new Map([
 // Turkish system prompts per role
 // ---------------------------------------------------------------------------
 const AGENT_SYSTEM_PROMPTS = {
-  "DevOps & Infrastructure": `Sen Demir adında bir DevOps ve altyapı uzmanısın. Docker, Jenkins, Linux server yönetimi, CI/CD pipeline'lar, Nginx, network konfigürasyonu ve deployment konularında uzmansın. Türkçe yanıt ver. Kısa ve teknik ol.`,
-  "IoT & Embedded": `Sen Volt adında bir IoT ve gömülü sistem uzmanısın. ESP32, PlatformIO, SHT31/ADS1115/TSL2591 sensörler, aktüatörler, MQTT protokolü ve firmware geliştirme konularında uzmansın. Türkçe yanıt ver. Kısa ve teknik ol.`,
-  "Backend": `Sen Atlas adında bir backend geliştiricisisin. Node.js, Express, PostgreSQL, MQTT broker, WebSocket, REST API tasarımı ve veritabanı yönetimi konularında uzmansın. Türkçe yanıt ver. Kısa ve teknik ol.`,
-  "Frontend & Mobile": `Sen Pixel adında bir frontend ve mobil geliştiricisisin. React, Next.js, Tailwind CSS, React Native, Expo ve responsive tasarım konularında uzmansın. Türkçe yanıt ver. Kısa ve teknik ol.`,
-  "Video & Streaming": `Sen Akış adında bir video ve streaming uzmanısın. FFmpeg, HLS/RTMP transcoding, WebRTC, CDN routing, video analytics ve canlı yayın altyapısı konularında uzmansın. Türkçe yanıt ver. Kısa ve teknik ol.`,
-  "AI & Automation": `Sen Zeka adında bir AI ve otomasyon uzmanısın. n8n workflow, LLM API entegrasyonu (Gemini, Claude, GPT), Telegram bot, web scraping ve otomasyon zincirleri konularında uzmansın. Türkçe yanıt ver. Kısa ve teknik ol.`,
+  "DevOps & Infrastructure": `Sen Erlik adında bir DevOps ve altyapı uzmanısın. Türk mitolojisinde yeraltı dünyasının hükümdarısın — altyapının derinliklerini yönetirsin. Docker, Jenkins, Linux server yönetimi, CI/CD pipeline'lar, Nginx, network konfigürasyonu ve deployment konularında uzmansın. Türkçe yanıt ver. Kısa ve teknik ol.`,
+  "IoT & Embedded": `Sen Kayra adında bir IoT ve gömülü sistem uzmanısın. Türk mitolojisinde ilk yaratıcı güçsün — donanıma hayat verirsin. ESP32, PlatformIO, SHT31/ADS1115/TSL2591 sensörler, aktüatörler, MQTT protokolü ve firmware geliştirme konularında uzmansın. Türkçe yanıt ver. Kısa ve teknik ol.`,
+  "Backend": `Sen Ülgen adında bir backend geliştiricisisin. Türk mitolojisinde yaratıcı gök tanrısısın — sistemlerin mimarisini kurarsın. Node.js, Express, PostgreSQL, MQTT broker, WebSocket, REST API tasarımı ve veritabanı yönetimi konularında uzmansın. Türkçe yanıt ver. Kısa ve teknik ol.`,
+  "Frontend & Mobile": `Sen Umay adında bir frontend ve mobil geliştiricisisin. Türk mitolojisinde bereket ve güzellik tanrıçasısın — arayüzlere estetik katarsın. React, Next.js, Tailwind CSS, React Native, Expo ve responsive tasarım konularında uzmansın. Türkçe yanıt ver. Kısa ve teknik ol.`,
+  "Video & Streaming": `Sen Asena adında bir video ve streaming uzmanısın. Türk mitolojisinde efsanevi dişi kurtsun — hız ve akış senin doğan. FFmpeg, HLS/RTMP transcoding, WebRTC, CDN routing, video analytics ve canlı yayın altyapısı konularında uzmansın. Türkçe yanıt ver. Kısa ve teknik ol.`,
+  "AI & Automation": `Sen Tengri adında bir AI ve otomasyon uzmanısın. Türk mitolojisinde Gök Tanrı'sın — yapay zekanın en yüce gücüsün. n8n workflow, LLM API entegrasyonu (Gemini, Claude, GPT), Telegram bot, web scraping ve otomasyon zincirleri konularında uzmansın. Türkçe yanıt ver. Kısa ve teknik ol.`,
 };
 
 // ---------------------------------------------------------------------------
@@ -351,7 +351,7 @@ function buildModelsList() {
     models.push({ id: "google/gemini-2.0-flash", name: "Gemini 2.0 Flash (CLI)", provider: "google" });
   }
   // Mock always available
-  models.push({ id: "demo/mock-office", name: "Mock (Yedek)", provider: "demo" });
+  models.push({ id: "builtin/mock-office", name: "Mock (Yedek)", provider: "builtin" });
   return models;
 }
 
@@ -676,7 +676,7 @@ async function handleMethod(method, params, id, sendEvent) {
     // Agent methods
     // -----------------------------------------------------------------------
     case "agents.list":
-      return resOk(id, { defaultId: "demo-orchestrator", mainKey: MAIN_KEY, agents: agentListPayload(), meta: { teamName: "Cemal'in AI Ekibi" } });
+      return resOk(id, { defaultId: "erlik-devops", mainKey: MAIN_KEY, agents: agentListPayload(), meta: { teamName: "Cemal'in AI Ekibi" } });
 
     case "agents.create": {
       const name = typeof p.name === "string" && p.name.trim() ? p.name.trim() : "Demo Agent";
@@ -710,7 +710,7 @@ async function handleMethod(method, params, id, sendEvent) {
 
     case "agents.delete": {
       const agentId = typeof p.agentId === "string" ? p.agentId.trim() : "";
-      if (agentId && agents.has(agentId) && agentId !== "demo-orchestrator") {
+      if (agentId && agents.has(agentId) && agentId !== "erlik-devops") {
         agents.delete(agentId);
         clearHistory(sessionKeyFor(agentId));
       }
@@ -718,13 +718,13 @@ async function handleMethod(method, params, id, sendEvent) {
     }
 
     case "agents.files.get": {
-      const key = `${p.agentId || "demo-orchestrator"}/${p.name || ""}`;
+      const key = `${p.agentId || "erlik-devops"}/${p.name || ""}`;
       const content = files.get(key);
       return resOk(id, { file: content !== undefined ? { content } : { missing: true } });
     }
 
     case "agents.files.set": {
-      const key = `${p.agentId || "demo-orchestrator"}/${p.name || ""}`;
+      const key = `${p.agentId || "erlik-devops"}/${p.name || ""}`;
       files.set(key, typeof p.content === "string" ? p.content : "");
       return resOk(id, {});
     }
@@ -900,9 +900,9 @@ async function handleMethod(method, params, id, sendEvent) {
           agentId: agent.id,
           updatedAt: history.length > 0 ? Date.now() : null,
           displayName: "Main",
-          origin: { label: agent.name, provider: "demo" },
-          model: settings.model || currentModels[0]?.id || "demo/mock-office",
-          modelProvider: "demo",
+          origin: { label: agent.name, provider: "builtin" },
+          model: settings.model || currentModels[0]?.id || "builtin/mock-office",
+          modelProvider: "builtin",
         };
       });
       return resOk(id, { sessions });
@@ -926,7 +926,7 @@ async function handleMethod(method, params, id, sendEvent) {
     }
 
     case "sessions.patch": {
-      const key = typeof p.key === "string" ? p.key : sessionKeyFor("demo-orchestrator");
+      const key = typeof p.key === "string" ? p.key : sessionKeyFor("erlik-devops");
       const current = sessionSettings.get(key) || {};
       const next = { ...current };
       if (p.model !== undefined) next.model = p.model;
@@ -937,12 +937,12 @@ async function handleMethod(method, params, id, sendEvent) {
         ok: true,
         key,
         entry: { thinkingLevel: next.thinkingLevel },
-        resolved: { model: next.model || currentModels[0]?.id || "demo/mock-office", modelProvider: "demo" },
+        resolved: { model: next.model || currentModels[0]?.id || "builtin/mock-office", modelProvider: "builtin" },
       });
     }
 
     case "sessions.reset": {
-      const key = typeof p.key === "string" ? p.key : sessionKeyFor("demo-orchestrator");
+      const key = typeof p.key === "string" ? p.key : sessionKeyFor("erlik-devops");
       clearHistory(key);
       return resOk(id, { ok: true });
     }
@@ -951,9 +951,9 @@ async function handleMethod(method, params, id, sendEvent) {
     // Chat — uses real AI when keys are configured, falls back to mock
     // -----------------------------------------------------------------------
     case "chat.send": {
-      const sessionKey = typeof p.sessionKey === "string" ? p.sessionKey : sessionKeyFor("demo-orchestrator");
-      const agentId = sessionKey.startsWith("agent:") ? sessionKey.split(":")[1] : "demo-orchestrator";
-      const agent = agents.get(agentId) || agents.get("demo-orchestrator");
+      const sessionKey = typeof p.sessionKey === "string" ? p.sessionKey : sessionKeyFor("erlik-devops");
+      const agentId = sessionKey.startsWith("agent:") ? sessionKey.split(":")[1] : "erlik-devops";
+      const agent = agents.get(agentId) || agents.get("erlik-devops");
       const message = typeof p.message === "string" ? p.message.trim() : String(p.message || "").trim();
       const runId = typeof p.idempotencyKey === "string" && p.idempotencyKey ? p.idempotencyKey : randomId();
       if (!message) return resOk(id, { status: "no-op", runId });
@@ -1075,7 +1075,7 @@ async function handleMethod(method, params, id, sendEvent) {
     }
 
     case "chat.history": {
-      const sessionKey = typeof p.sessionKey === "string" ? p.sessionKey : sessionKeyFor("demo-orchestrator");
+      const sessionKey = typeof p.sessionKey === "string" ? p.sessionKey : sessionKeyFor("erlik-devops");
       return resOk(id, { sessionKey, messages: getHistory(sessionKey) });
     }
 
@@ -1178,7 +1178,7 @@ function startAdapter(options = {}) {
           payload: {
             type: "hello-ok",
             protocol: 3,
-            adapterType: "demo",
+            adapterType: "builtin",
             features: {
               methods: [
                 "agents.list",
@@ -1224,9 +1224,9 @@ function startAdapter(options = {}) {
                 agents: [...agents.values()].map((agent) => ({
                   agentId: agent.id,
                   name: agent.name,
-                  isDefault: agent.id === "demo-orchestrator",
+                  isDefault: agent.id === "erlik-devops",
                 })),
-                defaultAgentId: "demo-orchestrator",
+                defaultAgentId: "erlik-devops",
               },
               sessionDefaults: { mainKey: MAIN_KEY },
             },

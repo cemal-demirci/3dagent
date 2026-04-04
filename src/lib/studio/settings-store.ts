@@ -51,7 +51,7 @@ const readOpenclawGatewayDefaults = (): {
 export const loadLocalGatewayDefaults = (): {
   url: string;
   token: string;
-  adapterType: "openclaw";
+  adapterType: "openclaw" | "builtin";
 } | null => {
   const fromFile = readOpenclawGatewayDefaults();
   if (fromFile) return fromFile;
@@ -60,7 +60,11 @@ export const loadLocalGatewayDefaults = (): {
   const envUrl = process.env.CLAW3D_GATEWAY_URL?.trim();
   const envToken = process.env.CLAW3D_GATEWAY_TOKEN?.trim();
   if (envUrl) return { url: envUrl, token: envToken ?? "", adapterType: "openclaw" };
-  return null;
+  // When no explicit gateway is configured, fall back to the embedded demo
+  // gateway that server/index.js starts automatically on every `npm run dev`.
+  // This lets end-users run Claw3D out of the box without any configuration.
+  const demoPort = process.env.DEMO_ADAPTER_PORT?.trim() || "18789";
+  return { url: `ws://localhost:${demoPort}`, token: "", adapterType: "builtin" };
 };
 
 export const loadStudioSettings = (): StudioSettings => {

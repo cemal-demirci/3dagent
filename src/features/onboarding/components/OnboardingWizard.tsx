@@ -17,8 +17,7 @@ import {
   type OnboardingStepId,
 } from "@/features/onboarding/types";
 import { WelcomeStep } from "@/features/onboarding/components/WelcomeStep";
-import { PrerequisitesStep } from "@/features/onboarding/components/PrerequisitesStep";
-import { ConnectStep } from "@/features/onboarding/components/ConnectStep";
+import { AISetupStep } from "@/features/onboarding/components/AISetupStep";
 import { AgentsStep } from "@/features/onboarding/components/AgentsStep";
 import { CompanyStep } from "@/features/onboarding/components/CompanyStep";
 import { CompleteStep } from "@/features/onboarding/components/CompleteStep";
@@ -106,20 +105,17 @@ export const OnboardingWizard = ({
   }, [currentStep]);
 
   const canGoNext = useMemo(() => {
-    // Connect step requires gateway connection before proceeding
-    if (currentStep === "connect" && !gatewayConnected) return false;
+    // AI setup step is always passable — keys are optional
     return true;
-  }, [currentStep, gatewayConnected]);
+  }, []);
 
   const renderStepContent = () => {
     switch (currentStep) {
       case "welcome":
         return <WelcomeStep />;
-      case "prerequisites":
-        return <PrerequisitesStep />;
-      case "connect":
+      case "ai-setup":
         return (
-          <ConnectStep
+          <AISetupStep
             gatewayUrl={gatewayUrl}
             token={token}
             onGatewayUrlChange={onGatewayUrlChange}
@@ -229,9 +225,7 @@ export const OnboardingWizard = ({
                 onClick={goNext}
                 disabled={!canGoNext}
               >
-                {currentStep === "connect" && !gatewayConnected
-                  ? t("onboarding.connectFirst")
-                  : t("onboarding.next")}
+                {t("onboarding.next")}
                 <ArrowRight className="h-3.5 w-3.5" />
               </button>
             )}

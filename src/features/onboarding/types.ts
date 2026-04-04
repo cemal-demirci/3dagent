@@ -10,8 +10,7 @@ import { t } from "@/lib/i18n";
 
 export type OnboardingStepId =
   | "welcome"
-  | "prerequisites"
-  | "connect"
+  | "ai-setup"
   | "agents"
   | "company"
   | "complete";
@@ -43,16 +42,10 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     skippable: false,
   },
   {
-    id: "prerequisites",
-    title: t("onboarding.step.prerequisites.title"),
-    description: t("onboarding.step.prerequisites.description"),
+    id: "ai-setup",
+    title: t("onboarding.step.aiSetup.title"),
+    description: t("onboarding.step.aiSetup.description"),
     skippable: true,
-  },
-  {
-    id: "connect",
-    title: t("onboarding.step.connect.title"),
-    description: t("onboarding.step.connect.description"),
-    skippable: false,
   },
   {
     id: "agents",

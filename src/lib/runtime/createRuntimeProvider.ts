@@ -13,7 +13,7 @@ export const createRuntimeProvider = (
   switch (providerId) {
     case "custom":
       return new CustomRuntimeProvider(client, runtimeUrl);
-    case "demo":
+    case "builtin":
       return new DemoRuntimeProvider(client);
     case "hermes":
       return new HermesRuntimeProvider(client);

@@ -126,7 +126,7 @@ export const resolveInitialGatewayAutoConnectDelayMs = (
 ): number => {
   switch (adapterType) {
     case "hermes":
-    case "demo":
+    case "builtin":
       return INITIAL_AUTO_CONNECT_DELAY_MS;
     default:
       return 0;
@@ -139,7 +139,7 @@ export const resolveInitialGatewayConnectAttemptCount = (
 ): number => {
   switch (adapterType) {
     case "hermes":
-    case "demo":
+    case "builtin":
       return 2;
     default:
       if (hasConnectedOnce) return 1;
@@ -154,7 +154,7 @@ const resolveDefaultGatewayProfile = (
   switch (adapterType) {
     case "custom":
       return { url: DEFAULT_CUSTOM_RUNTIME_URL, token: "" };
-    case "demo":
+    case "builtin":
     case "hermes":
       return { url: "ws://localhost:18789", token: "" };
     case "openclaw":
@@ -183,7 +183,7 @@ const normalizeLocalGatewayDefaults = (value: unknown): StudioGatewaySettings | 
   // client — leave it empty so the connection dialog can prompt if needed.
   const token = typeof raw.token === "string" ? raw.token.trim() : "";
   const adapterType =
-    raw.adapterType === "demo" ||
+    raw.adapterType === "builtin" ||
     raw.adapterType === "hermes" ||
     raw.adapterType === "openclaw" ||
     raw.adapterType === "custom"
@@ -209,7 +209,7 @@ const normalizeGatewayProfilesPublic = (
   if (!value || typeof value !== "object") return undefined;
   const raw = value as Partial<Record<StudioGatewayAdapterType, StudioGatewayProfilePublic>>;
   const profiles: Partial<Record<StudioGatewayAdapterType, { url: string; token: string }>> = {};
-  for (const adapterType of ["openclaw", "hermes", "demo", "custom"] as const) {
+  for (const adapterType of ["openclaw", "hermes", "builtin", "custom"] as const) {
     const profile = normalizeGatewayProfilePublic(raw[adapterType]);
     if (profile) {
       profiles[adapterType] = profile;
@@ -718,7 +718,7 @@ export const useGatewayConnection = (
                     ? gateway.lastKnownGood.token
                     : "",
                 adapterType:
-                  gateway.lastKnownGood.adapterType === "demo" ||
+                  gateway.lastKnownGood.adapterType === "builtin" ||
                   gateway.lastKnownGood.adapterType === "hermes" ||
                   gateway.lastKnownGood.adapterType === "openclaw" ||
                   gateway.lastKnownGood.adapterType === "custom"
@@ -733,7 +733,7 @@ export const useGatewayConnection = (
         const hasSavedUrl = Boolean(gateway?.url?.trim());
         const savedAdapterType =
           hasSavedUrl && gateway && "adapterType" in gateway && typeof gateway.adapterType === "string"
-            ? ((gateway.adapterType === "demo" ||
+            ? ((gateway.adapterType === "builtin" ||
                 gateway.adapterType === "hermes" ||
                 gateway.adapterType === "openclaw" ||
                 gateway.adapterType === "custom"
@@ -929,7 +929,7 @@ export const useGatewayConnection = (
       });
       const hello = client.getLastHello();
       const nextDetectedAdapterType =
-        hello?.adapterType === "demo" ||
+        hello?.adapterType === "builtin" ||
         hello?.adapterType === "hermes" ||
         hello?.adapterType === "openclaw" ||
         hello?.adapterType === "custom"
@@ -965,7 +965,7 @@ export const useGatewayConnection = (
   useEffect(() => {
     if (didAutoConnect.current) return;
     if (!settingsLoaded) return;
-    if (!hasLastKnownGoodState) return;
+    if (!hasLastKnownGoodState && !localGatewayDefaults) return;
     if (!gatewayUrl.trim()) return;
     if (!isAutoManagedAdapter(selectedAdapterType)) return;
     didAutoConnect.current = true;
@@ -985,7 +985,7 @@ export const useGatewayConnection = (
         autoConnectTimerRef.current = null;
       }
     };
-  }, [connect, gatewayUrl, hasLastKnownGoodState, selectedAdapterType, settingsLoaded]);
+  }, [connect, gatewayUrl, hasLastKnownGoodState, localGatewayDefaults, selectedAdapterType, settingsLoaded]);
 
   // Auto-retry on disconnect (gateway busy, network blip, etc.)
   useEffect(() => {
@@ -1133,7 +1133,7 @@ export const useGatewayConnection = (
     settingsLoaded &&
     status !== "connected" &&
     (selectedAdapterType === "custom" ||
-      !hasLastKnownGoodState ||
+      (!hasLastKnownGoodState && !localGatewayDefaults) ||
       !gatewayUrl.trim() ||
       (selectedAdapterType === "openclaw" && !token.trim()) ||
       wasManualDisconnectRef.current ||

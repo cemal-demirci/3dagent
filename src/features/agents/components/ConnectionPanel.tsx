@@ -41,10 +41,10 @@ export const ConnectionPanel = ({
   const isConnecting = status === "connecting";
   const tokenOptional =
     selectedAdapterType === "hermes" ||
-    selectedAdapterType === "demo" ||
+    selectedAdapterType === "builtin" ||
     selectedAdapterType === "custom";
   const applyDemoPreset = () => {
-    onAdapterTypeChange("demo");
+    onAdapterTypeChange("builtin");
   };
   const applyHermesPreset = () => {
     onAdapterTypeChange("hermes");
@@ -122,7 +122,7 @@ export const ConnectionPanel = ({
           type="button"
           onClick={applyDemoPreset}
         >
-          {t("connect.demoBackend")}
+          {t("connect.builtinBackend")}
         </button>
         <button
           className="ui-btn-secondary px-3 py-1.5 text-[11px] font-semibold tracking-[0.05em]"

@@ -350,7 +350,7 @@ export function SettingsPanel({
   const gatewayConnectDisabled = normalizedGatewayUrl.length === 0;
   const tokenOptional =
     selectedAdapterType === "hermes" ||
-    selectedAdapterType === "demo" ||
+    selectedAdapterType === "builtin" ||
     selectedAdapterType === "custom";
   const [remoteOfficeTokenDraft, setRemoteOfficeTokenDraft] = useState("");
 
@@ -399,7 +399,7 @@ export function SettingsPanel({
         <div className="mt-3 flex flex-wrap gap-2">
           {(
             [
-              ["demo", t("settings.demo")],
+              ["builtin", t("settings.builtin")],
               ["hermes", t("settings.hermes")],
               ["custom", t("settings.custom")],
               ["openclaw", t("settings.openclaw")],

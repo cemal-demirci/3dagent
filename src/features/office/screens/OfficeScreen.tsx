@@ -1118,7 +1118,18 @@ export function OfficeScreen({
     voiceId: voiceRepliesPreference.voiceId,
     speed: voiceRepliesPreference.speed,
   });
-  const showOnboardingWizard = showOnboarding || forceShowOnboarding;
+  // Skip onboarding wizard entirely when using the embedded builtin gateway —
+  // the builtin adapter comes pre-configured with agents so there is nothing
+  // for the user to set up.  They can still re-open it from settings.
+  const isBuiltinAutoSetup = selectedAdapterType === "builtin" && Boolean(localGatewayDefaults);
+  const showOnboardingWizard = !isBuiltinAutoSetup && (showOnboarding || forceShowOnboarding);
+  // Mark onboarding completed when builtin gateway connects so it stays
+  // dismissed across page reloads.
+  useEffect(() => {
+    if (isBuiltinAutoSetup && status === "connected" && showOnboarding) {
+      completeOnboarding();
+    }
+  }, [isBuiltinAutoSetup, status, showOnboarding, completeOnboarding]);
   const handleOpenOnboarding = useCallback(() => {
     resetOnboarding();
     setCompanyCreatedSignal(0);
@@ -4642,7 +4653,7 @@ export function OfficeScreen({
           initialStep={companyCreatedSignal > 0 ? "complete" : "welcome"}
           initialCompletedSteps={
             companyCreatedSignal > 0
-              ? ["welcome", "prerequisites", "connect", "agents", "company", "complete"]
+              ? ["welcome", "ai-setup", "agents", "company", "complete"]
               : undefined
           }
           createdCompanyName={createdCompanyName}

@@ -20,7 +20,7 @@ export type RuntimeCapability =
   | "files"
   | "agent-roles";
 
-export type RuntimeProviderId = "openclaw" | "hermes" | "demo" | "custom";
+export type RuntimeProviderId = "openclaw" | "hermes" | "builtin" | "custom";
 
 export type RuntimeProviderMetadata = {
   id: RuntimeProviderId;

@@ -73,17 +73,17 @@ const setupAndImportHook = async (gatewayUrl: string | null) => {
     }) => {
       gatewayUrl: string;
       token: string;
-      selectedAdapterType: "openclaw" | "hermes" | "demo" | "custom";
-      detectedAdapterType: "openclaw" | "hermes" | "demo" | "custom" | null;
-      activeAdapterType: "openclaw" | "hermes" | "demo" | "custom";
+      selectedAdapterType: "openclaw" | "hermes" | "builtin" | "custom";
+      detectedAdapterType: "openclaw" | "hermes" | "builtin" | "custom" | null;
+      activeAdapterType: "openclaw" | "hermes" | "builtin" | "custom";
       localGatewayDefaults: {
         url: string;
         token: string;
-        adapterType: "openclaw" | "hermes" | "demo" | "custom";
+        adapterType: "openclaw" | "hermes" | "builtin" | "custom";
       } | null;
       shouldPromptForConnect: boolean;
       useLocalGatewayDefaults: () => void;
-      setSelectedAdapterType: (value: "openclaw" | "hermes" | "demo" | "custom") => void;
+      setSelectedAdapterType: (value: "openclaw" | "hermes" | "builtin" | "custom") => void;
       connect: () => Promise<void>;
     },
     captured,
@@ -243,7 +243,7 @@ describe("useGatewayConnection", () => {
     expect(mod.resolveInitialGatewayAutoConnectDelayMs("openclaw")).toBe(0);
     expect(mod.resolveInitialGatewayAutoConnectDelayMs("custom")).toBe(0);
     expect(mod.resolveInitialGatewayAutoConnectDelayMs("hermes")).toBe(900);
-    expect(mod.resolveInitialGatewayAutoConnectDelayMs("demo")).toBe(900);
+    expect(mod.resolveInitialGatewayAutoConnectDelayMs("builtin")).toBe(900);
   });
 
   it("retries_only_the_first_connect_for_hermes_and_demo", async () => {
@@ -251,9 +251,9 @@ describe("useGatewayConnection", () => {
     expect(mod.resolveInitialGatewayConnectAttemptCount("openclaw", false)).toBe(1);
     expect(mod.resolveInitialGatewayConnectAttemptCount("custom", false)).toBe(1);
     expect(mod.resolveInitialGatewayConnectAttemptCount("hermes", false)).toBe(2);
-    expect(mod.resolveInitialGatewayConnectAttemptCount("demo", false)).toBe(2);
+    expect(mod.resolveInitialGatewayConnectAttemptCount("builtin", false)).toBe(2);
     expect(mod.resolveInitialGatewayConnectAttemptCount("hermes", true)).toBe(2);
-    expect(mod.resolveInitialGatewayConnectAttemptCount("demo", true)).toBe(2);
+    expect(mod.resolveInitialGatewayConnectAttemptCount("builtin", true)).toBe(2);
     expect(mod.resolveInitialGatewayConnectAttemptCount("openclaw", true)).toBe(1);
   });
 

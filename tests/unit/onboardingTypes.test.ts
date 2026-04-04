@@ -38,9 +38,9 @@ describe("getStepIndex", () => {
     expect(getStepIndex("complete")).toBe(ONBOARDING_STEPS.length - 1);
   });
 
-  it("returns correct index for connect", () => {
-    const idx = ONBOARDING_STEPS.findIndex((s) => s.id === "connect");
-    expect(getStepIndex("connect")).toBe(idx);
+  it("returns correct index for ai-setup", () => {
+    const idx = ONBOARDING_STEPS.findIndex((s) => s.id === "ai-setup");
+    expect(getStepIndex("ai-setup")).toBe(idx);
   });
 
   it("includes the company step before completion", () => {
@@ -52,8 +52,8 @@ describe("getStepIndex", () => {
 });
 
 describe("getNextStep", () => {
-  it("returns prerequisites after welcome", () => {
-    expect(getNextStep("welcome")).toBe("prerequisites");
+  it("returns ai-setup after welcome", () => {
+    expect(getNextStep("welcome")).toBe("ai-setup");
   });
 
   it("returns null after complete", () => {
@@ -78,8 +78,8 @@ describe("getPrevStep", () => {
     expect(getPrevStep("welcome")).toBeNull();
   });
 
-  it("returns prerequisites for connect", () => {
-    expect(getPrevStep("connect")).toBe("prerequisites");
+  it("returns welcome for ai-setup", () => {
+    expect(getPrevStep("ai-setup")).toBe("welcome");
   });
 
   it("navigates backward through all steps", () => {

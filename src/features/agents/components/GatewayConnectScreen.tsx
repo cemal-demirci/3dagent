@@ -50,7 +50,7 @@ export const GatewayConnectScreen = ({
   const [showToken, setShowToken] = useState(false);
   const tokenOptional =
     selectedAdapterType === "hermes" ||
-    selectedAdapterType === "demo" ||
+    selectedAdapterType === "builtin" ||
     selectedAdapterType === "custom";
   const isLocal = useMemo(() => isLocalGatewayUrl(gatewayUrl), [gatewayUrl]);
   const localPort = useMemo(() => resolveLocalGatewayPort(gatewayUrl), [gatewayUrl]);
@@ -66,8 +66,8 @@ export const GatewayConnectScreen = ({
     () => `npm run demo-gateway`,
     []
   );
-  const useDemoPreset = () => {
-    onAdapterTypeChange("demo");
+  const useBuiltinPreset = () => {
+    onAdapterTypeChange("builtin");
   };
   const useHermesPreset = () => {
     onAdapterTypeChange("hermes");
@@ -249,9 +249,9 @@ export const GatewayConnectScreen = ({
             <button
               type="button"
               className="ui-btn-secondary px-3 py-1.5 text-[11px] font-semibold tracking-[0.05em]"
-              onClick={useDemoPreset}
+              onClick={useBuiltinPreset}
             >
-              {t("connect.demoBackend")}
+              {t("connect.builtinBackend")}
             </button>
             <button
               type="button"
@@ -293,9 +293,9 @@ export const GatewayConnectScreen = ({
           <div className="rounded-md border border-border bg-muted/30 px-3 py-3">
             <p className="text-xs font-medium text-foreground">{t("connect.justSeeOffice")}</p>
             <p className="mt-1 text-xs leading-snug text-muted-foreground">
-              {t("connect.demoHint").split("{command}")[0]}
+              {t("connect.builtinHint").split("{command}")[0]}
               <span className="font-mono text-foreground">{localDemoCommand}</span>
-              {t("connect.demoHint").split("{command}")[1]}
+              {t("connect.builtinHint").split("{command}")[1]}
             </p>
           </div>
           <div className="rounded-md border border-border bg-muted/30 px-3 py-3">

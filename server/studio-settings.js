@@ -64,7 +64,7 @@ const loadUpstreamGatewaySettings = (env = process.env) => {
   return {
     url: url || DEFAULT_GATEWAY_URL,
     token,
-    adapterType: "demo",
+    adapterType: "builtin",
     settingsPath,
   };
 };
