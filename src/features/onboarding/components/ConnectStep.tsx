@@ -27,6 +27,7 @@ const AI_PROVIDERS = [
   { key: "anthropic" as const, label: t("onboarding.connect.aiSetup.anthropic"), placeholder: "sk-ant-..." },
   { key: "gemini" as const, label: t("onboarding.connect.aiSetup.gemini"), placeholder: "AIza..." },
   { key: "openai" as const, label: t("onboarding.connect.aiSetup.openai"), placeholder: "sk-..." },
+  { key: "groq" as const, label: t("onboarding.connect.aiSetup.groq"), placeholder: "gsk_..." },
 ] as const;
 
 export const ConnectStep = ({

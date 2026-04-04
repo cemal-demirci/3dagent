@@ -1,17 +1,5 @@
-import fs from "node:fs";
-import * as fsp from "node:fs/promises";
-import os from "node:os";
 import path from "node:path";
-import { randomUUID } from "node:crypto";
-import { createRequire } from "node:module";
-import { pathToFileURL } from "node:url";
 
-const require = createRequire(import.meta.url);
-const CONFIGURED_OPENCLAW_PACKAGE_ROOT = process.env.OPENCLAW_PACKAGE_ROOT?.trim() ?? "";
-
-const OPENCLAW_DIST_INDEX_RELATIVE_PATH = path.join("dist", "index.js");
-const OPENCLAW_DIST_DIRECTORY_RELATIVE_PATH = "dist";
-const AUDIO_KIND = "audio.transcription";
 const DEFAULT_VOICE_MIME = "audio/webm";
 const DEFAULT_VOICE_BASENAME = "voice-note";
 
@@ -25,23 +13,6 @@ const MIME_EXTENSION_MAP: Record<string, string> = {
   "audio/x-wav": ".wav",
 };
 
-type OpenClawConfig = {
-  tools?: {
-    media?: {
-      audio?: {
-        enabled?: boolean;
-      };
-    };
-  };
-};
-
-type MediaUnderstandingOutput = {
-  kind?: string;
-  text?: string;
-  provider?: string;
-  model?: string;
-};
-
 type MediaUnderstandingDecision = {
   outcome?: string;
   attachments?: Array<{
@@ -51,63 +22,12 @@ type MediaUnderstandingDecision = {
   }>;
 };
 
-type RunCapabilityResult = {
-  outputs?: MediaUnderstandingOutput[];
-  decision?: MediaUnderstandingDecision;
-};
-
-type OpenClawConfigModule = {
-  t: () => OpenClawConfig;
-};
-
-type OpenClawRunnerModule = {
-  a: (params: {
-    capability: "audio";
-    cfg: OpenClawConfig;
-    ctx: Record<string, unknown>;
-    attachments: {
-      cleanup: () => Promise<void>;
-    };
-    media: Array<Record<string, unknown>>;
-    providerRegistry: unknown;
-    config: unknown;
-  }) => Promise<RunCapabilityResult>;
-  n: (attachments: Array<Record<string, unknown>>) => {
-    cleanup: () => Promise<void>;
-  };
-  r: (ctx: Record<string, unknown>) => Array<Record<string, unknown>>;
-  t: () => unknown;
-};
-
-type OpenClawTranscriptionSdk = {
-  loadConfig: OpenClawConfigModule["t"];
-  runCapability: OpenClawRunnerModule["a"];
-  createMediaAttachmentCache: OpenClawRunnerModule["n"];
-  normalizeMediaAttachments: OpenClawRunnerModule["r"];
-  buildProviderRegistry: OpenClawRunnerModule["t"];
-};
-
 export type OpenClawVoiceTranscriptionResult = {
   transcript: string | null;
   provider: string | null;
   model: string | null;
   decision: MediaUnderstandingDecision | null;
   ignored: boolean;
-};
-
-let sdkPromise: Promise<OpenClawTranscriptionSdk> | null = null;
-const nativeImport = new Function(
-  "specifier",
-  "return import(specifier);",
-) as (specifier: string) => Promise<unknown>;
-
-const resolveInstalledOpenClawPackageRoot = (): string | null => {
-  try {
-    const resolvedEntry = require.resolve("openclaw");
-    return path.dirname(path.dirname(resolvedEntry));
-  } catch {
-    return null;
-  }
 };
 
 export const normalizeVoiceMimeType = (value: string | null | undefined): string => {
@@ -187,156 +107,58 @@ export const shouldIgnoreVoiceTranscription = (params: {
   );
 };
 
-const resolveOpenClawPackageRoot = (): string => {
-  const configuredCandidate = CONFIGURED_OPENCLAW_PACKAGE_ROOT;
-  if (configuredCandidate) {
-    const indexPath = path.join(configuredCandidate, OPENCLAW_DIST_INDEX_RELATIVE_PATH);
-    if (fs.existsSync(indexPath)) return configuredCandidate;
-    throw new Error("OPENCLAW_PACKAGE_ROOT does not point to a valid OpenClaw installation.");
-  }
-
-  const installedCandidate = resolveInstalledOpenClawPackageRoot();
-  if (installedCandidate) {
-    const indexPath = path.join(installedCandidate, OPENCLAW_DIST_INDEX_RELATIVE_PATH);
-    if (fs.existsSync(indexPath)) return installedCandidate;
-  }
-
-  throw new Error(
-    "OpenClaw could not be resolved from the current Node runtime. Install the `openclaw` package or set OPENCLAW_PACKAGE_ROOT.",
-  );
-};
-
-const loadOpenClawSdk = async (): Promise<OpenClawTranscriptionSdk> => {
-  if (sdkPromise) return sdkPromise;
-  sdkPromise = (async () => {
-    const packageRoot = resolveOpenClawPackageRoot();
-    const distDirectory = path.join(packageRoot, OPENCLAW_DIST_DIRECTORY_RELATIVE_PATH);
-    const distEntries = (await fsp.readdir(distDirectory)).sort();
-    const configCandidates = distEntries.filter((entry) => /^config-.*\.js$/.test(entry));
-    let loadConfig: OpenClawTranscriptionSdk["loadConfig"] | null = null;
-
-    for (const candidate of configCandidates) {
-      const configModule = (await nativeImport(
-        pathToFileURL(path.join(distDirectory, candidate)).href,
-      )) as Partial<OpenClawConfigModule>;
-      if (typeof configModule.t === "function") {
-        loadConfig = configModule.t;
-        break;
-      }
-    }
-
-    if (!loadConfig) {
-      throw new Error("The installed OpenClaw runtime does not expose a loadConfig() module.");
-    }
-
-    const runnerCandidates = distEntries.filter((entry) => /^runner-.*\.js$/.test(entry));
-
-    for (const candidate of runnerCandidates) {
-      const runnerModule = (await nativeImport(
-        pathToFileURL(path.join(distDirectory, candidate)).href,
-      )) as Partial<
-        OpenClawRunnerModule
-      >;
-      if (
-        typeof runnerModule.a === "function" &&
-        typeof runnerModule.n === "function" &&
-        typeof runnerModule.r === "function" &&
-        typeof runnerModule.t === "function"
-      ) {
-        return {
-          loadConfig,
-          runCapability: runnerModule.a,
-          createMediaAttachmentCache: runnerModule.n,
-          normalizeMediaAttachments: runnerModule.r,
-          buildProviderRegistry: runnerModule.t,
-        };
-      }
-    }
-
-    throw new Error("The installed OpenClaw runtime does not expose the audio transcription runner.");
-  })().catch((error) => {
-    sdkPromise = null;
-    throw error;
-  });
-  return sdkPromise;
-};
-
-export const transcribeVoiceWithOpenClaw = async (params: {
+export const transcribeVoice = async (params: {
   buffer: Buffer;
   fileName?: string | null;
   mimeType?: string | null;
 }): Promise<OpenClawVoiceTranscriptionResult> => {
-  const sdk = await loadOpenClawSdk();
-  const cfg = sdk.loadConfig();
-  if (cfg.tools?.media?.audio?.enabled === false) {
-    throw new Error("OpenClaw audio transcription is disabled.");
+  const apiKey = process.env.GROQ_API_KEY?.trim();
+  if (!apiKey) {
+    throw new Error("Ses transkripsiyon için GROQ_API_KEY gerekli.");
   }
 
   const mimeType = normalizeVoiceMimeType(params.mimeType);
   const fileName = sanitizeVoiceFileName(params.fileName, mimeType);
-  const tempDirectory = await fsp.mkdtemp(path.join(os.tmpdir(), "claw3d-voice-"));
-  const tempPath = path.join(tempDirectory, `${randomUUID()}-${fileName}`);
 
-  await fsp.writeFile(tempPath, params.buffer);
+  const formData = new FormData();
+  formData.append("file", new Blob([new Uint8Array(params.buffer)], { type: mimeType }), fileName);
+  formData.append("model", "whisper-large-v3-turbo");
+  formData.append("response_format", "json");
 
-  const ctx: Record<string, unknown> = {
-    Body: "",
-    BodyForAgent: "",
-    BodyForCommands: "",
-    RawBody: "",
-    CommandBody: "",
-    ChatType: "direct",
-    MediaPath: tempPath,
-    MediaType: mimeType,
-    MediaPaths: [tempPath],
-    MediaTypes: [mimeType],
-  };
+  const response = await fetch("https://api.groq.com/openai/v1/audio/transcriptions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: formData,
+  });
 
-  const media = sdk.normalizeMediaAttachments(ctx);
-  const cache = sdk.createMediaAttachmentCache(media);
-
-  try {
-    const result = await sdk.runCapability({
-      capability: "audio",
-      cfg,
-      ctx,
-      attachments: cache,
-      media,
-      providerRegistry: sdk.buildProviderRegistry(),
-      config: cfg.tools?.media?.audio,
-    });
-
-    const audioOutputs = (result.outputs ?? []).filter((output) => output.kind === AUDIO_KIND);
-    const transcript = audioOutputs
-      .map((output) => output.text?.trim() ?? "")
-      .filter(Boolean)
-      .join("\n\n")
-      .trim();
-
-    if (!transcript) {
-      if (shouldIgnoreVoiceTranscription({ transcript, decision: result.decision ?? null })) {
-        return {
-          transcript: null,
-          provider: null,
-          model: null,
-          decision: result.decision ?? null,
-          ignored: true,
-        };
-      }
-      throw new Error(buildVoiceTranscriptionErrorMessage(result.decision ?? null));
-    }
-
-    const firstOutput = audioOutputs[0] ?? null;
-    return {
-      transcript,
-      provider: firstOutput?.provider ?? null,
-      model: firstOutput?.model ?? null,
-      decision: result.decision ?? null,
-      ignored: false,
-    };
-  } finally {
-    await cache.cleanup().catch(() => undefined);
-    await fsp.rm(tempPath, { force: true }).catch(() => undefined);
-    await fsp.rmdir(tempDirectory).catch(() => undefined);
+  if (!response.ok) {
+    const errorBody = await response.text().catch(() => "");
+    throw new Error(`Groq Whisper API error (${response.status}): ${errorBody}`);
   }
+
+  const data = (await response.json()) as { text?: string };
+  const transcript = data.text?.trim() ?? "";
+
+  if (!transcript) {
+    return {
+      transcript: null,
+      provider: "groq",
+      model: "whisper-large-v3-turbo",
+      decision: null,
+      ignored: true,
+    };
+  }
+
+  return {
+    transcript,
+    provider: "groq",
+    model: "whisper-large-v3-turbo",
+    decision: null,
+    ignored: false,
+  };
 };
+
+/** @deprecated Use transcribeVoice instead */
+export const transcribeVoiceWithOpenClaw = transcribeVoice;

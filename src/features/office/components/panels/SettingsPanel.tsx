@@ -21,6 +21,7 @@ type AIKeysState = {
     anthropic: AIProviderStatus;
     gemini: AIProviderStatus;
     openai: AIProviderStatus;
+    groq: AIProviderStatus;
   };
 };
 
@@ -66,10 +67,11 @@ const AI_PROVIDERS = [
   { key: "anthropic" as const, label: t("aiKeys.anthropic"), placeholder: "sk-ant-..." },
   { key: "gemini" as const, label: t("aiKeys.gemini"), placeholder: "AIza..." },
   { key: "openai" as const, label: t("aiKeys.openai"), placeholder: "sk-..." },
+  { key: "groq" as const, label: t("aiKeys.groq"), placeholder: "gsk_..." },
 ] as const;
 
 function AIKeysSection({ callGateway }: { callGateway?: (method: string, params: unknown) => Promise<unknown> }) {
-  const [keyDrafts, setKeyDrafts] = useState<Record<string, string>>({ anthropic: "", gemini: "", openai: "" });
+  const [keyDrafts, setKeyDrafts] = useState<Record<string, string>>({ anthropic: "", gemini: "", openai: "", groq: "" });
   const [status, setStatus] = useState<AIKeysState | null>(null);
   const [saveFlash, setSaveFlash] = useState<Record<string, boolean>>({});
 

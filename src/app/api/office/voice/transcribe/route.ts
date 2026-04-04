@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { transcribeVoiceWithOpenClaw } from "@/lib/openclaw/voiceTranscription";
+import { transcribeVoice } from "@/lib/openclaw/voiceTranscription";
 
 export const runtime = "nodejs";
 
@@ -71,7 +71,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const result = await transcribeVoiceWithOpenClaw({
+    const result = await transcribeVoice({
       buffer: Buffer.from(arrayBuffer),
       fileName: audioFile.name,
       mimeType: audioFile.type,
