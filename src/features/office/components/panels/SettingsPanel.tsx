@@ -84,8 +84,10 @@ function AIKeysSection({ callGateway }: { callGateway?: (method: string, params:
   }, [callGateway]);
 
   useEffect(() => {
-    fetchStatus();
-  }, [fetchStatus]);
+    if (!callGateway) return;
+    const id = requestAnimationFrame(() => void fetchStatus());
+    return () => cancelAnimationFrame(id);
+  }, [fetchStatus, callGateway]);
 
   const handleSave = async (provider: string) => {
     if (!callGateway) return;
@@ -164,13 +166,9 @@ function AIKeysSection({ callGateway }: { callGateway?: (method: string, params:
 }
 
 function NotificationSection() {
-  const [permission, setPermission] = useState<string>("default");
-
-  useEffect(() => {
-    setPermission(
-      isNotificationSupported() ? getNotificationPermission() : "unsupported"
-    );
-  }, []);
+  const [permission, setPermission] = useState<string>(() =>
+    isNotificationSupported() ? getNotificationPermission() : "unsupported",
+  );
 
   const handleEnable = async () => {
     const granted = await requestNotificationPermission();

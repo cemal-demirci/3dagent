@@ -184,7 +184,7 @@ export function HQSidebar({
                         : "text-white/45 hover:bg-white/5 hover:text-white/80"
                     }`}
                   >
-                    <span>{t(TAB_KEYS[tab] as any)}</span>
+                    <span>{t(TAB_KEYS[tab] as Parameters<typeof t>[0])}</span>
                     {showBadge ? (
                       <span className="rounded bg-cyan-500/15 px-1.5 py-0.5 text-[10px] text-cyan-300" aria-label={tReplace("hq.sidebar.unread", { count: inboxCount })}>
                         {inboxCount}

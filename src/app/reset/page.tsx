@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function ResetPage() {
   const [done, setDone] = useState(false);
@@ -16,7 +17,8 @@ export default function ResetPage() {
           .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
       });
     } catch {}
-    setDone(true);
+    const id = requestAnimationFrame(() => setDone(true));
+    return () => cancelAnimationFrame(id);
   }, []);
 
   if (!done) return null;
@@ -28,12 +30,12 @@ export default function ResetPage() {
         <p className="mt-2 text-sm text-amber-100/70">
           Tüm veriler temizlendi. Şimdi kuruluma başlayabilirsin.
         </p>
-        <a
-          href="/office"
+        <Link
+          href="/office/"
           className="mt-4 inline-block rounded-lg bg-amber-500 px-6 py-2 font-mono text-sm font-semibold text-black hover:bg-amber-400"
         >
           Office&apos;e Git →
-        </a>
+        </Link>
       </div>
     </div>
   );

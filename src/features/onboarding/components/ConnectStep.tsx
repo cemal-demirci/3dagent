@@ -59,8 +59,10 @@ export const ConnectStep = ({
   }, [callGateway, connected]);
 
   useEffect(() => {
-    void fetchAIStatus();
-  }, [fetchAIStatus]);
+    if (!connected) return;
+    const id = requestAnimationFrame(() => void fetchAIStatus());
+    return () => cancelAnimationFrame(id);
+  }, [fetchAIStatus, connected]);
 
   const handleSaveKey = useCallback(
     async (provider: string) => {
@@ -97,8 +99,10 @@ export const ConnectStep = ({
   }, [callGateway, connected]);
 
   useEffect(() => {
-    void fetchCliStatus();
-  }, [fetchCliStatus]);
+    if (!connected) return;
+    const id = requestAnimationFrame(() => void fetchCliStatus());
+    return () => cancelAnimationFrame(id);
+  }, [fetchCliStatus, connected]);
 
   const hasAnyCli = cliStatus?.agentSdk || cliStatus?.cli;
 

@@ -769,10 +769,10 @@ export function PlaybooksPanel({
                     className="w-full text-left"
                   >
                     <div className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-white/85">
-                      {t(template.nameKey as any)}
+                      {t(template.nameKey as Parameters<typeof t>[0])}
                     </div>
                     <div className="mt-1 font-mono text-[11px] leading-5 text-white/50">
-                      {t(template.descKey as any)}
+                      {t(template.descKey as Parameters<typeof t>[0])}
                     </div>
                   </button>
 
@@ -803,7 +803,7 @@ export function PlaybooksPanel({
                         <input
                           value={nameOverride}
                           onChange={(event) => setNameOverride(event.target.value)}
-                          placeholder={t(template.nameKey as any)}
+                          placeholder={t(template.nameKey as Parameters<typeof t>[0])}
                           className="rounded border border-white/10 bg-black/50 px-2 py-2 font-mono text-[11px] text-white/80 outline-none placeholder:text-white/20"
                         />
                       </label>

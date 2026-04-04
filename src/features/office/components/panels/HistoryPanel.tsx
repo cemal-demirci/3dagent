@@ -127,7 +127,7 @@ export function HistoryPanel({
                     {run.agentName}
                   </span>
                   <span className="rounded border border-cyan-500/20 bg-cyan-500/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em] text-cyan-200">
-                    {t(TRIGGER_LABEL_KEYS[run.trigger] as any)}
+                    {t(TRIGGER_LABEL_KEYS[run.trigger] as Parameters<typeof t>[0])}
                   </span>
                 </div>
 

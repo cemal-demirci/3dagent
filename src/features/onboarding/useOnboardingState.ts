@@ -4,7 +4,7 @@
  * Uses localStorage so the wizard only shows once per browser.
  * The key is scoped to the 3DAgent app to avoid collisions.
  */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 const STORAGE_KEY = "3dagent:onboarding:completed";
 
@@ -40,11 +40,9 @@ export type OnboardingStateReturn = {
 };
 
 export const useOnboardingState = (): OnboardingStateReturn => {
-  const [completed, setCompleted] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    setCompleted(readCompleted());
-  }, []);
+  const [completed, setCompleted] = useState<boolean | null>(() =>
+    typeof window === "undefined" ? null : readCompleted(),
+  );
 
   const completeOnboarding = useCallback(() => {
     setCompleted(true);

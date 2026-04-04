@@ -22,6 +22,9 @@ const eslintConfig = defineConfig([
 
     // Vendored third-party code (kept as-is; linting it adds noise).
     "src/lib/avatars/vendor/**",
+
+    // Auto-generated service worker (minified, not hand-authored).
+    "public/sw.js",
   ]),
   prettier,
 ]);
