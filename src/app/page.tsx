@@ -50,7 +50,7 @@ const features = [
 ];
 
 const installSteps = [
-  { step: 1, cmd: "git clone https://github.com/cemal-demirci/claw3d.git" },
+  { step: 1, cmd: "git clone https://github.com/cemal-demirci/3dagent.git" },
   { step: 2, cmd: "npm install" },
   { step: 3, cmd: "npm run dev" },
 ];
@@ -90,7 +90,7 @@ export default function Home() {
       {/* Hero */}
       <section className="min-h-screen flex flex-col items-center justify-center px-6 text-center relative">
         <h1 className="font-display text-7xl sm:text-8xl md:text-9xl tracking-tight text-amber-400">
-          CLAW3D
+          3DAGENT
         </h1>
         <p className="mt-4 max-w-xl text-lg sm:text-xl text-neutral-400 font-sans">
           AI ajanlarınız için gerçek zamanlı 3D çalışma ortamı.
@@ -99,7 +99,7 @@ export default function Home() {
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-4">
           <a
-            href="https://github.com/cemal-demirci/claw3d"
+            href="https://github.com/cemal-demirci/3dagent"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-6 py-3 bg-amber-400 text-black font-semibold rounded-lg hover:bg-amber-300 transition-colors"
@@ -199,7 +199,7 @@ export default function Home() {
             </a>
           </span>
           <a
-            href="https://github.com/cemal-demirci/claw3d"
+            href="https://github.com/cemal-demirci/3dagent"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 hover:text-amber-400 transition-colors"

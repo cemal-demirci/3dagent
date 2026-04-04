@@ -1,5 +1,5 @@
 services:
-  claw3d:
+  3dagent:
     build: .
     ports:
       - "${PORT:-3000}:3000"

@@ -1,6 +1,6 @@
 {
-  "name": "Claw3D — by Cemal Demirci",
-  "short_name": "Claw3D",
+  "name": "3DAgent — by Cemal Demirci",
+  "short_name": "3DAgent",
   "description": "AI agent workspace — cemal.cloud",
   "start_url": "/office",
   "display": "standalone",

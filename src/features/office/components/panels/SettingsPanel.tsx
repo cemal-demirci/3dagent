@@ -286,7 +286,7 @@ function AboutSection() {
           <div>
             <div className="text-[11px] font-medium text-white">{t("about.title")}</div>
             <div className="mt-1 text-[10px] text-white/50">
-              Claw3D v0.1.4 {t("branding.developedBy")}
+              3DAgent v0.1.4 {t("branding.developedBy")}
             </div>
           </div>
           <button

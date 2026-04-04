@@ -14,7 +14,7 @@ export async function GET() {
       _meta: {
         exportedAt: new Date().toISOString(),
         version: "0.1.4",
-        app: "claw3d",
+        app: "3dagent",
       },
       settings,
     };
@@ -22,7 +22,7 @@ export async function GET() {
     return new NextResponse(JSON.stringify(exportData, null, 2), {
       headers: {
         "Content-Type": "application/json",
-        "Content-Disposition": `attachment; filename="claw3d-settings-${Date.now()}.json"`,
+        "Content-Disposition": `attachment; filename="3dagent-settings-${Date.now()}.json"`,
         "Cache-Control": "no-store",
       },
     });

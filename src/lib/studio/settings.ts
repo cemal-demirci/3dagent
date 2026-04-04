@@ -398,7 +398,7 @@ const normalizeTaskBoardCard = (
     status: isTaskBoardStatus(record.status) ? record.status : (fallback?.status ?? "todo"),
     source: isTaskBoardSource(record.source)
       ? record.source
-      : (fallback?.source ?? "claw3d_manual"),
+      : (fallback?.source ?? "3dagent_manual"),
     sourceEventId:
       normalizeOptionalIsoString(record.sourceEventId, fallback?.sourceEventId ?? null) ??
       null,

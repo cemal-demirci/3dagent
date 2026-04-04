@@ -25,7 +25,7 @@ function OfficeLoadingFallback() {
           label="Loading..."
           labelClassName="text-muted-foreground"
         />
-        <span className="font-display text-lg text-amber-400/80">CLAW3D</span>
+        <span className="font-display text-lg text-amber-400/80">3DAGENT</span>
         <span className="text-[10px] text-white/30">cemal.cloud</span>
       </div>
     </div>

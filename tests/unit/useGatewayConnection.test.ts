@@ -259,7 +259,7 @@ describe("useGatewayConnection", () => {
 
   it("auto_applies_runtime_local_defaults_when_no_saved_gateway_and_build_time_empty", async () => {
     // Simulates #57: NEXT_PUBLIC_GATEWAY_URL was never rebuilt, but
-    // CLAW3D_GATEWAY_URL is set on the server so localGatewayDefaults
+    // AGENT3D_GATEWAY_URL is set on the server so localGatewayDefaults
     // comes through in the sanitized (public) form with tokenConfigured.
     const { useGatewayConnection } = await setupAndImportHook("");
     const coordinator = {

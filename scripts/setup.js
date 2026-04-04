@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Claw3D Setup Wizard — cemal.cloud
+ * 3DAgent Setup Wizard — cemal.cloud
  *
  * Interactive terminal setup: system check, CLI installs, auth, env, test.
  * Zero external dependencies — uses only Node.js built-ins.
@@ -36,7 +36,7 @@ const step = (n, total, title) =>
 function banner() {
   console.log(`
 ${C.amber}${C.bold}\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557
-\u2551     CLAW3D SETUP \u2014 cemal.cloud      \u2551
+\u2551    3DAGENT SETUP \u2014 cemal.cloud      \u2551
 \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d${C.reset}
 `);
 }

@@ -47,7 +47,7 @@ export function AccessGateScreen() {
     <div className="flex h-screen w-screen items-center justify-center bg-[#0a0a0a]">
       <div className="w-full max-w-xs space-y-6 text-center">
         <div>
-          <h1 className="font-display text-4xl text-amber-400">CLAW3D</h1>
+          <h1 className="font-display text-4xl text-amber-400">3DAGENT</h1>
           <p className="mt-1 text-[11px] text-white/40">
             {t("branding.developedBy")}
           </p>

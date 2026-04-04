@@ -13,7 +13,7 @@ import {
 // Studio settings are intentionally stored as a local JSON file for a single-user workflow.
 // That includes gateway connection details, so treat the state directory as plaintext secret
 // storage and document any changes to this threat model in README.md and SECURITY.md.
-const SETTINGS_DIRNAME = "claw3d";
+const SETTINGS_DIRNAME = "3dagent";
 const SETTINGS_FILENAME = "settings.json";
 const OPENCLAW_CONFIG_FILENAME = "openclaw.json";
 
@@ -57,12 +57,12 @@ export const loadLocalGatewayDefaults = (): {
   if (fromFile) return fromFile;
   // Fall back to env vars so operators can configure the gateway URL at
   // runtime without openclaw.json and without a rebuild.
-  const envUrl = process.env.CLAW3D_GATEWAY_URL?.trim();
-  const envToken = process.env.CLAW3D_GATEWAY_TOKEN?.trim();
+  const envUrl = process.env.AGENT3D_GATEWAY_URL?.trim();
+  const envToken = process.env.AGENT3D_GATEWAY_TOKEN?.trim();
   if (envUrl) return { url: envUrl, token: envToken ?? "", adapterType: "openclaw" };
   // When no explicit gateway is configured, fall back to the embedded demo
   // gateway that server/index.js starts automatically on every `npm run dev`.
-  // This lets end-users run Claw3D out of the box without any configuration.
+  // This lets end-users run 3DAgent out of the box without any configuration.
   const demoPort = process.env.DEMO_ADAPTER_PORT?.trim() || "18789";
   return { url: `ws://localhost:${demoPort}`, token: "", adapterType: "builtin" };
 };

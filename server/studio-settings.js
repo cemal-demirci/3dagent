@@ -3,7 +3,7 @@ const os = require("node:os");
 const path = require("node:path");
 
 const LEGACY_STATE_DIRNAMES = [".openclaw", ".clawdbot", ".moltbot"];
-const NEW_STATE_DIRNAME = ".claw3d";
+const NEW_STATE_DIRNAME = ".3dagent";
 
 const resolveUserPath = (input) => {
   const trimmed = String(input ?? "").trim();
@@ -26,7 +26,7 @@ const resolveDefaultHomeDir = () => {
 };
 
 const resolveStateDir = (env = process.env) => {
-  const override = env.CLAW3D_STATE_DIR?.trim();
+  const override = env.AGENT3D_STATE_DIR?.trim();
   if (override) return resolveUserPath(override);
 
   const home = resolveDefaultHomeDir();
@@ -44,7 +44,7 @@ const resolveStateDir = (env = process.env) => {
 };
 
 const resolveStudioSettingsPath = (env = process.env) => {
-  return path.join(resolveStateDir(env), "claw3d", "settings.json");
+  return path.join(resolveStateDir(env), "3dagent", "settings.json");
 };
 
 const readJsonFile = (filePath) => {

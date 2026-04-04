@@ -40,7 +40,7 @@
 
 ### Added
 
-- Initial public Claw3D project documentation, including `README.md`, `VISION.md`, and `ARCHITECTURE.md`.
+- Initial public 3DAgent project documentation, including `README.md`, `VISION.md`, and `ARCHITECTURE.md`.
 - A gateway-first web UI for connecting to OpenClaw agents, monitoring runtime activity, and managing agent workflows.
 - A retro-office 3D environment for visualizing agent activity, spatial interactions, and immersive operational surfaces.
 - An office builder flow for editing and publishing office layouts.

@@ -524,7 +524,7 @@ const doctorFixHint =
   "Run `npx openclaw doctor --fix` on the gateway host (or `pnpm openclaw doctor --fix` in a source checkout).";
 
 const protocolMismatchHint =
-  "This gateway looks too old for Claw3D's protocol v3. Upgrade OpenClaw, use the Hermes adapter, or run `npm run demo-gateway` for a no-framework office demo.";
+  "This gateway looks too old for 3DAgent's protocol v3. Upgrade OpenClaw, use the Hermes adapter, or run `npm run demo-gateway` for a no-framework office demo.";
 
 const isGatewayProtocolMismatchError = (error: GatewayResponseError) => {
   if (error.code.trim().toUpperCase() !== "INVALID_REQUEST") return false;
@@ -727,7 +727,7 @@ export const useGatewayConnection = (
               }
             : null;
         // When the user has no saved gateway URL, prefer the runtime
-        // localGatewayDefaults (from openclaw.json / CLAW3D_GATEWAY_URL)
+        // localGatewayDefaults (from openclaw.json / AGENT3D_GATEWAY_URL)
         // over the build-time NEXT_PUBLIC_GATEWAY_URL which may be stale
         // or empty if the operator forgot to rebuild after .env changes.
         const hasSavedUrl = Boolean(gateway?.url?.trim());

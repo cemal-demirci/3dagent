@@ -24,7 +24,7 @@ type MarketplaceFilter = "all" | SkillMarketplaceCollectionId;
 
 const getFilterLabel = (filterId: MarketplaceFilter): string => {
   switch (filterId) {
-    case "claw3d": return "Claw3D";
+    case "3dagent": return "3DAgent";
     case "all": return t("hq.marketplace.filterAll");
     case "featured": return t("hq.marketplace.filterFeatured");
     case "installed": return t("hq.marketplace.filterInstalled");
@@ -37,7 +37,7 @@ const getFilterLabel = (filterId: MarketplaceFilter): string => {
 };
 
 const FILTER_IDS: MarketplaceFilter[] = [
-  "claw3d", "all", "featured", "installed", "setup-required", "built-in", "workspace", "extra", "other",
+  "3dagent", "all", "featured", "installed", "setup-required", "built-in", "workspace", "extra", "other",
 ];
 
 const getReadinessLabel = (readiness: string): string => {
@@ -110,7 +110,7 @@ export function SkillsMarketplacePanel({
   onOpenAgentSettings: (agentId: string) => void;
 }) {
   const [query, setQuery] = useState("");
-  const [activeFilter, setActiveFilter] = useState<MarketplaceFilter>("claw3d");
+  const [activeFilter, setActiveFilter] = useState<MarketplaceFilter>("3dagent");
   const [detailSkillKey, setDetailSkillKey] = useState<string | null>(null);
 
   const entries = useMemo(
@@ -131,7 +131,7 @@ export function SkillsMarketplacePanel({
     const normalizedQuery = query.trim().toLowerCase();
     const visibleCollectionIds: SkillMarketplaceCollectionId[] =
       activeFilter === "all"
-        ? ["claw3d", "built-in", "installed", "workspace", "extra", "other"]
+        ? ["3dagent", "built-in", "installed", "workspace", "extra", "other"]
         : [activeFilter];
     return collections
       .filter((collection) => visibleCollectionIds.includes(collection.id))
@@ -165,7 +165,7 @@ export function SkillsMarketplacePanel({
 
   const filterCounts = useMemo(() => {
     const counts: Record<MarketplaceFilter, number> = {
-      claw3d: 0,
+      "3dagent": 0,
       all: entries.length,
       featured: 0,
       installed: 0,
@@ -307,7 +307,7 @@ export function SkillsMarketplacePanel({
             {marketplace.message.text}
             {marketplace.message.kind === "success" ? (
               <div className="mt-1 font-mono text-[10px] text-emerald-100/80">
-                {t("hq.marketplace.checkClaw3dFilter")}
+                {t("hq.marketplace.check3dagentFilter")}
               </div>
             ) : null}
           </div>

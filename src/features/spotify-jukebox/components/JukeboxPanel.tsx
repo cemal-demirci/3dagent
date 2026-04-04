@@ -133,7 +133,7 @@ function SetupView() {
   return (
     <div className="space-y-6 p-6">
       <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 px-4 py-3 text-sm text-cyan-100">
-        {tReplace("jukebox.keepClaw3dOpen", { origin: localhostOrigin })}
+        {tReplace("jukebox.keep3dagentOpen", { origin: localhostOrigin })}
       </div>
 
       {!callbackLooksValid && callbackBaseUrl.trim().length > 0 && (

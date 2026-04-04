@@ -802,7 +802,7 @@ async function handleMethod(method, params, id, sendEvent) {
         title: p.title || "Untitled",
         description: p.description || "",
         status: p.status || "todo",
-        source: p.source || "claw3d_manual",
+        source: p.source || "3dagent_manual",
         sourceEventId: p.sourceEventId || null,
         assignedAgentId: p.assignedAgentId || null,
         createdAt: new Date().toISOString(),
@@ -1134,7 +1134,7 @@ function startAdapter(options = {}) {
 
   const httpServer = http.createServer((req, res) => {
     res.writeHead(200, { "Content-Type": "text/plain" });
-    res.end("Claw3D Demo Gateway Adapter\n");
+    res.end("3DAgent Demo Gateway Adapter\n");
   });
 
   const wss = new WebSocketServer({ server: httpServer });

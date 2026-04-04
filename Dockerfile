@@ -14,8 +14,8 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 
-RUN addgroup -g 1001 -S claw3d && \
-    adduser -S claw3d -u 1001
+RUN addgroup -g 1001 -S agent3d && \
+    adduser -S agent3d -u 1001
 
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/package-lock.json ./
@@ -27,7 +27,7 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/next.config.ts ./
 
-USER claw3d
+USER agent3d
 
 EXPOSE 3000
 

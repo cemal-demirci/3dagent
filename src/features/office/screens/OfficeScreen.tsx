@@ -2033,7 +2033,7 @@ export function OfficeScreen({
       );
       if (!agent) return;
       const confirmed = window.confirm(
-        `Delete ${agent.name}? This removes the agent record from OpenClaw and clears its scheduled automations. Claw3D will not touch workspace files.`,
+        `Delete ${agent.name}? This removes the agent record from OpenClaw and clears its scheduled automations. 3DAgent will not touch workspace files.`,
       );
       if (!confirmed) return;
 
@@ -4453,7 +4453,7 @@ export function OfficeScreen({
                   setKanbanInstallProgress({
                     active: true,
                     percent: 100,
-                    message: "Refreshing task-manager state in Claw3D.",
+                    message: "Refreshing task-manager state in 3DAgent.",
                     error: null,
                   });
                   setKanbanInstallPromptOpen(false);

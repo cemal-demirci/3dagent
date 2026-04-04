@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * AboutModal — Minimal about dialog for Claw3D.
+ * AboutModal — Minimal about dialog for 3DAgent.
  */
 
 import { X } from "lucide-react";
@@ -28,7 +28,7 @@ export function AboutModal({ onClose }: { onClose: () => void }) {
         </button>
 
         <div className="flex flex-col items-center gap-4 text-center">
-          <h2 className="font-display text-3xl text-amber-400">CLAW3D</h2>
+          <h2 className="font-display text-3xl text-amber-400">3DAGENT</h2>
           <p className="text-xs text-white/50">
             {tReplace("about.version", { version: "0.1.4" })}
           </p>

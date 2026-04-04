@@ -1,4 +1,4 @@
-# Claw3D API Referansı
+# 3DAgent API Referansı
 
 Tüm API endpoint'leri `/api/` altında çalışır. WebSocket gateway hariç tüm route'lar rate limiting'e tabidir.
 

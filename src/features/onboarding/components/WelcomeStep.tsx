@@ -1,5 +1,5 @@
 /**
- * WelcomeStep — First onboarding screen introducing Claw3D.
+ * WelcomeStep — First onboarding screen introducing 3DAgent.
  */
 import { Building2, Eye, MessageSquare, Users } from "lucide-react";
 import { t } from "@/lib/i18n";
@@ -30,7 +30,7 @@ const features = [
 export const WelcomeStep = () => (
   <div className="space-y-5">
     <div className="text-center mb-4">
-      <h1 className="text-2xl font-display text-amber-400">CLAW3D</h1>
+      <h1 className="text-2xl font-display text-amber-400">3DAGENT</h1>
       <p className="text-[11px] text-white/40">{t("branding.developedBy")}</p>
     </div>
     <div className="space-y-2">

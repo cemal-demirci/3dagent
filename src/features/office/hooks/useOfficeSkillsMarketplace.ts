@@ -277,7 +277,7 @@ export const useOfficeSkillsMarketplace = ({
 
       await runSkillMutation({
         skillKey: packagedSkill.skillKey,
-        successMessage: `Successfully installed ${packagedSkill.name.trim()} in the selected workspace. Enable it for the agent from the CLAW3D tab.`,
+        successMessage: `Successfully installed ${packagedSkill.name.trim()} in the selected workspace. Enable it for the agent from the 3DAGENT tab.`,
         run: async (_agentId, report) => {
           await installPackagedSkillViaGatewayAgent({
             client,
@@ -361,7 +361,7 @@ export const useOfficeSkillsMarketplace = ({
         });
         params.onProgress?.({
           percent: 92,
-          message: "Refreshing skill state in Claw3D.",
+          message: "Refreshing skill state in 3DAgent.",
         });
         await loadMarketplace(targetAgentId);
         params.onProgress?.({

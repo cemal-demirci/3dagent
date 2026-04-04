@@ -1,10 +1,10 @@
-# CLAW3D
+# 3DAGENT
 
 AI ajanlarınız için 3D çalışma alanı.
 
-> Orijinal proje [iamlukethedev/Claw3D](https://github.com/iamlukethedev/Claw3D) tarafından geliştirilmiştir. Bu sürüm Türkçe lokalizasyon, otomatik kurulum, branding ve ek özelliklerle genişletilmiştir. MIT lisansı altında dağıtılmaktadır.
+> Orijinal proje [iamlukethedev/Claw3D](https://github.com/iamlukethedev/Claw3D) tarafından geliştirilmiştir. Bu surum (3DAgent) Turkce lokalizasyon, otomatik kurulum, branding ve ek ozelliklerle genisletilmistir. MIT lisansi altinda dagitilmaktadir.
 
-Claw3D, AI otomasyonunu görsel bir iş yerine dönüştürür — ajanlarınız paylaşımlı bir 3D ortamda birlikte çalışır, kod yazar, test eder ve görevleri yürütür.
+3DAgent, AI otomasyonunu görsel bir iş yerine dönüştürür — ajanlarınız paylaşımlı bir 3D ortamda birlikte çalışır, kod yazar, test eder ve görevleri yürütür.
 
 **AI ekibiniz için bir ofis.**
 
@@ -13,8 +13,8 @@ Claw3D, AI otomasyonunu görsel bir iş yerine dönüştürür — ajanlarınız
 ## Hızlı Başlangıç
 
 ```bash
-git clone https://github.com/cemal-demirci/claw3d.git
-cd claw3d
+git clone https://github.com/cemal-demirci/3dagent.git
+cd 3dagent
 npm install          # Sonunda "npm run setup çalıştırın" hatırlatması çıkar
 npm run setup        # İnteraktif kurulum wizard'ı
 npm run dev          # http://localhost:3000
@@ -101,8 +101,8 @@ npm run dev          # http://localhost:3000
 - Tüm UI bileşenleri, onboarding, ayarlar, paneller Türkçe
 
 ### cemal.cloud Branding
-- Sayfa başlığı: "Claw3D — by Cemal Demirci"
-- Loading ekranında CLAW3D + cemal.cloud
+- Sayfa başlığı: "3DAgent — by Cemal Demirci"
+- Loading ekranında 3DAGENT + cemal.cloud
 - Onboarding wizard'da branding başlık ve footer
 - Hakkında modalı (versiyon, geliştirici, teknolojiler, lisans)
 - Settings panelinde "Hakkında" bölümü
@@ -142,7 +142,7 @@ npm run dev          # http://localhost:3000
 
 ### Docker Desteği
 - Multi-stage Dockerfile (builder → runner)
-- Non-root kullanıcı (`claw3d`, uid 1001)
+- Non-root kullanıcı (`agent3d`, uid 1001)
 - docker-compose.yml ile tek komutta çalıştırma
 - Otomatik health check
 
@@ -192,7 +192,7 @@ npm run dev          # http://localhost:3000
 ## Proje Yapısı
 
 ```
-claw3d/
+3dagent/
 ├── server/                    # Node.js backend
 │   ├── index.js               # Ana sunucu (HTTP/HTTPS + Next.js)
 │   ├── access-gate.js         # Token kimlik doğrulama
@@ -326,6 +326,6 @@ npm run dev
 
 ## Lisans
 
-MIT — Orijinal proje [iamlukethedev](https://github.com/iamlukethedev/Claw3D) tarafından geliştirilmiştir.
+MIT — Orijinal proje [iamlukethedev](https://github.com/iamlukethedev/Claw3D) tarafindan gelistirilmistir.
 
 Bu sürüm [Cemal Demirci](https://cemal.cloud) tarafından genişletilmiştir.

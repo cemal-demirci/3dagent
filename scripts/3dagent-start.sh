@@ -1,23 +1,23 @@
 #!/usr/bin/env bash
-# clawd3d-start — Start all Clawd3D services, auto-resolving port conflicts.
+# 3dagent-start — Start all 3DAgent services, auto-resolving port conflicts.
 #
 # Setup (once):
-#   echo 'alias clawd3d="/absolute/path/to/Claw3D/scripts/clawd3d-start.sh"' >> ~/.zshrc
+#   echo 'alias 3dagent="/absolute/path/to/3DAgent/scripts/3dagent-start.sh"' >> ~/.zshrc
 #   source ~/.zshrc
 #
-# Then just run:  clawd3d
+# Then just run:  3dagent
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-CLAWD3D_DIR="$(cd -- "$SCRIPT_DIR/.." >/dev/null 2>&1 && pwd)"
-LOG_DIR="/tmp/clawd3d-logs"
+AGENT3D_DIR="$(cd -- "$SCRIPT_DIR/.." >/dev/null 2>&1 && pwd)"
+LOG_DIR="/tmp/3dagent-logs"
 mkdir -p "$LOG_DIR"
 
 GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BLUE='\033[0;34m'; NC='\033[0m'
-log()  { echo -e "${GREEN}[clawd3d]${NC} $*"; }
-warn() { echo -e "${YELLOW}[clawd3d]${NC} $*"; }
-info() { echo -e "${BLUE}[clawd3d]${NC} $*"; }
+log()  { echo -e "${GREEN}[3dagent]${NC} $*"; }
+warn() { echo -e "${YELLOW}[3dagent]${NC} $*"; }
+info() { echo -e "${BLUE}[3dagent]${NC} $*"; }
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -79,14 +79,14 @@ if ! port_free $ADAPTER_PORT; then
     ADAPTER_PORT=$(find_free_port $((ADAPTER_PORT + 1)))
     warn "Port 18789 taken by another process → using :$ADAPTER_PORT for adapter."
     log "Starting Hermes adapter on :$ADAPTER_PORT..."
-    cd "$CLAWD3D_DIR"
+    cd "$AGENT3D_DIR"
     nohup env HERMES_ADAPTER_PORT="$ADAPTER_PORT" HERMES_API_URL="$HERMES_API_URL" \
       npm run hermes-adapter > "$LOG_DIR/hermes-adapter.log" 2>&1 &
     sleep 1
   fi
 else
   log "Starting Hermes adapter on :$ADAPTER_PORT..."
-  cd "$CLAWD3D_DIR"
+  cd "$AGENT3D_DIR"
   nohup env HERMES_ADAPTER_PORT="$ADAPTER_PORT" HERMES_API_URL="$HERMES_API_URL" \
     npm run hermes-adapter > "$LOG_DIR/hermes-adapter.log" 2>&1 &
   sleep 1
@@ -97,24 +97,24 @@ GATEWAY_WS_URL="ws://localhost:$ADAPTER_PORT"
 APP_PORT=3000
 if ! port_free $APP_PORT; then
   if port_owned_by $APP_PORT "node.*next|next-server|server/index\.js"; then
-    warn "Clawd3D dev server already running on :$APP_PORT — reusing."
+    warn "3DAgent dev server already running on :$APP_PORT — reusing."
   else
     APP_PORT=$(find_free_port $((APP_PORT + 1)))
-    warn "Port 3000 taken by another process → using :$APP_PORT for Clawd3D."
-    log "Starting Clawd3D dev server on :$APP_PORT..."
-    cd "$CLAWD3D_DIR"
+    warn "Port 3000 taken by another process → using :$APP_PORT for 3DAgent."
+    log "Starting 3DAgent dev server on :$APP_PORT..."
+    cd "$AGENT3D_DIR"
     nohup env PORT="$APP_PORT" NEXT_PUBLIC_GATEWAY_URL="$GATEWAY_WS_URL" \
-      npm run dev > "$LOG_DIR/clawd3d-dev.log" 2>&1 &
+      npm run dev > "$LOG_DIR/3dagent-dev.log" 2>&1 &
   fi
 else
-  log "Starting Clawd3D dev server on :$APP_PORT..."
-  cd "$CLAWD3D_DIR"
+  log "Starting 3DAgent dev server on :$APP_PORT..."
+  cd "$AGENT3D_DIR"
   nohup env PORT="$APP_PORT" NEXT_PUBLIC_GATEWAY_URL="$GATEWAY_WS_URL" \
-    npm run dev > "$LOG_DIR/clawd3d-dev.log" 2>&1 &
+    npm run dev > "$LOG_DIR/3dagent-dev.log" 2>&1 &
 fi
 
 # ── 4. Wait until the app responds ───────────────────────────────────────────
-log "Waiting for Clawd3D to be ready at :$APP_PORT..."
+log "Waiting for 3DAgent to be ready at :$APP_PORT..."
 ready=0
 for i in $(seq 1 90); do
   if curl -sf "http://localhost:$APP_PORT" > /dev/null 2>&1; then
@@ -123,7 +123,7 @@ for i in $(seq 1 90); do
   sleep 1
 done
 if [ "$ready" -eq 0 ]; then
-  warn "Timed out waiting for :$APP_PORT — check $LOG_DIR/clawd3d-dev.log"
+  warn "Timed out waiting for :$APP_PORT — check $LOG_DIR/3dagent-dev.log"
 fi
 
 # ── 5. Open browser ───────────────────────────────────────────────────────────
@@ -131,7 +131,7 @@ open "http://localhost:$APP_PORT"
 
 echo ""
 log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-log " Clawd3D      →  http://localhost:$APP_PORT"
+log " 3DAgent      →  http://localhost:$APP_PORT"
 info " Gateway WS   →  $GATEWAY_WS_URL"
 info " Hermes API   →  $HERMES_API_URL"
 info " Logs         →  $LOG_DIR/"

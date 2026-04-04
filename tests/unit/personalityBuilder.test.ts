@@ -32,7 +32,7 @@ describe("personalityBuilder", () => {
     const files = createFiles();
     files["USER.md"] = {
       exists: true,
-      content: `# USER.md - About Your Human\n\n- **Name:** George\n- **What to call them:** GP\n- **Pronouns:** he/him\n- **Timezone:** America/Chicago\n- **Notes:** Building Claw3D.\n\n## Context\n\nWants concise technical answers.\nPrefers implementation over discussion.\n`,
+      content: `# USER.md - About Your Human\n\n- **Name:** George\n- **What to call them:** GP\n- **Pronouns:** he/him\n- **Timezone:** America/Chicago\n- **Notes:** Building 3DAgent.\n\n## Context\n\nWants concise technical answers.\nPrefers implementation over discussion.\n`,
     };
 
     const draft = parsePersonalityFiles(files);
@@ -42,7 +42,7 @@ describe("personalityBuilder", () => {
       callThem: "GP",
       pronouns: "he/him",
       timezone: "America/Chicago",
-      notes: "Building Claw3D.",
+      notes: "Building 3DAgent.",
       context: "Wants concise technical answers.\nPrefers implementation over discussion.",
     });
   });
@@ -110,7 +110,7 @@ describe("personalityBuilder", () => {
         callThem: "GP",
         pronouns: "he/him",
         timezone: "America/Chicago",
-        notes: "Building Claw3D.",
+        notes: "Building 3DAgent.",
         context: "Wants concise technical answers.\nPrefers implementation over discussion.",
       },
       soul: {
@@ -148,7 +148,7 @@ describe("personalityBuilder", () => {
         "- What to call them: GP",
         "- Pronouns: he/him",
         "- Timezone: America/Chicago",
-        "- Notes: Building Claw3D.",
+        "- Notes: Building 3DAgent.",
         "",
         "## Context",
         "",
