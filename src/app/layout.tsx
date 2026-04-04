@@ -3,23 +3,28 @@ import { Bebas_Neue, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Claw3D \u2014 by Cemal Demirci",
-  description: "AI agent workspace \u2014 cemal.cloud",
+  metadataBase: new URL("https://3d.cemal.cloud"),
+  title: "Claw3D — 3D AI Agent Workspace",
+  description:
+    "AI ajanlarınız için gerçek zamanlı 3D çalışma ortamı. Sesli komut, multi-agent yönetimi, marketplace ve kanban — hepsi tek workspace'te.",
   icons: {
     icon: "/favicon.svg",
   },
   manifest: "/manifest.json",
   themeColor: "#fbbf24",
   openGraph: {
-    title: "Claw3D \u2014 by Cemal Demirci",
-    description: "AI ajanlar\u0131n\u0131z i\u00e7in 3D \u00e7al\u0131\u015fma alan\u0131 \u2014 cemal.cloud",
+    title: "Claw3D — 3D AI Agent Workspace",
+    description:
+      "AI ajanlarınız için gerçek zamanlı 3D çalışma ortamı. Sesli komut, multi-agent yönetimi, marketplace ve kanban.",
     siteName: "Claw3D",
     type: "website",
+    url: "https://3d.cemal.cloud",
   },
   twitter: {
-    card: "summary",
-    title: "Claw3D \u2014 by Cemal Demirci",
-    description: "AI agent workspace \u2014 cemal.cloud",
+    card: "summary_large_image",
+    title: "Claw3D — 3D AI Agent Workspace",
+    description:
+      "AI ajanlarınız için gerçek zamanlı 3D çalışma ortamı. Sesli komut, multi-agent, marketplace ve kanban.",
   },
 };
 
@@ -60,7 +65,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${display.variable} ${sans.variable} ${mono.variable} antialiased`}>
-        <main className="h-screen w-screen overflow-hidden bg-background">{children}</main>
+        <main className="min-h-screen w-full bg-background">{children}</main>
       </body>
     </html>
   );
