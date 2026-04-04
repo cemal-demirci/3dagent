@@ -1,322 +1,262 @@
-# Claw3D
+# CLAW3D
 
-A 3D workspace for AI agents.
+AI ajanlarınız için 3D çalışma alanı.
 
-> Unofficial project: Claw3D is an independent community project and is not affiliated with, endorsed by, or maintained by the OpenClaw team. OpenClaw is a separate project, and this repository is not the official OpenClaw repository.
+> Orijinal proje [iamlukethedev/Claw3D](https://github.com/iamlukethedev/Claw3D) tarafından geliştirilmiştir. Bu sürüm Türkçe lokalizasyon, otomatik kurulum, branding ve ek özelliklerle genişletilmiştir. MIT lisansı altında dağıtılmaktadır.
 
-Claw3D turns AI automation into a visual workplace where agents collaborate, review code, run tests, train skills, and execute tasks inside a shared 3D environment.
+Claw3D, AI otomasyonunu görsel bir iş yerine dönüştürür — ajanlarınız paylaşımlı bir 3D ortamda birlikte çalışır, kod yazar, test eder ve görevleri yürütür.
 
-Built and maintained by LukeTheDev. Follow on X: [@iamlukethedev](https://x.com/iamlukethedev).
+**AI ekibiniz için bir ofis.**
 
-Think of it as:
+---
 
-An office for your AI team.
-
-## What you can do with Claw3D
-
-• Watch your AI agents work in real time
-• Run standups with agents connected to GitHub and Jira
-• Review pull requests from inside the office
-• Monitor QA pipelines and logs
-• Train agents in the gym to develop new skills
-• Reset sessions and clean context with the janitor system
-
-Instead of managing automation through dashboards and logs…
-
-You walk through your AI workplace.
-
-[Vision](VISION.md) · [Architecture](ARCHITECTURE.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
-
-## What Claw3D Is
-
-Claw3D is the visualization and interaction layer.
-
-Today it can sit on top of:
-
-- OpenClaw through the existing gateway flow
-- Hermes through the bundled WebSocket adapter
-- a direct HTTP `custom` runtime provider for orchestrator-backed stacks
-- a built-in demo gateway for office exploration without a real agent framework
-
-In practical terms, this app gives you:
-
-- a live `/office` retro-office environment where agents appear as workers moving through a shared 3D world
-- an `/office/builder` surface for editing and publishing office layouts
-- a gateway-first architecture that keeps runtime state in the connected backend while Studio stores local UI preferences
-- a backend-neutral runtime seam inside Studio so additional providers can be integrated without rewriting the whole UI
-
-This repository does not build the upstream runtimes themselves. It is the frontend, Studio, and adapter/proxy layer that connects to a runtime speaking the Claw3D gateway protocol.
-
-## Why It Exists
-
-AI systems are becoming more capable, but their work is still usually hidden behind logs, terminal output, and dashboards.
-
-Claw3D exists to make agent systems visible:
-
-- inspect what agents are doing in real time
-- monitor runs, approvals, history, and activity from one place
-- interact with agents through chat and immersive UI surfaces
-- move toward a world where AI systems are understandable through space, motion, and presence
-
-For the broader direction of the project, see [`VISION.md`](VISION.md).
-
-## What Exists Today
-
-The current app already includes a substantial Claw3D surface:
-
-- Fleet management and agent chat with runtime updates streamed from the gateway.
-- Agent creation, settings, session controls, approvals, and gateway-backed configuration editing.
-- A 3D retro office with desks, rooms, navigation, animations, and event-driven activity cues.
-- Immersive operational spaces for standups, GitHub review flows, analytics, and system monitoring.
-- Local Studio persistence for gateway connection details, focused-agent preferences, desk assignments, office state, and related UI settings.
-- A custom same-origin WebSocket proxy so the browser talks to Studio, and Studio talks to the upstream OpenClaw Gateway.
-
-## Quick Start
-
-Requirements:
-
-- Node.js 20+ recommended.
-- npm 10+ recommended.
-- One of:
-  - a working OpenClaw installation with a reachable Gateway URL and token
-  - Hermes with the bundled adapter
-  - the built-in demo gateway for local exploration
-
-Prerequisite:
-
-- Claw3D does not install or build OpenClaw or Hermes for you.
-- Before starting Claw3D against a real backend, make sure your chosen runtime is already running and that you know the gateway URL and token Studio should use.
-- For a no-framework local office demo, run the bundled demo gateway instead.
-- If you need a full cross-machine setup guide (OpenClaw + Tailscale + Claw3D), follow [`TUTORIAL.md`](TUTORIAL.md).
-
-Run from source:
+## Hızlı Başlangıç
 
 ```bash
-git clone <your-public-repo-url> claw3d
+git clone https://github.com/cemal-demirci/claw3d.git
 cd claw3d
-npm install
-cp .env.example .env
-npm run dev
+npm install          # Sonunda "npm run setup çalıştırın" hatırlatması çıkar
+npm run setup        # İnteraktif kurulum wizard'ı
+npm run dev          # http://localhost:3000
 ```
 
-Then open `http://localhost:3000` and configure the gateway URL and token in Studio.
-Studio now also persists the selected backend mode (`OpenClaw`, `Hermes`, `Demo`, or `Custom`) and
-shows the active backend reported by the connected gateway.
+`npm run setup` şunları otomatik halleder:
+- Node.js ve npm sürüm kontrolü
+- Claude CLI kurulum + OAuth giriş
+- Gemini CLI kontrolü + auth
+- `.env` dosyası oluşturma
+- API key girişi (opsiyonel — CLI zaten yetişiyor)
+- Demo gateway bağlantı testi
 
-### Custom runtime mode
+---
 
-If you are integrating an orchestrator-backed runtime through the `custom`
-provider seam, start your runtime first, then start Claw3D:
+## Orijinal Özellikler
 
+### 3D Retro Ofis
+- Ajanların masalarında çalıştığı, hareket ettiği paylaşımlı 3D ortam
+- Odalar, masalar, navigasyon, animasyonlar ve olay tabanlı aktivite ipuçları
+- Ofis düzeni builder'ı (`/office/builder`) ile özelleştirme
+- Isı haritası ve iz takibi
+
+### Ajan Yönetimi
+- Filo kenar çubuğundan ajan oluşturma, yapılandırma ve izleme
+- Gerçek zamanlı sohbet + komut onaylama
+- Oturum kontrolleri, yeni oturum başlatma
+- Avatar özelleştirme ve ajan düzenleme
+- Beyin dosyaları (personality, memory, tools) düzenleme
+- Ajan yetenekleri (skills) yönetimi
+
+### Gateway Mimarisi
+- **OpenClaw** — Resmi gateway protokolü
+- **Hermes** — WebSocket adaptörü ile alternatif runtime
+- **Demo** — Gerçek backend olmadan ofisi keşfetmek için mock gateway
+- **Custom** — Kendi orchestrator/runtime'ınızı bağlayın
+- Same-origin WebSocket proxy (tarayıcı → Studio → Gateway)
+
+### İmersif Ekranlar
+- **GitHub Kod İnceleme Odası** — PR inceleme, diff görüntüleme, satır içi yorum
+- **Kanban Panosu** — Sürükle-bırak görev yönetimi, ajan atama, playbook bağlama
+- **ATM / Hazine** — Token kullanım defteri, ajan harcamaları, bütçe uyarıları
+- **Telefon Kabini** — Ajanlarla sesli/yazılı iletişim
+- **Mesajlaşma Kabini** — SMS tarzı mesajlaşma
+- **Kahvehane** — Test ve sohbet köşesi
+- **Kapalıçarşı** — Beceri pazarı (marketplace)
+
+### HQ Karargah Panelleri
+- **Inbox** — Gelen bildirimler ve onay istekleri
+- **Geçmiş** — Oturum geçmişi ve loglar
+- **Analitik** — Kullanım istatistikleri
+- **Playbook'lar** — Otomatik iş akışları
+- **Görev Panosu** — Kanban tarzı görev takibi
+
+### Çoklu Ofis Desteği
+- Uzak ofis bağlantısı (presence endpoint veya OpenClaw gateway)
+- Salt okunur uzak ajan görüntüleme
+- Etiket ve kaynak türü yapılandırması
+
+### Ses Desteği
+- ElevenLabs TTS ile sesli ajan yanıtları
+- Ses seçimi ve hız ayarı
+- Sesli mesaj kaydı
+
+### Spotify Jukebox (SOUNDCLAW)
+- Ofiste müzik çalma
+- OAuth entegrasyonu
+
+---
+
+## Eklenen Özellikler (Bu Sürüm)
+
+### Otomatik Kurulum Wizard'ı
+- `npm run setup` — 6 adımlı renkli terminal wizard
+- Claude CLI otomatik kurulum + OAuth login
+- Gemini CLI kontrolü + Google auth
+- `.env` otomatik oluşturma
+- API key girişi (opsiyonel)
+- Gateway bağlantı testi
+- `npm install` sonrası hatırlatma mesajı
+
+### Türkçe Lokalizasyon
+- 1260+ çeviri anahtarı
+- Tüm UI bileşenleri, onboarding, ayarlar, paneller Türkçe
+
+### cemal.cloud Branding
+- Sayfa başlığı: "Claw3D — by Cemal Demirci"
+- Loading ekranında CLAW3D + cemal.cloud
+- Onboarding wizard'da branding başlık ve footer
+- Hakkında modalı (versiyon, geliştirici, teknolojiler, lisans)
+- Settings panelinde "Hakkında" bölümü
+
+### CLI/SDK Durum Badge'leri
+- Gateway bağlantısında Claude Agent SDK durumu
+- Gemini CLI auth durumu
+- CLI aktifse API key formu yerine "Zaten yapılandırılmış" badge'i
+- CLI yoksa sarı uyarı + yönlendirme
+
+### Erişim Kapısı Ekranı (Access Gate)
+- `STUDIO_ACCESS_TOKEN` ayarlıyken branded login formu
+- Token girişi → cookie ayarla → otomatik yenileme
+- Hatalı token'da görsel hata mesajı
+- cemal.cloud branding
+
+---
+
+## Teknik Altyapı
+
+| Katman | Teknoloji |
+|--------|-----------|
+| Frontend | Next.js 16, React 19, TypeScript |
+| 3D Grafik | Three.js, React Three Fiber, Drei |
+| Oyun Motoru | Phaser (builder ve interaktif yüzeyler) |
+| Stil | Tailwind CSS 4 |
+| AI SDK'lar | Claude Agent SDK, Google Gemini, OpenAI |
+| Gerçek Zamanlı | WebSocket (ws) |
+| Ses | ElevenLabs TTS |
+| Test | Vitest (unit), Playwright (e2e) |
+| Sunucu | Node.js custom server (HTTP/HTTPS + WebSocket proxy) |
+
+---
+
+## Proje Yapısı
+
+```
+claw3d/
+├── server/                    # Node.js backend
+│   ├── index.js               # Ana sunucu (HTTP/HTTPS + Next.js)
+│   ├── access-gate.js         # Token kimlik doğrulama
+│   ├── gateway-proxy.js       # WebSocket proxy
+│   ├── demo-gateway-adapter.js # Demo gateway
+│   └── hermes-gateway-adapter.js # Hermes adaptörü
+│
+├── scripts/
+│   ├── setup.js               # Otomatik kurulum wizard'ı
+│   └── postinstall-hint.js    # npm install sonrası ipucu
+│
+├── src/
+│   ├── app/                   # Next.js App Router
+│   │   ├── layout.tsx         # Root layout + metadata
+│   │   ├── office/            # Ana ofis arayüzü
+│   │   └── api/               # API route'ları
+│   │
+│   ├── features/
+│   │   ├── office/            # Ofis UI + paneller
+│   │   ├── agents/            # Ajan bileşenleri + state
+│   │   ├── onboarding/        # Başlangıç wizard'ı
+│   │   ├── retro-office/      # 3D retro ofis
+│   │   ├── company-builder/   # Şirket oluşturucu
+│   │   └── spotify-jukebox/   # Müzik çalar
+│   │
+│   └── lib/
+│       ├── i18n/              # Türkçe çeviriler (1260+ key)
+│       ├── gateway/           # Gateway iletişimi
+│       ├── studio/            # Studio ayarları
+│       └── voiceReply/        # ElevenLabs TTS
+│
+├── .env.example               # Ortam değişkeni şablonu
+└── package.json               # v0.1.4
+```
+
+---
+
+## Ortam Değişkenleri
+
+| Değişken | Açıklama |
+|----------|----------|
+| `NEXT_PUBLIC_GATEWAY_URL` | Varsayılan gateway URL (build-time) |
+| `DEBUG` | OpenClaw konsolunu göster (varsayılan: true) |
+| `PORT` / `HOST` | Sunucu adresi |
+| `STUDIO_ACCESS_TOKEN` | Uzak erişim için token koruması |
+| `ANTHROPIC_API_KEY` | Claude API anahtarı |
+| `GEMINI_API_KEY` | Gemini API anahtarı |
+| `OPENAI_API_KEY` | OpenAI API anahtarı |
+| `ELEVENLABS_API_KEY` | Sesli yanıt için ElevenLabs |
+
+Tüm değişkenler için: [`.env.example`](.env.example)
+
+---
+
+## Komutlar
+
+| Komut | Açıklama |
+|-------|----------|
+| `npm run setup` | İnteraktif kurulum wizard'ı |
+| `npm run dev` | Geliştirme sunucusu |
+| `npm run build` | Production build |
+| `npm run start` | Production sunucu |
+| `npm run demo-gateway` | Demo gateway başlat |
+| `npm run hermes-adapter` | Hermes adaptörünü başlat |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | TypeScript kontrol |
+| `npm run test` | Unit testler (Vitest) |
+| `npm run e2e` | E2E testler (Playwright) |
+
+---
+
+## Bağlantı Senaryoları
+
+### Yerel Gateway + Yerel Studio
 ```bash
 npm run dev
+# Tarayıcıda: http://localhost:3000
+# Gateway URL: ws://localhost:18789
 ```
 
-Then open `http://localhost:3000`, choose `Custom backend`, and point the
-upstream URL at your runtime boundary, for example:
-
-```text
-http://127.0.0.1:7770
-```
-
-Current `custom` runtime expectations:
-
-- `GET /health`
-- `GET /state`
-- `GET /registry`
-- `POST /v1/chat/completions`
-
-The browser does not call that runtime directly. Claw3D proxies the
-`custom` provider through its own same-origin route at
-`/api/runtime/custom`, which avoids browser-side CORS problems and keeps
-the provider transport separate from the OpenClaw/Hermes gateway path.
-
-### Demo mode
-
-If you only want to see the office and agent interactions without installing OpenClaw or Hermes:
-
+### Uzak Gateway + Yerel Studio (Tailscale)
 ```bash
-npm run demo-gateway
-npm run dev
+# Gateway host'ta:
+tailscale serve --yes --bg --https 443 http://127.0.0.1:18789
+# Studio'da URL: wss://<gateway-host>.ts.net
 ```
 
-Then connect Studio to:
-
-```text
-ws://localhost:18789
-```
-
-This starts a mock local gateway with demo agents, streaming chat, session previews, and office presence.
-In the connect screen, choose `Demo backend`, then connect.
-
-### Hermes adapter
-
-If you want to use Hermes instead of OpenClaw:
-
+### Uzak Gateway + Yerel Studio (SSH)
 ```bash
-npm run hermes-adapter
+ssh -L 18789:127.0.0.1:18789 user@<gateway-host>
+# Studio'da URL: ws://localhost:18789
+```
+
+### Demo Modu (Backend Gerekmez)
+```bash
 npm run dev
+# Demo backend otomatik başlar
+# Studio'da "Demo backend" seçin
 ```
 
-See [`docs/hermes-gateway.md`](docs/hermes-gateway.md) for setup details and current scope.
+---
 
-For a local gateway on the same machine, the usual upstream URL is:
+## Sorun Giderme
 
-```text
-ws://localhost:18789
-```
+| Sorun | Çözüm |
+|-------|-------|
+| Connect başarısız | Gateway URL ve token'ı kontrol edin |
+| `EPROTO` hatası | `wss://` yerine `ws://` deneyin (TLS olmayan endpoint) |
+| `INVALID_REQUEST` | Gateway çok eski — güncelleyin veya demo kullanın |
+| `401 Studio access token` | `STUDIO_ACCESS_TOKEN` ayarlı, cookie eksik |
+| CLI bulunamadı | `npm run setup` çalıştırın |
 
-In the connect screen, choose `Hermes backend`, then connect.
+---
 
-## How It Connects
+## Lisans
 
-Claw3D uses two separate network hops:
+MIT — Orijinal proje [iamlukethedev](https://github.com/iamlukethedev/Claw3D) tarafından geliştirilmiştir.
 
-1. Browser -> Studio over HTTP and a same-origin WebSocket at `/api/gateway/ws`.
-2. Studio -> OpenClaw Gateway over a second WebSocket opened by the Studio server.
-
-That means `ws://localhost:18789` always refers to the gateway reachable from the Studio host, not necessarily from the browser device.
-
-This design keeps gateway settings persisted on the Studio host and lets Studio open the upstream connection server-side. The current UI still loads the configured upstream URL/token into browser memory at runtime, so treat the browser as part of the active trust boundary.
-
-## Common Setups
-
-### Gateway local, Studio local
-
-1. Start Studio with `npm run dev`.
-2. Open `http://localhost:3000`.
-3. Use `ws://localhost:18789` plus your OpenClaw gateway token.
-
-### Gateway remote, Studio local
-
-Use any gateway URL your machine can reach.
-
-Recommended with Tailscale:
-
-1. On the gateway host, run `tailscale serve --yes --bg --https 443 http://127.0.0.1:18789`.
-2. In Studio, use `wss://<gateway-host>.ts.net`.
-
-Alternative with SSH:
-
-1. Run `ssh -L 18789:127.0.0.1:18789 user@<gateway-host>`.
-2. In Studio, use `ws://localhost:18789`.
-
-### Studio remote, Gateway remote
-
-1. Run Studio on the remote host.
-2. Expose Studio on a private network or over Tailscale.
-3. Set `STUDIO_ACCESS_TOKEN` if Studio binds to a public host.
-4. Configure the gateway URL and token inside Studio.
-
-## Tech Stack
-
-- Next.js App Router, React, and TypeScript for the main web application.
-- A custom Node server for the Studio-side WebSocket proxy.
-- Three.js, React Three Fiber, and Drei for the 3D office experience.
-- Phaser for office/viewer-builder workflows and related interactive surfaces.
-- Vitest for unit tests and Playwright for end-to-end coverage.
-
-## Configuration
-
-Important runtime paths:
-
-- OpenClaw config: `~/.openclaw/openclaw.json`
-- Studio settings: `~/.openclaw/claw3d/settings.json`
-
-Common environment variables:
-
-- `HOST` and `PORT` control the Studio server bind address and port.
-- `STUDIO_ACCESS_TOKEN` protects Studio when binding to a public host.
-- `NEXT_PUBLIC_GATEWAY_URL` provides the default upstream gateway URL when Studio settings are empty. **Note:** this is a build-time variable — changes require `npm run build` to take effect.
-- `CLAW3D_GATEWAY_URL` and `CLAW3D_GATEWAY_TOKEN` provide a runtime alternative to `NEXT_PUBLIC_GATEWAY_URL` that takes effect on server restart without a rebuild. These are also used as a fallback when `openclaw.json` is not present.
-- `OPENCLAW_STATE_DIR` and `OPENCLAW_CONFIG_PATH` override the default OpenClaw paths.
-- `OPENCLAW_GATEWAY_SSH_TARGET`, `OPENCLAW_GATEWAY_SSH_USER`, `OPENCLAW_GATEWAY_SSH_PORT`, and `OPENCLAW_GATEWAY_SSH_STRICT_HOST_KEY_CHECKING` support advanced gateway-host operations over SSH when needed.
-- `ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID`, and `ELEVENLABS_MODEL_ID` enable voice reply integration.
-
-See [`.env.example`](.env.example) for the full local development template.
-
-## Scripts
-
-- `npm run dev` starts the Studio dev server.
-- `npm run hermes-adapter` starts the Hermes WebSocket adapter.
-- `npm run demo-gateway` starts the built-in mock gateway for demo mode.
-- `npm run build` builds the production Next.js app.
-- `npm run start` starts the production server.
-- `npm run lint` runs ESLint.
-- `npm run typecheck` runs TypeScript without emitting output.
-- `npm run test` runs unit tests with Vitest.
-- `npm run e2e` runs Playwright tests.
-- `npm run studio:setup` prepares common local Studio prerequisites.
-- `npm run smoke:dev-server` runs a basic dev-server smoke check.
-
-## Documentation
-
-- [`VISION.md`](VISION.md): project direction and long-term guardrails.
-- [`ARCHITECTURE.md`](ARCHITECTURE.md): system boundaries, data flow, and major trade-offs.
-- [`TUTORIAL.md`](TUTORIAL.md): detailed step-by-step setup for OpenClaw + Tailscale + Claw3D.
-- [`MULTI_AGENT_BETA.md`](MULTI_AGENT_BETA.md): remote office beta setup, connection modes, and limitations.
-- [`CODE_DOCUMENTATION.md`](CODE_DOCUMENTATION.md): practical code map, extension points, and contributor onboarding order.
-- [`CONTRIBUTING.md`](CONTRIBUTING.md): local workflow, testing, and PR expectations.
-- [`SUPPORT.md`](SUPPORT.md): where to ask for help and how to route reports.
-- [`ROADMAP.md`](ROADMAP.md): near-term priorities and contributor-friendly work areas.
-- [`docs/pi-chat-streaming.md`](docs/pi-chat-streaming.md): gateway runtime streaming and transcript rendering.
-- [`docs/permissions-sandboxing.md`](docs/permissions-sandboxing.md): Studio permissions and OpenClaw behavior.
-- [`docs/hermes-gateway.md`](docs/hermes-gateway.md): Hermes adapter setup, capabilities, and current limitations.
-
-## Current Limitations
-
-- The immersive retro office (`/office`) and the Phaser builder (`/office/builder`) are related but still separate stacks.
-- The app keeps gateway secrets out of browser persistent storage, but the current connection flow still loads the upstream URL/token into browser memory at runtime.
-- Local Spotify auth for `SOUNDCLAW` currently stores an access token only. Refresh-token handling is not implemented yet, so local Spotify auth may need to be repeated after the token expires.
-
-## Troubleshooting
-
-If the UI loads but Connect fails, the problem is usually on the Studio -> Gateway side:
-
-- Confirm the upstream URL and token in Studio settings.
-- `EPROTO` or `wrong version number` usually means `wss://` was used against a non-TLS endpoint.
-- `INVALID_REQUEST` errors mentioning `minProtocol` or `maxProtocol` usually mean the gateway is too old for Claw3D protocol v3. Upgrade OpenClaw, use the Hermes adapter, or run `npm run demo-gateway`.
-- `401 Studio access token required` usually means `STUDIO_ACCESS_TOKEN` is enabled and the request is missing the expected `studio_access` cookie.
-- Helpful proxy error codes include `studio.gateway_url_missing`, `studio.gateway_token_missing`, `studio.upstream_error`, and `studio.upstream_closed`.
-
-Marketplace skill installs now use a gateway-native workspace flow and do not require enabling SSH on the user machine.
-
-### Spotify auth on localhost
-
-If you are testing the `SOUNDCLAW` jukebox locally and Spotify OAuth does not accept your `localhost` callback, use an `ngrok` callback bridge:
-
-1. Keep Claw3D running locally on `http://localhost:3000`.
-2. Start `ngrok` for the local Studio server, for example `ngrok http 3000`.
-3. In the jukebox setup UI, paste your public `ngrok` URL into the `ngrok Public URL` field.
-4. In the Spotify developer dashboard, register `https://<your-ngrok-host>/spotify/callback` as the redirect URI.
-5. Complete Spotify sign-in from the jukebox panel.
-
-How it works:
-
-- The main Claw3D app stays on `localhost`, so your normal local office state and agent state remain intact.
-- Spotify redirects to the `ngrok` callback URL.
-- The callback page passes the auth code back to the open local Claw3D window.
-
-Current local limitation:
-
-- Because only the Spotify access token is stored right now, you may need to repeat the `ngrok` auth flow when that token expires during local development.
-
-If you use other advanced gateway-host operations over SSH:
-
-- macOS: enable `System Settings` -> `General` -> `Sharing` -> `Remote Login`, and make sure the target user is allowed.
-- Windows: enable the `OpenSSH Server` optional feature, start the `sshd` service, and allow it through the firewall.
-- Linux: make sure `sshd` is installed, running, and reachable from the Studio machine.
-
-For first-time SSH connections, Claw3D uses `StrictHostKeyChecking=accept-new` by default so a new host key can be trusted automatically. If you need stricter behavior, set `OPENCLAW_GATEWAY_SSH_STRICT_HOST_KEY_CHECKING=yes`, or set it to `no` only if you explicitly want to skip host key checks.
-
-## Contributing
-
-Keep pull requests focused, run `npm run lint`, `npm run typecheck`, and `npm run test` before opening a PR, and update docs when behavior or architecture changes.
-
-## AI Editing Guardrails
-
-If you use Cursor or another AI-assisted workflow, review the committed project guardrails in [`.cursor/rules/claw3d-project-guardrails.mdc`](.cursor/rules/claw3d-project-guardrails.mdc).
-
-That rule file captures the shared editing expectations for this repository, including the Claw3D-vs-OpenClaw boundary, code placement conventions, office-stack distinctions, and documentation/test update expectations.
-
-Community expectations live in [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md). Security reporting instructions live in [`SECURITY.md`](SECURITY.md).
+Bu sürüm [Cemal Demirci](https://cemal.cloud) tarafından genişletilmiştir.
