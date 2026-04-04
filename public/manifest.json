@@ -1,0 +1,16 @@
+{
+  "name": "Claw3D — by Cemal Demirci",
+  "short_name": "Claw3D",
+  "description": "AI agent workspace — cemal.cloud",
+  "start_url": "/office",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#fbbf24",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

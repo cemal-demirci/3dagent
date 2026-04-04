@@ -5,6 +5,7 @@ const next = require("next");
 const { createAccessGate } = require("./access-gate");
 const { createGatewayProxy } = require("./gateway-proxy");
 const { createRateLimiter } = require("./rate-limiter");
+const { createSecurityHeaders } = require("./security-headers");
 const { logger } = require("./logger");
 const { assertPublicHostAllowed, resolveHosts } = require("./network-policy");
 const { loadUpstreamGatewaySettings } = require("./studio-settings");
@@ -97,6 +98,7 @@ async function main() {
   });
 
   const rateLimiter = createRateLimiter();
+  const securityHeaders = createSecurityHeaders();
 
   /** Health check handler — returns before Next.js or access gate */
   const handleHealth = (req, res) => {
@@ -138,6 +140,7 @@ async function main() {
   const httpsCert = useHttps ? await generateHttpsCert() : null;
 
   const handleRequest = (req, res) => {
+    if (securityHeaders.applyHeaders(req, res)) return;
     if (handleHealth(req, res)) return;
     if (rateLimiter.handleHttp(req, res)) return;
     if (accessGate.handleHttp(req, res)) return;

@@ -5,6 +5,22 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Claw3D \u2014 by Cemal Demirci",
   description: "AI agent workspace \u2014 cemal.cloud",
+  icons: {
+    icon: "/favicon.svg",
+  },
+  manifest: "/manifest.json",
+  themeColor: "#fbbf24",
+  openGraph: {
+    title: "Claw3D \u2014 by Cemal Demirci",
+    description: "AI ajanlar\u0131n\u0131z i\u00e7in 3D \u00e7al\u0131\u015fma alan\u0131 \u2014 cemal.cloud",
+    siteName: "Claw3D",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Claw3D \u2014 by Cemal Demirci",
+    description: "AI agent workspace \u2014 cemal.cloud",
+  },
 };
 
 const display = Bebas_Neue({
@@ -31,8 +47,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="tr" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#fbbf24" />
         <script
           dangerouslySetInnerHTML={{
             __html:

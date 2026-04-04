@@ -119,6 +119,58 @@ npm run dev          # http://localhost:3000
 - Hatalı token'da görsel hata mesajı
 - cemal.cloud branding
 
+### Güvenlik Başlıkları
+- X-Content-Type-Options, X-Frame-Options, X-XSS-Protection
+- Referrer-Policy, Permissions-Policy
+- HTTPS üzerinde HSTS (Strict-Transport-Security)
+- Yapılandırılabilir CORS desteği (preflight dahil)
+
+### Rate Limiting
+- IP bazlı kayan pencere (sliding window) hız sınırlayıcı
+- Sadece `/api/*` route'larını sınırlar, statik dosya ve WebSocket'i atlar
+- `RATE_LIMIT_MAX` ve `RATE_LIMIT_WINDOW_MS` ile yapılandırma
+- `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset` başlıkları
+
+### Yapılandırılmış Loglama (Structured Logging)
+- JSON formatında stdout/stderr çıktı
+- `LOG_LEVEL` ile seviye kontrolü (debug, info, warn, error)
+- Sıfır bağımlılık — sadece Node.js built-in
+
+### Health Check
+- `/health` endpoint'i — durum, uptime, sürüm bilgisi
+- Docker HEALTHCHECK ile entegre
+
+### Docker Desteği
+- Multi-stage Dockerfile (builder → runner)
+- Non-root kullanıcı (`claw3d`, uid 1001)
+- docker-compose.yml ile tek komutta çalıştırma
+- Otomatik health check
+
+### CI/CD (GitHub Actions)
+- Push ve PR'da otomatik çalışır (main branch)
+- Node.js 20 ve 22 matris testi
+- Lint → Typecheck → Test → Build pipeline'ı
+
+### Masaüstü Bildirimleri
+- Tarayıcı Notification API entegrasyonu
+- İzin isteme ve durum kontrolü
+- Tab odakta değilken bildirim gönderme
+- Settings panelinden yapılandırma
+
+### Dışa/İçe Aktarma (Export/Import)
+- `/api/studio/export` — Tüm ayarları JSON olarak indir
+- `/api/studio/import` — JSON dosyasından ayarları yükle
+- Settings panelinden tek tıkla erişim
+
+### PWA Desteği
+- `manifest.json` — Standalone uygulama modu
+- SVG favicon (C3 logosu)
+- Open Graph ve Twitter meta etiketleri
+- Tema rengi: amber (#fbbf24)
+
+### API Dokümantasyonu
+- Tüm endpoint'ler belgelenmiş → [`API.md`](API.md)
+
 ---
 
 ## Teknik Altyapı
@@ -145,6 +197,9 @@ claw3d/
 │   ├── index.js               # Ana sunucu (HTTP/HTTPS + Next.js)
 │   ├── access-gate.js         # Token kimlik doğrulama
 │   ├── gateway-proxy.js       # WebSocket proxy
+│   ├── rate-limiter.js        # IP bazlı hız sınırlayıcı
+│   ├── security-headers.js    # Güvenlik başlıkları middleware
+│   ├── logger.js              # Yapılandırılmış JSON logger
 │   ├── demo-gateway-adapter.js # Demo gateway
 │   └── hermes-gateway-adapter.js # Hermes adaptörü
 │
@@ -167,11 +222,20 @@ claw3d/
 │   │   └── spotify-jukebox/   # Müzik çalar
 │   │
 │   └── lib/
-│       ├── i18n/              # Türkçe çeviriler (1260+ key)
+│       ├── i18n/              # Türkçe çeviriler (1280+ key)
 │       ├── gateway/           # Gateway iletişimi
 │       ├── studio/            # Studio ayarları
+│       ├── notifications.ts   # Masaüstü bildirimleri
 │       └── voiceReply/        # ElevenLabs TTS
 │
+├── tests/unit/                # Unit testler (Vitest)
+├── public/
+│   ├── favicon.svg            # SVG favicon
+│   └── manifest.json          # PWA manifest
+├── .github/workflows/ci.yml   # CI/CD pipeline
+├── Dockerfile                 # Multi-stage Docker build
+├── docker-compose.yml         # Docker Compose
+├── API.md                     # API dokümantasyonu
 ├── .env.example               # Ortam değişkeni şablonu
 └── package.json               # v0.1.4
 ```
@@ -190,6 +254,10 @@ claw3d/
 | `GEMINI_API_KEY` | Gemini API anahtarı |
 | `OPENAI_API_KEY` | OpenAI API anahtarı |
 | `ELEVENLABS_API_KEY` | Sesli yanıt için ElevenLabs |
+| `RATE_LIMIT_MAX` | Pencere başına max istek (varsayılan: 100) |
+| `RATE_LIMIT_WINDOW_MS` | Pencere süresi ms (varsayılan: 60000) |
+| `LOG_LEVEL` | Log seviyesi: debug, info, warn, error (varsayılan: info) |
+| `CORS_ORIGIN` | CORS izin verilen origin (boşsa CORS kapalı) |
 
 Tüm değişkenler için: [`.env.example`](.env.example)
 
@@ -209,6 +277,7 @@ Tüm değişkenler için: [`.env.example`](.env.example)
 | `npm run typecheck` | TypeScript kontrol |
 | `npm run test` | Unit testler (Vitest) |
 | `npm run e2e` | E2E testler (Playwright) |
+| `docker compose up -d` | Docker ile çalıştır |
 
 ---
 
