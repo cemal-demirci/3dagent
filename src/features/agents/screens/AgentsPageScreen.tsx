@@ -526,6 +526,7 @@ const AgentsPageScreen = () => {
         preferredSelectedAgentId: preferredSelectedAgentIdRef.current,
         hasCurrentSelection: Boolean(stateRef.current.selectedAgentId),
         logError: (message, error) => console.error(message, error),
+        applyPatchNow: (patch) => settingsCoordinator.applyPatchNow(patch),
       });
       executeStudioBootstrapLoadCommands({
         commands,

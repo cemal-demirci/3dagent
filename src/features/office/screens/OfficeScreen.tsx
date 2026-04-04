@@ -1400,6 +1400,7 @@ export function OfficeScreen({
           preferredSelectedAgentId: null,
           hasCurrentSelection: false,
           logError: console.error,
+          applyPatchNow: (patch) => settingsCoordinator.applyPatchNow(patch),
         });
         if (connectionEpochAtStart !== connectionEpochRef.current) {
           return;

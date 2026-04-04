@@ -1,4 +1,5 @@
 import { hydrateAgentFleetFromGateway } from "@/features/agents/operations/agentFleetHydration";
+import { seedPresetAgentsIfEmpty } from "@/features/agents/operations/seedPresetAgentsOperation";
 import {
   planBootstrapSelection,
   planFocusedFilterPatch,
@@ -33,9 +34,10 @@ export async function runStudioBootstrapLoadOperation(params: {
   preferredSelectedAgentId: string | null;
   hasCurrentSelection: boolean;
   logError?: (message: string, error: unknown) => void;
+  applyPatchNow?: (patch: StudioSettingsPatch) => Promise<void>;
 }): Promise<StudioBootstrapLoadCommand[]> {
   try {
-    const result = await hydrateAgentFleetFromGateway({
+    let result = await hydrateAgentFleetFromGateway({
       client: params.client,
       gatewayUrl: params.gatewayUrl,
       cachedConfigSnapshot: params.cachedConfigSnapshot,
@@ -43,6 +45,34 @@ export async function runStudioBootstrapLoadOperation(params: {
       isDisconnectLikeError: params.isDisconnectLikeError,
       logError: params.logError,
     });
+
+    // Seed preset agents when gateway fleet is empty
+    if (result.seeds.length === 0) {
+      try {
+        const seedResult = await seedPresetAgentsIfEmpty({
+          client: params.client,
+          seeds: result.seeds,
+        });
+        if (seedResult) {
+          // Persist handcrafted avatars BEFORE re-hydration so hydration picks them up
+          if (params.applyPatchNow) {
+            await params.applyPatchNow({
+              avatars: { [params.gatewayUrl]: seedResult.avatars },
+            });
+          }
+          result = await hydrateAgentFleetFromGateway({
+            client: params.client,
+            gatewayUrl: params.gatewayUrl,
+            cachedConfigSnapshot: result.configSnapshot ?? params.cachedConfigSnapshot,
+            loadStudioSettings: params.loadStudioSettings,
+            isDisconnectLikeError: params.isDisconnectLikeError,
+            logError: params.logError,
+          });
+        }
+      } catch (seedErr) {
+        params.logError?.("Failed to seed preset agents.", seedErr);
+      }
+    }
 
     const selectionIntent = planBootstrapSelection({
       hasCurrentSelection: params.hasCurrentSelection,

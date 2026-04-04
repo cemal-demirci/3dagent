@@ -1282,6 +1282,10 @@ export const tr = {
   "settings.importSuccess": "Ayarlar başarıyla içe aktarıldı",
   "settings.importError": "İçe aktarma başarısız",
 
+  // ---- Preset Agents ----
+  "preset.seeding": "Hazır ajanlar kuruluyor...",
+  "preset.seeded": "6 ajan hazır!",
+
   // ---- Access Gate ----
   "access.title": "Eri\u015fim",
   "access.tokenPlaceholder": "Eri\u015fim token'\u0131n\u0131z\u0131 girin",
