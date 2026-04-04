@@ -91,9 +91,27 @@ npm run dev          # http://localhost:3000
 - Ses seçimi ve hız ayarı
 - Sesli mesaj kaydı
 
+### Kanban Görev Panosu
+
+<p align="center">
+  <img src="docs/images/kanban-board.png" alt="3DAgent Kanban Panosu" width="100%" />
+</p>
+
 ### Spotify Jukebox (SOUNDCLAW)
 - Ofiste müzik çalma
 - OAuth entegrasyonu
+
+---
+
+## Stüdyo Ayarları
+
+<p align="center">
+  <img src="docs/images/settings-panel.png" alt="3DAgent Stüdyo Ayarları — API Anahtarları ve Gateway" width="100%" />
+</p>
+
+<p align="center">
+  <img src="docs/images/settings-voice.png" alt="3DAgent Ses Ayarları — Ses Seçimi ve Hız" width="100%" />
+</p>
 
 ---
 
