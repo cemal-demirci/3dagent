@@ -14,6 +14,9 @@ import {
   Copy,
   Check,
   ChevronDown,
+  Globe,
+  Zap,
+  KeyRound,
 } from "lucide-react";
 
 const features = [
@@ -55,6 +58,27 @@ const installSteps = [
   { step: 3, cmd: "npm run dev" },
 ];
 
+const gettingStartedSteps = [
+  {
+    num: 1,
+    icon: Globe,
+    title: "Uygulamayı Aç",
+    desc: "Tarayıcınızdan 3DAgent'a erişin veya PWA olarak kurun.",
+  },
+  {
+    num: 2,
+    icon: Zap,
+    title: "Bağlan veya Demo Dene",
+    desc: "Gateway'e bağlanın veya demo modda keşfetmeye başlayın.",
+  },
+  {
+    num: 3,
+    icon: KeyRound,
+    title: "AI Anahtarını Ayarla",
+    desc: "LLM sağlayıcınızı yapılandırın ve ajanları çalıştırmaya başlayın.",
+  },
+];
+
 const techStack = [
   "Next.js 16",
   "React 19",
@@ -85,6 +109,8 @@ function CopyButton({ text }: { text: string }) {
 }
 
 export default function Home() {
+  const [devOpen, setDevOpen] = useState(false);
+
   return (
     <div className="bg-[#0a0a0a] text-neutral-100">
       {/* Hero */}
@@ -98,22 +124,22 @@ export default function Home() {
           Sesli komut, multi-agent, marketplace — hepsi tek workspace&apos;te.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-4">
+          <Link
+            href="/office"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-amber-400 text-black font-semibold rounded-lg hover:bg-amber-300 transition-colors"
+          >
+            <ExternalLink className="w-5 h-5" />
+            Hemen Başla
+          </Link>
           <a
             href="https://github.com/cemal-demirci/3dagent"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-amber-400 text-black font-semibold rounded-lg hover:bg-amber-300 transition-colors"
-          >
-            <Github className="w-5 h-5" />
-            GitHub&apos;dan İndir
-          </a>
-          <Link
-            href="/office"
             className="inline-flex items-center gap-2 px-6 py-3 border border-neutral-700 text-neutral-200 font-semibold rounded-lg hover:border-amber-400 hover:text-amber-400 transition-colors"
           >
-            <ExternalLink className="w-5 h-5" />
-            Demo&apos;yu Dene
-          </Link>
+            <Github className="w-5 h-5" />
+            GitHub
+          </a>
         </div>
         <div className="absolute bottom-8 animate-bounce text-neutral-600">
           <ChevronDown className="w-6 h-6" />
@@ -139,31 +165,59 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Installation */}
-      <section className="max-w-3xl mx-auto px-6 py-24">
+      {/* Getting Started */}
+      <section className="max-w-5xl mx-auto px-6 py-24">
         <h2 className="font-display text-4xl sm:text-5xl text-center text-amber-400 mb-16">
-          KURULUM
+          NASIL BAŞLANIR
         </h2>
-        <div className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-3 border-b border-neutral-800">
-            <span className="w-3 h-3 rounded-full bg-red-500" />
-            <span className="w-3 h-3 rounded-full bg-yellow-500" />
-            <span className="w-3 h-3 rounded-full bg-green-500" />
-            <span className="ml-2 text-neutral-500 text-sm font-mono">terminal</span>
-          </div>
-          <div className="p-6 space-y-4">
-            {installSteps.map((s) => (
-              <div key={s.step} className="flex items-center gap-3">
-                <span className="text-amber-400 font-mono text-sm shrink-0">
-                  {s.step}.
-                </span>
-                <code className="font-mono text-sm text-neutral-300 flex-1 overflow-x-auto">
-                  {s.cmd}
-                </code>
-                <CopyButton text={s.cmd} />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {gettingStartedSteps.map((s) => (
+            <div
+              key={s.num}
+              className="border border-neutral-800 rounded-xl p-8 text-center hover:border-amber-400/50 transition-colors group"
+            >
+              <span className="font-display text-4xl text-amber-400">{s.num}</span>
+              <s.icon className="w-8 h-8 text-neutral-500 group-hover:text-amber-400 transition-colors mx-auto mt-4 mb-4" />
+              <h3 className="font-semibold text-lg mb-2">{s.title}</h3>
+              <p className="text-neutral-400 text-sm leading-relaxed">{s.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Developer CLI Accordion */}
+        <div className="mt-10">
+          <button
+            onClick={() => setDevOpen(!devOpen)}
+            className="flex items-center gap-2 mx-auto text-neutral-500 hover:text-amber-400 transition-colors text-sm font-mono"
+          >
+            <ChevronDown
+              className={`w-4 h-4 transition-transform ${devOpen ? "rotate-180" : ""}`}
+            />
+            Geliştiriciler için
+          </button>
+          {devOpen && (
+            <div className="mt-4 bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden max-w-3xl mx-auto">
+              <div className="flex items-center gap-2 px-4 py-3 border-b border-neutral-800">
+                <span className="w-3 h-3 rounded-full bg-red-500" />
+                <span className="w-3 h-3 rounded-full bg-yellow-500" />
+                <span className="w-3 h-3 rounded-full bg-green-500" />
+                <span className="ml-2 text-neutral-500 text-sm font-mono">terminal</span>
               </div>
-            ))}
-          </div>
+              <div className="p-6 space-y-4">
+                {installSteps.map((s) => (
+                  <div key={s.step} className="flex items-center gap-3">
+                    <span className="text-amber-400 font-mono text-sm shrink-0">
+                      {s.step}.
+                    </span>
+                    <code className="font-mono text-sm text-neutral-300 flex-1 overflow-x-auto">
+                      {s.cmd}
+                    </code>
+                    <CopyButton text={s.cmd} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 

@@ -1,8 +1,8 @@
-# 3DAGENT
+# 3DAGENT — Cemal Claude Ofis
 
 AI ajanlarınız için 3D çalışma alanı.
 
-> Orijinal proje [iamlukethedev/Claw3D](https://github.com/iamlukethedev/Claw3D) tarafından geliştirilmiştir. Bu sürüm (3DAgent) Türkçe lokalizasyon, otomatik kurulum, branding ve ek özelliklerle genişletilmiştir. MIT lisansı altında dağıtılmaktadır.
+> Orijinal proje [iamlukethedev/Claw3D](https://github.com/iamlukethedev/Claw3D)'den fork edilmiştir. MIT lisansı altında dağıtılmaktadır.
 
 <p align="center">
   <img src="docs/images/landing-page.png" alt="3DAgent Landing Page" width="100%" />
@@ -356,6 +356,4 @@ npm run dev
 
 ## Lisans
 
-MIT — Orijinal proje [iamlukethedev](https://github.com/iamlukethedev/Claw3D) tarafindan gelistirilmistir.
-
-Bu sürüm [Cemal Demirci](https://cemal.cloud) tarafından genişletilmiştir.
+MIT — Orijinal proje [iamlukethedev/Claw3D](https://github.com/iamlukethedev/Claw3D)'den fork edilmiştir.

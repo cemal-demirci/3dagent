@@ -149,8 +149,8 @@ const makeCard = (
   const nowIso = new Date().toISOString();
   return {
     id: input.id,
-    title: input.title.trim() || "Untitled task",
-    description: input.description?.trim() ?? "",
+    title: (input.title ?? "").trim() || "Untitled task",
+    description: (input.description ?? "").trim(),
     status: input.status ?? "todo",
     source: input.source ?? "3dagent_manual",
     sourceEventId: input.sourceEventId ?? null,
@@ -573,9 +573,9 @@ const buildStandupSeedCards = (
   if (!config) return [];
   return Object.entries(config.manualByAgentId)
     .map(([agentId, entry]) => {
-      const title = entry.currentTask.trim();
-      const note = entry.note.trim();
-      const blockers = entry.blockers.trim();
+      const title = (entry.currentTask ?? "").trim();
+      const note = (entry.note ?? "").trim();
+      const blockers = (entry.blockers ?? "").trim();
       if (!title && !note && !blockers) return null;
       const existing =
         existingCards.find((card) => card.id === `standup:${agentId}`) ?? null;

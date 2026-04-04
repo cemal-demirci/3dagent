@@ -2322,7 +2322,7 @@ export function RetroOffice3D({
   githubSkill = null,
   taskManagerEnabled = false,
   soundclawEnabled = false,
-  officeTitle = "Luke Headquarters",
+  officeTitle = "Cemal Claude Ofis",
   officeTitleLoaded = false,
   remoteOfficeEnabled = false,
   remoteOfficeSourceKind = "presence_endpoint",

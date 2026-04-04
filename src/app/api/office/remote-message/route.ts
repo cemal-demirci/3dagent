@@ -59,7 +59,7 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
-    const remoteGatewayUrl = officePreference.remoteOfficeGatewayUrl.trim();
+    const remoteGatewayUrl = (officePreference.remoteOfficeGatewayUrl ?? "").trim();
     if (!remoteGatewayUrl) {
       return NextResponse.json(
         { error: "Remote office gateway URL is not configured." },

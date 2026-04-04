@@ -83,7 +83,9 @@ export const AISetupStep = ({
         setKeyDrafts((prev) => ({ ...prev, [provider]: "" }));
         setTimeout(() => setSaveFlash((prev) => ({ ...prev, [provider]: false })), 1500);
         await fetchAIStatus();
-      } catch {}
+      } catch (err) {
+        console.error(`[AISetupStep] ai.keys.set failed for ${provider}:`, err);
+      }
       setSaving((prev) => ({ ...prev, [provider]: false }));
     },
     [callGateway, keyDrafts, fetchAIStatus],
@@ -96,12 +98,21 @@ export const AISetupStep = ({
     if (!callGateway || !connected) return;
     try {
       const result = (await callGateway("setup.status", {})) as {
+        providers?: {
+          anthropic?: { agentSdk?: boolean };
+          gemini?: { cli?: boolean };
+        };
         agentSdk?: boolean;
         cli?: boolean;
       };
-      if (result) setCliStatus(result);
-    } catch {
-      // setup.status may not exist on all gateways — silently ignore
+      if (result) {
+        setCliStatus({
+          agentSdk: result.providers?.anthropic?.agentSdk ?? result.agentSdk,
+          cli: result.providers?.gemini?.cli ?? result.cli,
+        });
+      }
+    } catch (err) {
+      console.error("[AISetupStep] setup.status failed:", err);
     }
   }, [callGateway, connected]);
 

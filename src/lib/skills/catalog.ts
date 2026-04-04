@@ -30,8 +30,8 @@ const PACKAGED_SKILLS: PackagedSkillDefinition[] = [
     name: "todo",
     description: "Maintain a shared workspace TODO list with blocked tasks.",
     installSource: "openclaw-workspace",
-    creatorName: "iamlukethedev",
-    creatorUrl: "http://x.com/iamlukethedev/",
+    creatorName: "cemal-demirci",
+    creatorUrl: "https://github.com/cemal-demirci",
   },
   {
     packageId: "task-manager",
@@ -40,8 +40,8 @@ const PACKAGED_SKILLS: PackagedSkillDefinition[] = [
     description:
       "Capture actionable requests as persistent tasks and keep a shared Kanban task store in sync.",
     installSource: "openclaw-workspace",
-    creatorName: "iamlukethedev",
-    creatorUrl: "https://github.com/iamlukethedev",
+    creatorName: "cemal-demirci",
+    creatorUrl: "https://github.com/cemal-demirci",
   },
   {
     packageId: "soundclaw",
@@ -49,8 +49,8 @@ const PACKAGED_SKILLS: PackagedSkillDefinition[] = [
     name: "soundclaw",
     description: "Control Spotify playback, search music, and return shareable music links.",
     installSource: "openclaw-workspace",
-    creatorName: "iamlukethedev",
-    creatorUrl: "https://github.com/iamlukethedev",
+    creatorName: "cemal-demirci",
+    creatorUrl: "https://github.com/cemal-demirci",
   },
 ];
 

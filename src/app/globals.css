@@ -1353,3 +1353,7 @@ textarea:focus::-webkit-scrollbar {
     transform: translateY(-1px);
   }
 }
+
+.animate-spin-slow {
+  animation: spin 3s linear infinite;
+}

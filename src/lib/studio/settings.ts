@@ -440,7 +440,7 @@ const normalizeTaskBoardPreference = (
   };
 };
 
-const DEFAULT_OFFICE_TITLE = "Luke Headquarters";
+const DEFAULT_OFFICE_TITLE = "Cemal Claude Ofis";
 const DEFAULT_REMOTE_OFFICE_LABEL = "Remote Office";
 const DEFAULT_REMOTE_OFFICE_SOURCE_KIND = "presence_endpoint" as const;
 

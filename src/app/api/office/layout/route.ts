@@ -64,7 +64,7 @@ export async function GET(request: Request) {
       if (
         !officePreference.remoteOfficeEnabled ||
         officePreference.remoteOfficeSourceKind !== "presence_endpoint" ||
-        !officePreference.remoteOfficePresenceUrl.trim()
+        !(officePreference.remoteOfficePresenceUrl ?? "").trim()
       ) {
         return NextResponse.json({ snapshot: null }, { headers: { "Cache-Control": "no-store" } });
       }

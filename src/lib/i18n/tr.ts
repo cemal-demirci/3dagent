@@ -1204,7 +1204,7 @@ export const tr = {
   "mock.whatShouldISayTo": "{callee} kişisine ne söylememi istersiniz?",
   "mock.waitingForMessageTo": "{callee} kişisine mesajınız bekleniyor.",
   "mock.connectedTo": "{callee} ile bağlantı kuruldu.",
-  "mock.hiThisIsAssistant": "Merhaba, ben Luke'un asistanı. Size şunu iletmemi söyledi: {message}. Teşekkür ederim.",
+  "mock.hiThisIsAssistant": "Merhaba, ben Cemal'in asistanı. Size şunu iletmemi söyledi: {message}. Teşekkür ederim.",
   "mock.okayThanks": "Tamam, bildirdiğin için teşekkürler.",
   "mock.seeYouSoon": "Tamam, yakında görüşürüz.",
   "mock.loveToo": "Ben de seni seviyorum. Sonra konuşuruz.",
@@ -1294,4 +1294,9 @@ export const tr = {
   "access.tokenPlaceholder": "Eri\u015fim token'\u0131n\u0131z\u0131 girin",
   "access.submit": "Giri\u015f",
   "access.error": "Ge\u00e7ersiz token",
+
+  // ---- PWA ----
+  "pwa.updateAvailable": "Yeni s\u00fcr\u00fcm mevcut",
+  "pwa.updateAction": "G\u00fcncelle",
+  "pwa.dismiss": "Kapat",
 } as const;

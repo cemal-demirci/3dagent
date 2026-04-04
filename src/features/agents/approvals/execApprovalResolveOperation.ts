@@ -59,7 +59,7 @@ export const resolveExecApprovalViaStudio = async (params: {
     if (!scopedSessionKey) return null;
     const matched = params
       .getAgents()
-      .find((agent) => agent.sessionKey.trim() === scopedSessionKey);
+      .find((agent) => (agent.sessionKey ?? "").trim() === scopedSessionKey);
     return matched?.agentId ?? null;
   };
 

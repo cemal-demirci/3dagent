@@ -315,7 +315,7 @@ function extractOpenAiStyleError(payload, fallbackMessage) {
   if (payload && typeof payload === "object") {
     const message =
       typeof payload?.error?.message === "string"
-        ? payload.error.message.trim()
+        ? (payload.error?.message ?? "").trim()
         : "";
     if (message) return message;
   }

@@ -85,7 +85,13 @@ function initOpenAIClient(apiKey) {
 }
 
 // ---------------------------------------------------------------------------
-// Agent definitions with provider/model assignments
+// Default provider/model — all agents use this unless overridden at runtime
+// ---------------------------------------------------------------------------
+const DEFAULT_PROVIDER = "anthropic";
+const DEFAULT_MODEL = "claude-sonnet-4-20250514";
+
+// ---------------------------------------------------------------------------
+// Agent definitions
 // ---------------------------------------------------------------------------
 const agents = new Map([
   ["erlik-devops", {
@@ -93,48 +99,48 @@ const agents = new Map([
     name: "Erlik",
     role: "DevOps & Infrastructure",
     workspace: "/demo/devops",
-    provider: "anthropic",
-    model: "claude-sonnet-4-20250514",
+    provider: DEFAULT_PROVIDER,
+    model: DEFAULT_MODEL,
   }],
   ["kayra-iot", {
     id: "kayra-iot",
     name: "Kayra",
     role: "IoT & Embedded",
     workspace: "/demo/iot",
-    provider: "gemini",
-    model: "gemini-2.0-flash",
+    provider: DEFAULT_PROVIDER,
+    model: DEFAULT_MODEL,
   }],
   ["ulgen-backend", {
     id: "ulgen-backend",
     name: "Ülgen",
     role: "Backend",
     workspace: "/demo/backend",
-    provider: "openai",
-    model: "gpt-4o",
+    provider: DEFAULT_PROVIDER,
+    model: DEFAULT_MODEL,
   }],
   ["umay-frontend", {
     id: "umay-frontend",
     name: "Umay",
     role: "Frontend & Mobile",
     workspace: "/demo/frontend",
-    provider: "anthropic",
-    model: "claude-sonnet-4-20250514",
+    provider: DEFAULT_PROVIDER,
+    model: DEFAULT_MODEL,
   }],
   ["asena-video", {
     id: "asena-video",
     name: "Asena",
     role: "Video & Streaming",
     workspace: "/demo/video",
-    provider: "gemini",
-    model: "gemini-2.0-flash",
+    provider: DEFAULT_PROVIDER,
+    model: DEFAULT_MODEL,
   }],
   ["tengri-ai", {
     id: "tengri-ai",
     name: "Tengri",
     role: "AI & Automation",
     workspace: "/demo/ai",
-    provider: "openai",
-    model: "gpt-4o",
+    provider: DEFAULT_PROVIDER,
+    model: DEFAULT_MODEL,
   }],
 ]);
 
@@ -637,14 +643,15 @@ async function handleMethod(method, params, id, sendEvent) {
     case "ai.keys.set": {
       const provider = typeof p.provider === "string" ? p.provider.trim() : "";
       const apiKey = typeof p.apiKey === "string" ? p.apiKey.trim() : "";
-      if (!provider || !["anthropic", "gemini", "openai"].includes(provider)) {
-        return resErr(id, "invalid_provider", "Provider must be anthropic, gemini, or openai.");
+      if (!provider || !["anthropic", "gemini", "openai", "groq"].includes(provider)) {
+        return resErr(id, "invalid_provider", "Provider must be anthropic, gemini, openai, or groq.");
       }
       aiKeys[provider] = apiKey;
       if (apiKey) {
         if (provider === "anthropic") initAnthropicClient(apiKey);
         else if (provider === "gemini") initGeminiClient(apiKey);
         else if (provider === "openai") initOpenAIClient(apiKey);
+        // groq: key stored but no dedicated client init needed
       } else {
         // Clear client when key is removed
         if (provider === "anthropic") anthropicClient = null;
@@ -658,6 +665,7 @@ async function handleMethod(method, params, id, sendEvent) {
           anthropic: Boolean(anthropicClient),
           gemini: Boolean(geminiClient),
           openai: Boolean(openaiClient),
+          groq: Boolean(aiKeys.groq),
         },
       });
     }
@@ -668,6 +676,7 @@ async function handleMethod(method, params, id, sendEvent) {
           anthropic: { configured: Boolean(aiKeys.anthropic), active: Boolean(anthropicClient) },
           gemini: { configured: Boolean(aiKeys.gemini), active: Boolean(geminiClient) },
           openai: { configured: Boolean(aiKeys.openai), active: Boolean(openaiClient) },
+          groq: { configured: Boolean(aiKeys.groq), active: Boolean(aiKeys.groq) },
         },
       });
     }
@@ -688,8 +697,8 @@ async function handleMethod(method, params, id, sendEvent) {
         name,
         role,
         workspace: `/demo/${slug}`,
-        provider: "anthropic",
-        model: "claude-sonnet-4-20250514",
+        provider: DEFAULT_PROVIDER,
+        model: DEFAULT_MODEL,
       });
       broadcastEvent({
         type: "event",
@@ -763,11 +772,54 @@ async function handleMethod(method, params, id, sendEvent) {
     // -----------------------------------------------------------------------
     case "skills.status":
       return resOk(id, {
+        workspaceDir: "/demo/workspace",
+        managedSkillsDir: "/demo/workspace/.skills",
         skills: [
-          { id: "task-manager", name: "Task Manager", installed: true, version: "1.0.0" },
-          { id: "soundclaw", name: "Soundclaw", installed: true, version: "1.0.0" },
+          {
+            name: "Task Manager",
+            description: "Turns actionable requests into persistent shared tasks that power the 3DAgent Kanban board.",
+            source: "openclaw-workspace",
+            bundled: false,
+            filePath: "/demo/workspace/skills/task-manager/task-manager.md",
+            baseDir: "/demo/workspace/skills/task-manager",
+            skillKey: "task-manager",
+            always: false,
+            disabled: false,
+            blockedByAllowlist: false,
+            eligible: true,
+            requirements: { bins: [], anyBins: [], env: [], config: [], os: [] },
+            missing: { bins: [], anyBins: [], env: [], config: [], os: [] },
+            configChecks: [],
+            install: [],
+          },
+          {
+            name: "Soundclaw",
+            description: "Lets agents search Spotify, control playback, and return music links.",
+            source: "openclaw-workspace",
+            bundled: false,
+            filePath: "/demo/workspace/skills/soundclaw/soundclaw.md",
+            baseDir: "/demo/workspace/skills/soundclaw",
+            skillKey: "soundclaw",
+            always: false,
+            disabled: false,
+            blockedByAllowlist: false,
+            eligible: true,
+            requirements: { bins: [], anyBins: [], env: [], config: [], os: [] },
+            missing: { bins: [], anyBins: [], env: [], config: [], os: [] },
+            configChecks: [],
+            install: [],
+          },
         ],
       });
+
+    case "skills.install":
+      return resOk(id, { ok: true, message: "Installed.", stdout: "", stderr: "", code: 0 });
+
+    case "skills.update":
+      return resOk(id, { ok: true, skillKey: p.skillKey || "", config: {} });
+
+    case "skills.remove":
+      return resOk(id, { removed: true, removedPath: `/demo/workspace/skills/${p.skillKey || "unknown"}`, source: "openclaw-workspace" });
 
     // -----------------------------------------------------------------------
     // Setup status — for onboarding wizard AI configuration

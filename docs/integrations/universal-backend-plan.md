@@ -224,11 +224,11 @@ Scope:
 - Retire or reduce the Hermes OpenClaw shim.
 - Convert shim-only routes into provider-native routes where possible.
 
-## Near-Term Guidance For Luke
+## Near-Term Guidance
 
-If Luke wants "drop-in Hermes support right now", PR #70 is directionally useful.
+If the goal is "drop-in Hermes support right now", PR #70 is directionally useful.
 
-If Luke wants "3DAgent should support any backend cleanly", PR #70 should not be the mainline architecture.
+If the goal is "3DAgent should support any backend cleanly", PR #70 should not be the mainline architecture.
 
 Best compromise:
 

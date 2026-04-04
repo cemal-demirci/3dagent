@@ -1143,7 +1143,7 @@ const AgentChatComposer = memo(function AgentChatComposer({
             ref={inputRef}
             rows={1}
             value={value}
-            className="chat-composer-input min-h-[64px] flex-1 resize-none border-0 bg-transparent px-0 py-1 text-[15px] leading-6 text-foreground outline-none shadow-none transition placeholder:text-muted-foreground/65 focus:outline-none focus-visible:outline-none focus-visible:ring-0"
+            className="chat-composer-input min-h-[36px] max-h-[120px] flex-1 resize-none border-0 bg-transparent px-0 py-1 text-[15px] leading-6 text-foreground outline-none shadow-none transition placeholder:text-muted-foreground/65 focus:outline-none focus-visible:outline-none focus-visible:ring-0"
             onChange={onChange}
             onKeyDown={onKeyDown}
             placeholder={t("chat.typeMessage")}
@@ -1249,8 +1249,10 @@ export const AgentChatPanel = ({
     const el = draftRef.current;
     if (!el) return;
     el.style.height = "auto";
-    el.style.height = `${el.scrollHeight}px`;
-    el.style.overflowY = el.scrollHeight > el.clientHeight ? "auto" : "hidden";
+    const maxH = 120;
+    const h = Math.min(el.scrollHeight, maxH);
+    el.style.height = `${h}px`;
+    el.style.overflowY = el.scrollHeight > maxH ? "auto" : "hidden";
   }, []);
 
   const handleDraftRef = useCallback((el: HTMLTextAreaElement | HTMLInputElement | null) => {

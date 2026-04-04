@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Bebas_Neue, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { PWAUpdateBanner } from "@/features/pwa/PWAUpdateBanner";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -11,6 +12,11 @@ export const metadata: Metadata = {
     icon: "/favicon.svg",
   },
   manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "3DAgent",
+  },
   openGraph: {
     title: "3DAgent — 3D AI Agent Workspace",
     description:
@@ -59,6 +65,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         <script
           dangerouslySetInnerHTML={{
             __html:
@@ -68,6 +75,7 @@ export default function RootLayout({
       </head>
       <body className={`${display.variable} ${sans.variable} ${mono.variable} antialiased`}>
         <main className="min-h-screen w-full bg-background">{children}</main>
+        <PWAUpdateBanner />
       </body>
     </html>
   );

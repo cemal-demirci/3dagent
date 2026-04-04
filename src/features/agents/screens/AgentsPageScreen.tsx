@@ -188,11 +188,11 @@ const resolveControlUiUrl = (params: {
 const resolveNextNewAgentName = (agents: AgentState[]) => {
   const baseName = "New Agent";
   const existingNames = new Set(
-    agents.map((agent) => agent.name.trim().toLowerCase()).filter((name) => name.length > 0)
+    agents.map((agent) => (agent.name ?? "").trim().toLowerCase()).filter((name) => name.length > 0)
   );
   const existingIds = new Set(
     agents
-      .map((agent) => agent.agentId.trim().toLowerCase())
+      .map((agent) => (agent.agentId ?? "").trim().toLowerCase())
       .filter((agentId) => agentId.length > 0)
   );
   const baseLower = baseName.toLowerCase();

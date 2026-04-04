@@ -372,7 +372,7 @@ export const useOfficeSkillsMarketplace = ({
           agents.find((agent) => agent.agentId === targetAgentId)?.name ?? "the main agent";
         setMessage({
           kind: "success",
-          text: `Installed and enabled ${packagedSkill.name.trim()} for ${agentName}.`,
+          text: `Installed and enabled ${(packagedSkill.name ?? packagedSkill.skillKey ?? "skill").trim()} for ${agentName}.`,
         });
       } catch (err) {
         const nextMessage =

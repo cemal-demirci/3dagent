@@ -9,6 +9,13 @@ function createSecurityHeaders(options) {
   const corsOrigin = options?.corsOrigin ?? process.env.CORS_ORIGIN ?? "";
 
   const applyHeaders = (req, res) => {
+    // Service worker files — no cache, allow root scope
+    const pathname = require("url").parse(req.url).pathname;
+    if (pathname === "/sw.js" || pathname?.startsWith("/workbox-")) {
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      res.setHeader("Service-Worker-Allowed", "/");
+    }
+
     // Prevent MIME sniffing
     res.setHeader("X-Content-Type-Options", "nosniff");
 

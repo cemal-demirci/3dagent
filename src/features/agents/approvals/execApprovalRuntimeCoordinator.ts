@@ -54,7 +54,7 @@ const resolveAgentForPauseRequest = (params: {
   const approvalSessionKey = params.approval.sessionKey?.trim() ?? "";
   if (!approvalSessionKey) return null;
   return (
-    params.agents.find((agent) => agent.sessionKey.trim() === approvalSessionKey) ?? null
+    params.agents.find((agent) => (agent.sessionKey ?? "").trim() === approvalSessionKey) ?? null
   );
 };
 

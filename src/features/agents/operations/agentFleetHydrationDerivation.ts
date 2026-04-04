@@ -290,7 +290,7 @@ export const deriveHydrateAgentFleetResult = (
       });
     }
     const sessionKeys = Array.from(
-      new Set(activeAgents.map((agent) => agent.sessionKey).filter((key) => key.trim().length > 0))
+      new Set(activeAgents.map((agent) => agent.sessionKey).filter((key): key is string => typeof key === "string" && key.trim().length > 0))
     ).slice(0, 64);
     if (sessionKeys.length > 0) {
       summaryPatches = buildSummarySnapshotPatches({

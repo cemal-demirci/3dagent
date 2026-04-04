@@ -13,7 +13,7 @@ Please use GitHub Issues for bugs, feature requests, and questions about planned
 
 ## Local setup
 ```bash
-git clone https://github.com/iamlukethedev/Claw3D.git
+git clone https://github.com/cemal-demirci/3dagent.git
 cd 3dagent
 npm install
 cp .env.example .env

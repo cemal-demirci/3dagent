@@ -7,8 +7,8 @@ import { getPackagedSkillById } from "@/lib/skills/catalog";
 import { readPackagedSkillFiles } from "@/lib/skills/packaged";
 import type { PackagedSkillInstallRequest, PackagedSkillInstallResult } from "@/lib/skills/types";
 
-const normalizeRequired = (value: string, field: string): string => {
-  const trimmed = value.trim();
+const normalizeRequired = (value: string | undefined | null, field: string): string => {
+  const trimmed = (value ?? "").trim();
   if (!trimmed) {
     throw new Error(`${field} is required.`);
   }

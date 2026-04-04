@@ -31,7 +31,7 @@ export const upsertTaskBoardCard = (
   cards: TaskBoardCard[],
   nextCard: TaskBoardCard,
 ): TaskBoardCard[] => {
-  const cardId = nextCard.id.trim();
+  const cardId = (nextCard.id ?? "").trim();
   if (!cardId) return cards;
   const existingIndex = cards.findIndex((card) => card.id === cardId);
   if (existingIndex < 0) return sortTaskBoardCards([...cards, nextCard]);

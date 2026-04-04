@@ -152,7 +152,7 @@ This host is what 3DAgent will use as `wss://<gateway-host>.<tailnet>.ts.net`.
 On **Machine B**:
 
 ```bash
-git clone https://github.com/iamlukethedev/Claw3D.git 3dagent
+git clone https://github.com/cemal-demirci/3dagent.git
 cd 3dagent
 npm install
 cp .env.example .env
