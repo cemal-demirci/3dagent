@@ -79,6 +79,18 @@ export const ITEM_FOOTPRINT: Record<string, [number, number]> = {
   rowing_machine: [90, 34],
   kettlebell_rack: [70, 26],
   yoga_mat: [70, 30],
+  // ── bazaar (Kapalıçarşı) ───────────────────────────────────────────────
+  spice_stall: [70, 45],
+  carpet_stand: [80, 36],
+  lantern_post: [28, 28],
+  bazaar_counter: [90, 42],
+  pottery_shelf: [70, 30],
+  // ── kahvehane ──────────────────────────────────────────────────────────
+  coffee_table: [54, 38],
+  sedir: [70, 36],
+  cezve_station: [70, 36],
+  backgammon_table: [90, 42],
+  tulip_lamp: [28, 28],
   keyboard: [30, 14],
   mouse: [16, 10],
   trash: [20, 20],
@@ -163,6 +175,18 @@ export const ITEM_METADATA: Record<string, { blocksNavigation: boolean; navPaddi
   rowing_machine:  { blocksNavigation: true  },
   kettlebell_rack: { blocksNavigation: true  },
   yoga_mat:        { blocksNavigation: true  },
+  // ── bazaar (Kapalıçarşı) ──────────────────────────────────────────────────
+  spice_stall:     { blocksNavigation: true  },
+  carpet_stand:    { blocksNavigation: true  },
+  lantern_post:    { blocksNavigation: true  },
+  bazaar_counter:  { blocksNavigation: true  },
+  pottery_shelf:   { blocksNavigation: true  },
+  // ── kahvehane ────────────────────────────────────────────────────────────
+  coffee_table:    { blocksNavigation: true  },
+  sedir:           { blocksNavigation: true  },
+  cezve_station:   { blocksNavigation: true  },
+  backgammon_table:{ blocksNavigation: true  },
+  tulip_lamp:      { blocksNavigation: false }, // hanging lamp, passable
   // ── art room ──────────────────────────────────────────────────────────────
   easel:           { blocksNavigation: true  }, // floor-standing prop (issue #4)
   // ── water cooler ──────────────────────────────────────────────────────────

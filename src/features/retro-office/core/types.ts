@@ -38,7 +38,7 @@ export type RenderAgent = SceneActor & {
   frame: number;
   walkSpeed: number;
   phaseOffset: number;
-  state: "walking" | "sitting" | "standing" | "away" | "working_out" | "dancing";
+  state: "walking" | "sitting" | "standing" | "away" | "browsing" | "dancing";
   awayUntil?: number;
   separationReplanAt?: number;
   bumpedUntil?: number;
@@ -56,10 +56,10 @@ export type RenderAgent = SceneActor & {
   smsBoothStage?: "door_outer" | "door_inner" | "typing";
   phoneBoothStage?: "door_outer" | "door_inner" | "receiver";
   serverRoomStage?: "door_outer" | "door_inner" | "terminal";
-  gymStage?: "door_outer" | "door_inner" | "workout";
-  qaLabStage?: "door_outer" | "door_inner" | "station";
-  qaLabStationType?: QaLabStationType;
-  workoutStyle?: "run" | "lift" | "bike" | "box" | "row" | "stretch";
+  bazaarStage?: "door_outer" | "door_inner" | "browsing";
+  kahvehaneStage?: "door_outer" | "door_inner" | "seated";
+  kahvehaneActivity?: KahvehaneActivity;
+  browsingStyle?: "shopping" | "inspecting" | "haggling" | "admiring" | "resting" | "chatting";
   janitorRouteIndex?: number;
   janitorPauseUntil?: number;
 };
@@ -90,14 +90,14 @@ export type FacingPoint = CanvasPoint & {
   facing: number;
 };
 
-export type QaLabStationType = "console" | "device_rack" | "bench";
+export type KahvehaneActivity = "coffee" | "tavla" | "sohbet" | "cezve" | "dinlenme";
 
-export type GymWorkoutLocation = FacingPoint & {
-  workoutStyle: "run" | "lift" | "bike" | "box" | "row" | "stretch";
+export type BazaarBrowsingLocation = FacingPoint & {
+  browsingStyle: "shopping" | "inspecting" | "haggling" | "admiring" | "resting" | "chatting";
 };
 
-export type QaLabStationLocation = FacingPoint & {
-  stationType: QaLabStationType;
+export type KahvehaneSeatingLocation = FacingPoint & {
+  kahvehaneActivity: KahvehaneActivity;
 };
 
 export type ServerRoomRoute = {
@@ -107,15 +107,15 @@ export type ServerRoomRoute = {
   facing: number;
 };
 
-export type QaLabRoute = {
-  stage: "door_outer" | "door_inner" | "station";
+export type KahvehaneRoute = {
+  stage: "door_outer" | "door_inner" | "seated";
   targetX: number;
   targetY: number;
   facing: number;
 };
 
-export type GymRoute = {
-  stage: "door_outer" | "door_inner" | "workout";
+export type BazaarRoute = {
+  stage: "door_outer" | "door_inner" | "browsing";
   targetX: number;
   targetY: number;
   facing: number;

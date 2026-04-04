@@ -76,14 +76,14 @@ describe("skill triggers", () => {
     const holdMaps = buildOfficeSkillTriggerHoldMaps({
       "agent-a": "desk",
       "agent-b": "github",
-      "agent-c": "gym",
-      "agent-d": "qa_lab",
+      "agent-c": "bazaar",
+      "agent-d": "kahvehane",
     });
 
     expect(holdMaps.deskHoldByAgentId).toEqual({ "agent-a": true });
     expect(holdMaps.githubHoldByAgentId).toEqual({ "agent-b": true });
-    expect(holdMaps.gymHoldByAgentId).toEqual({ "agent-c": true });
-    expect(holdMaps.qaHoldByAgentId).toEqual({ "agent-d": true });
-    expect(holdMaps.skillGymHoldByAgentId).toEqual({ "agent-c": true });
+    expect(holdMaps.bazaarHoldByAgentId).toEqual({ "agent-c": true });
+    expect(holdMaps.kahvehaneHoldByAgentId).toEqual({ "agent-d": true });
+    expect(holdMaps.skillBazaarHoldByAgentId).toEqual({ "agent-c": true });
   });
 });

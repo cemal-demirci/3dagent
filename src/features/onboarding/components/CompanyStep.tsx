@@ -1,4 +1,5 @@
 import { Building2, Sparkles, Users, Wand2 } from "lucide-react";
+import { t } from "@/lib/i18n";
 
 export type CompanyStepProps = {
   connected: boolean;
@@ -21,10 +22,9 @@ export const CompanyStep = ({
             <Building2 className="h-5 w-5 text-amber-300" />
           </div>
           <div className="space-y-2">
-            <p className="text-sm font-semibold text-white">Bootstrap your company with AI</p>
+            <p className="text-sm font-semibold text-white">{t("onboarding.company.title")}</p>
             <p className="text-xs leading-5 text-white/60">
-              Describe what your company does and Claw3D can turn that into a full org structure
-              with specialized agents, working files, and role instructions.
+              {t("onboarding.company.description")}
             </p>
           </div>
         </div>
@@ -34,27 +34,27 @@ export const CompanyStep = ({
         {[
           {
             icon: Sparkles,
-            title: "Improve the brief",
-            description: "Use your connected runtime to sharpen the company prompt.",
+            titleKey: "onboarding.company.improveBrief" as const,
+            descKey: "onboarding.company.improveBriefDesc" as const,
           },
           {
             icon: Users,
-            title: "Generate the team",
-            description: "Get a practical org chart with roles, responsibilities, and handoffs.",
+            titleKey: "onboarding.company.generateTeam" as const,
+            descKey: "onboarding.company.generateTeamDesc" as const,
           },
           {
             icon: Wand2,
-            title: "Create everything",
-            description: "Write agent files and create the team directly in the connected runtime.",
+            titleKey: "onboarding.company.createEverything" as const,
+            descKey: "onboarding.company.createEverythingDesc" as const,
           },
-        ].map(({ icon: Icon, title, description }) => (
+        ].map(({ icon: Icon, titleKey, descKey }) => (
           <div
-            key={title}
+            key={titleKey}
             className="rounded-md border border-white/8 bg-white/[0.02] px-3 py-3"
           >
             <Icon className="h-4 w-4 text-white/70" />
-            <p className="mt-2 text-[11px] font-semibold text-white">{title}</p>
-            <p className="mt-1 text-[10px] leading-4 text-white/45">{description}</p>
+            <p className="mt-2 text-[11px] font-semibold text-white">{t(titleKey)}</p>
+            <p className="mt-1 text-[10px] leading-4 text-white/45">{t(descKey)}</p>
           </div>
         ))}
       </div>
@@ -68,13 +68,12 @@ export const CompanyStep = ({
               onClick={onOpenCompanyBuilder}
             >
               <Sparkles className="h-3.5 w-3.5" />
-              Open Company Builder
+              {t("onboarding.company.openBuilder")}
             </button>
           </div>
         ) : (
           <div className="rounded-md border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-xs text-amber-100/80">
-            Connect to a runtime and keep at least one planning agent available to generate the
-            company with AI.
+            {t("onboarding.company.builderHint")}
           </div>
         )}
       </div>

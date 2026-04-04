@@ -1,4 +1,5 @@
 import type { MockTextMessageScenario } from "@/lib/office/text/types";
+import { t, tReplace } from "@/lib/i18n";
 
 const normalizeWhitespace = (value: string | null | undefined): string =>
   (value ?? "").replace(/\s+/g, " ").trim();
@@ -10,32 +11,32 @@ const titleCase = (value: string): string =>
 
 const formatRecipientLabel = (recipient: string): string => {
   const normalized = normalizeWhitespace(recipient).toLowerCase();
-  if (!normalized) return "your contact";
-  if (normalized === "my wife") return "your wife";
-  if (normalized === "my husband") return "your husband";
-  if (normalized === "my mom") return "your mom";
-  if (normalized === "my dad") return "your dad";
+  if (!normalized) return t("mock.yourContact");
+  if (normalized === "my wife" || normalized === "kişim") return t("mock.yourContact");
+  if (normalized === "my husband") return t("mock.yourHusband");
+  if (normalized === "my mom") return t("mock.yourMom");
+  if (normalized === "my dad") return t("mock.yourDad");
   return titleCase(normalized);
 };
 
 const buildPromptText = (recipientLabel: string): string =>
-  `What should I message ${recipientLabel}?`;
+  tReplace("mock.whatShouldIMessage", { recipient: recipientLabel });
 
 const buildConfirmationText = (message: string): string => {
   const normalized = normalizeWhitespace(message).toLowerCase();
-  if (normalized.includes("late for the soccer game")) {
-    return "No worries, thanks for the heads up.";
+  if (normalized.includes("late for the soccer game") || normalized.includes("maça geç")) {
+    return t("mock.noWorriesHeadsUp");
   }
-  if (normalized.includes("running late")) {
-    return "Thanks for letting me know.";
+  if (normalized.includes("running late") || normalized.includes("gecikiyorum")) {
+    return t("mock.thanksLettingKnow");
   }
-  if (normalized.includes("on my way")) {
-    return "Perfect, see you soon.";
+  if (normalized.includes("on my way") || normalized.includes("yoldayım")) {
+    return t("mock.perfectSeeYou");
   }
-  if (normalized.includes("be there")) {
-    return "Sounds good.";
+  if (normalized.includes("be there") || normalized.includes("orada")) {
+    return t("mock.soundsGoodShort");
   }
-  return "Delivered.";
+  return t("mock.deliveredShort");
 };
 
 export const buildMockTextMessageScenario = (params: {
@@ -51,7 +52,7 @@ export const buildMockTextMessageScenario = (params: {
       messageText: null,
       confirmationText: null,
       promptText: buildPromptText(recipientLabel),
-      statusLine: `Waiting for your message to ${recipientLabel}.`,
+      statusLine: tReplace("mock.waitingForTextTo", { recipient: recipientLabel }),
     };
   }
   return {
@@ -60,6 +61,6 @@ export const buildMockTextMessageScenario = (params: {
     messageText: message,
     confirmationText: buildConfirmationText(message),
     promptText: null,
-    statusLine: `Text queued for ${recipientLabel}.`,
+    statusLine: tReplace("mock.textQueuedFor", { recipient: recipientLabel }),
   };
 };

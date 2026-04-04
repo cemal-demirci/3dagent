@@ -1,5 +1,7 @@
 "use client";
 
+import { t, tReplace } from "@/lib/i18n";
+
 type KanbanDisabledPanelProps = {
   onClose: () => void;
   onInstall: () => void;
@@ -21,23 +23,22 @@ export function KanbanDisabledPanel({
     <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 p-6">
       <div className="w-full max-w-sm rounded-3xl border border-slate-700/40 bg-slate-950/95 p-8 text-center shadow-2xl">
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-slate-700/40 bg-slate-800/60 px-2 text-center text-sm font-semibold uppercase tracking-[0.12em] text-slate-200">
-          Kanban
+          {t("hq.kanban.disabled.title")}
         </div>
 
         <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-slate-500">
-          Task Manager
+          {t("hq.kanban.disabled.taskManager")}
         </div>
-        <h2 className="mt-1 text-xl font-semibold text-white">Kanban Skill Not Installed</h2>
+        <h2 className="mt-1 text-xl font-semibold text-white">{t("hq.kanban.disabled.notInstalled")}</h2>
         <p className="mt-3 text-sm leading-relaxed text-slate-400">
-          Install the <span className="text-cyan-400">TASK-MANAGER</span> skill to let your
-          agents capture work as tasks and open the Kanban desk.
+          {tReplace("hq.kanban.disabled.description", { skillName: "TASK-MANAGER" })}
         </p>
 
         {installing ? (
           <div className="mt-5 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-4 text-left">
             <div className="flex items-center justify-between gap-3">
               <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-cyan-300/80">
-                Installing
+                {t("hq.kanban.disabled.installing")}
               </span>
               <span className="font-mono text-[10px] text-cyan-100/70">
                 {Math.max(0, Math.min(100, Math.round(progressPercent)))}%
@@ -50,10 +51,10 @@ export function KanbanDisabledPanel({
               />
             </div>
             <p className="mt-3 text-sm leading-relaxed text-slate-300">
-              {progressMessage?.trim() || "Installing the task-manager skill."}
+              {progressMessage?.trim() || t("hq.kanban.disabled.defaultProgress")}
             </p>
             <p className="mt-2 text-xs leading-relaxed text-slate-500">
-              Once it&apos;s installed, Claw3D will refresh the task-manager state.
+              {t("hq.kanban.disabled.postInstall")}
             </p>
           </div>
         ) : null}
@@ -71,7 +72,7 @@ export function KanbanDisabledPanel({
             onClick={onInstall}
             disabled={installing}
           >
-            {installing ? "Installing TASK-MANAGER skill..." : "Install TASK-MANAGER skill"}
+            {installing ? t("hq.kanban.disabled.installingBtn") : t("hq.kanban.disabled.installBtn")}
           </button>
           <button
             type="button"
@@ -79,7 +80,7 @@ export function KanbanDisabledPanel({
             onClick={onClose}
             disabled={installing}
           >
-            Dismiss
+            {t("hq.kanban.disabled.dismiss")}
           </button>
         </div>
       </div>

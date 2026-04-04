@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { t, tReplace } from "@/lib/i18n";
 import { shouldPreferBrowserScreenshot } from "@/lib/office/browserPreview";
 import type { OfficeDeskMonitor } from "@/lib/office/deskMonitor";
 
@@ -68,7 +69,7 @@ function useBrowserPreviewScreenshot(params: {
       };
 
       if (!response.ok) {
-        throw new Error(payload.error?.trim() || "Unable to capture browser preview.");
+        throw new Error(payload.error?.trim() || t("monitor.unableCapturePreview"));
       }
       if (requestIdRef.current !== requestId) return;
 
@@ -86,7 +87,7 @@ function useBrowserPreviewScreenshot(params: {
         ...current,
         browserUrl,
         error:
-          error instanceof Error ? error.message : "Unable to capture browser preview.",
+          error instanceof Error ? error.message : t("monitor.unableCapturePreview"),
         loading: false,
       }));
     }
@@ -207,7 +208,7 @@ function MonitorBrowserContent({
             }}
             className="rounded-full border border-white/12 bg-white/6 px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-white/72 transition-colors hover:bg-white/10"
           >
-            {browserView === "screenshot" ? "Live Embed" : "Screenshot"}
+            {browserView === "screenshot" ? t("monitor.liveEmbed") : t("monitor.screenshot")}
           </button>
           {browserView === "screenshot" ? (
             <button
@@ -215,7 +216,7 @@ function MonitorBrowserContent({
               onClick={() => void browserPreview.refresh()}
               className="rounded-full border border-emerald-400/25 bg-emerald-400/10 px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-emerald-200 transition-colors hover:bg-emerald-400/20"
             >
-              Refresh Shot
+              {t("monitor.refreshShot")}
             </button>
           ) : null}
           <button
@@ -225,7 +226,7 @@ function MonitorBrowserContent({
             }
             className="rounded-full border border-sky-400/25 bg-sky-400/10 px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-sky-200 transition-colors hover:bg-sky-400/20"
           >
-            Open Browser
+            {t("monitor.openBrowser")}
           </button>
         </div>
         <div className="relative flex-1 bg-[#f4f7fb]">
@@ -243,16 +244,16 @@ function MonitorBrowserContent({
               ) : (
                 <div className="rounded-2xl border border-white/10 bg-white/5 px-6 py-5 text-center font-mono text-[14px] text-white/68">
                   {browserPreview.loading
-                    ? "Capturing browser screenshot..."
-                    : browserPreview.error || "Waiting for browser screenshot."}
+                    ? t("monitor.capturingScreenshot")
+                    : browserPreview.error || t("monitor.waitingForScreenshot")}
                 </div>
               )}
               <div className="pointer-events-none absolute right-4 top-4 rounded-full border border-white/10 bg-black/45 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.18em] text-white/70">
                 {browserPreview.loading
-                  ? "Refreshing"
+                  ? t("monitor.refreshing")
                   : browserPreview.capturedAt
-                    ? `Screenshot ${new Date(browserPreview.capturedAt).toLocaleTimeString()}`
-                    : "Screenshot fallback"}
+                    ? tReplace("monitor.screenshotAt", { time: new Date(browserPreview.capturedAt).toLocaleTimeString() })
+                    : t("monitor.screenshotFallback")}
               </div>
             </div>
           ) : (
@@ -274,7 +275,7 @@ function MonitorBrowserContent({
           <div className="pointer-events-none absolute inset-x-0 bottom-0 border-t border-black/10 bg-gradient-to-t from-black/50 to-transparent px-6 py-4 font-mono text-[13px] text-white/80">
             {monitor.entries.length > 0
               ? monitor.entries[monitor.entries.length - 1]?.text
-              : "Waiting for browser activity."}
+              : t("monitor.waitingForBrowserActivity")}
           </div>
         </div>
       </div>
@@ -344,7 +345,7 @@ export function MonitorImmersiveContent({
                 </div>
               </div>
               <div className="mt-5 px-2 text-[11px] uppercase tracking-[0.2em] text-white/28">
-                Agent
+                {t("monitor.agent")}
               </div>
               <div className="rounded-md border border-white/6 bg-black/20 px-3 py-2 text-white/82">
                 {monitor.agentName}
@@ -365,7 +366,7 @@ export function MonitorImmersiveContent({
                 </div>
               </div>
               <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.18em] text-emerald-200/90">
-                {monitor.live ? "Live" : "Idle"}
+                {monitor.live ? t("monitor.live") : t("monitor.idle")}
               </div>
             </div>
             <div className="flex min-h-0 flex-1">
@@ -411,14 +412,14 @@ export function MonitorImmersiveContent({
                       </div>
                     ))}
                     {(editor?.terminalLines ?? []).length === 0 ? (
-                      <div className="text-white/35">No terminal output yet.</div>
+                      <div className="text-white/35">{t("monitor.noTerminalOutput")}</div>
                     ) : null}
                   </div>
                 </div>
               </div>
               <div className="flex w-[290px] flex-col border-l border-white/6 bg-[#1f2024]">
                 <div className="border-b border-white/6 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/45">
-                  Agent Movement And Behavior
+                  {t("monitor.agentMovementBehavior")}
                 </div>
                 <div className="flex-1 space-y-3 overflow-auto px-4 py-4">
                   {monitor.entries.length > 0 ? (
@@ -446,7 +447,7 @@ export function MonitorImmersiveContent({
                     ))
                   ) : (
                     <div className="rounded-lg border border-white/8 bg-white/[0.03] px-3 py-4 text-[12px] text-white/40">
-                      No live activity yet.
+                      {t("monitor.noLiveActivity")}
                     </div>
                   )}
                 </div>

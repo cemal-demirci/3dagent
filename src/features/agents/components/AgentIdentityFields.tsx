@@ -1,5 +1,7 @@
 "use client";
 
+import { t } from "@/lib/i18n";
+
 export type AgentIdentityValues = {
   name: string;
   creature: string;
@@ -24,11 +26,11 @@ export function AgentIdentityFields({
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       <label className="flex flex-col gap-2 text-xs text-muted-foreground">
-        Name
+        {t("agentIdentity.name")}
         <input
           className={inputClassName}
           value={values.name}
-          placeholder="e.g. Luke"
+          placeholder={t("agentIdentity.namePlaceholder")}
           disabled={disabled}
           onChange={(event) => {
             onChange("name", event.target.value);
@@ -36,11 +38,11 @@ export function AgentIdentityFields({
         />
       </label>
       <label className="flex flex-col gap-2 text-xs text-muted-foreground">
-        Role
+        {t("agentIdentity.role")}
         <input
           className={inputClassName}
           value={values.creature}
-          placeholder="e.g. Product Designer"
+          placeholder={t("agentIdentity.rolePlaceholder")}
           disabled={disabled}
           onChange={(event) => {
             onChange("creature", event.target.value);
@@ -48,11 +50,11 @@ export function AgentIdentityFields({
         />
       </label>
       <label className="flex flex-col gap-2 text-xs text-muted-foreground">
-        Vibe
+        {t("agentIdentity.vibe")}
         <input
           className={inputClassName}
           value={values.vibe}
-          placeholder="e.g. Calm, sharp, and helpful"
+          placeholder={t("agentIdentity.vibePlaceholder")}
           disabled={disabled}
           onChange={(event) => {
             onChange("vibe", event.target.value);
@@ -60,11 +62,11 @@ export function AgentIdentityFields({
         />
       </label>
       <label className="flex flex-col gap-2 text-xs text-muted-foreground">
-        Emoji
+        {t("agentIdentity.emoji")}
         <input
           className={inputClassName}
           value={values.emoji}
-          placeholder="e.g. ✨"
+          placeholder={t("agentIdentity.emojiPlaceholder")}
           disabled={disabled}
           onChange={(event) => {
             onChange("emoji", event.target.value);

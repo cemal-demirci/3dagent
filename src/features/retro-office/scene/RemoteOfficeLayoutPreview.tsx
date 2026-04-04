@@ -41,6 +41,19 @@ const ITEM_COLOR_BY_TYPE: Record<string, string> = {
   vending: "#ef5350",
   server_rack: "#37474f",
   server_terminal: "#455a64",
+  // Bazaar (Kapalıçarşı) items
+  spice_stall: "#e65100",
+  carpet_stand: "#8d1a1a",
+  lantern_post: "#fbc02d",
+  bazaar_counter: "#6d4c41",
+  pottery_shelf: "#bf360c",
+  // Kahvehane items
+  coffee_table: "#4e342e",
+  sedir: "#5d4037",
+  cezve_station: "#3e2723",
+  backgammon_table: "#33691e",
+  tulip_lamp: "#c62828",
+  // Legacy gym items (kept for migration display)
   qa_terminal: "#7e57c2",
   device_rack: "#546e7a",
   test_bench: "#8d6e63",

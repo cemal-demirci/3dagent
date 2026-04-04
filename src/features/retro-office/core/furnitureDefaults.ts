@@ -296,7 +296,7 @@ const PREVIOUS_QA_LAB_ITEMS: FurnitureSeed[] = [
   { type: "plant", x: 1604, y: 622 },
 ];
 
-const DEFAULT_GYM_ITEMS: FurnitureSeed[] = [
+const DEFAULT_BAZAAR_ITEMS: FurnitureSeed[] = [
   {
     type: "wall",
     x: GYM_ROOM_X,
@@ -340,19 +340,19 @@ const DEFAULT_GYM_ITEMS: FurnitureSeed[] = [
     w: WALL_THICKNESS,
     h: 380,
   },
-  { type: "treadmill", x: 1142, y: 90, facing: 90 },
-  { type: "weight_bench", x: 1204, y: 92, facing: 90 },
-  { type: "dumbbell_rack", x: 1220, y: 160, facing: 180 },
-  { type: "rowing_machine", x: 1140, y: 222, facing: 90 },
-  { type: "kettlebell_rack", x: 1224, y: 248, facing: 180 },
-  { type: "exercise_bike", x: 1146, y: 366, facing: 90 },
-  { type: "punching_bag", x: 1266, y: 380, facing: 0 },
-  { type: "yoga_mat", x: 1168, y: 542, facing: 0, color: "#0f766e" },
+  { type: "spice_stall", x: 1142, y: 90, facing: 90 },
+  { type: "spice_stall", x: 1204, y: 92, facing: 90 },
+  { type: "carpet_stand", x: 1220, y: 160, facing: 180 },
+  { type: "bazaar_counter", x: 1140, y: 222, facing: 90 },
+  { type: "carpet_stand", x: 1224, y: 248, facing: 180 },
+  { type: "bazaar_counter", x: 1146, y: 366, facing: 90 },
+  { type: "lantern_post", x: 1266, y: 380, facing: 0 },
+  { type: "pottery_shelf", x: 1168, y: 542, facing: 0 },
   { type: "plant", x: 1268, y: 82 },
   { type: "plant", x: 1268, y: 622 },
 ];
 
-const DEFAULT_QA_LAB_ITEMS: FurnitureSeed[] = [
+const DEFAULT_KAHVEHANE_ITEMS: FurnitureSeed[] = [
   {
     type: "wall",
     x: QA_LAB_X,
@@ -396,11 +396,11 @@ const DEFAULT_QA_LAB_ITEMS: FurnitureSeed[] = [
     w: WALL_THICKNESS,
     h: EAST_WING_ROOM_HEIGHT,
   },
-  { type: "qa_terminal", x: 1374, y: 92, facing: 90 },
-  { type: "device_rack", x: 1454, y: 92, facing: 180 },
-  { type: "device_rack", x: 1454, y: 204, facing: 180 },
-  { type: "test_bench", x: 1372, y: 316, facing: 90 },
-  { type: "test_bench", x: 1372, y: 450, facing: 90 },
+  { type: "coffee_table", x: 1374, y: 92, facing: 90 },
+  { type: "sedir", x: 1454, y: 92, facing: 180 },
+  { type: "cezve_station", x: 1454, y: 204, facing: 180 },
+  { type: "backgammon_table", x: 1372, y: 316, facing: 90 },
+  { type: "tulip_lamp", x: 1372, y: 450, facing: 90 },
   { type: "plant", x: 1496, y: 82 },
   { type: "plant", x: 1496, y: 622 },
 ];
@@ -515,8 +515,8 @@ const DEFAULT_FURNITURE: FurnitureSeed[] = [
   { type: "plant", x: 1100, y: 490 },
   { type: "plant", x: 530, y: 700 },
   ...DEFAULT_SERVER_ROOM_ITEMS,
-  ...DEFAULT_GYM_ITEMS,
-  ...DEFAULT_QA_LAB_ITEMS,
+  ...DEFAULT_BAZAAR_ITEMS,
+  ...DEFAULT_KAHVEHANE_ITEMS,
   ...DEFAULT_ART_ROOM_ITEMS,
   DEFAULT_SMS_BOOTH,
   { type: "chair", x: 100, y: 200, facing: 180 },
@@ -562,8 +562,8 @@ const LEGACY_GYM_ROOM_SIGNATURES = new Set(
 const PREVIOUS_GYM_ROOM_SIGNATURES = new Set(
   PREVIOUS_GYM_ROOM_ITEMS.map(createFurnitureSignature),
 );
-const GYM_ROOM_SIGNATURES = new Set(
-  DEFAULT_GYM_ITEMS.map(createFurnitureSignature),
+const BAZAAR_SIGNATURES = new Set(
+  DEFAULT_BAZAAR_ITEMS.map(createFurnitureSignature),
 );
 const LEGACY_QA_LAB_SIGNATURES = new Set(
   LEGACY_QA_LAB_ITEMS.map(createFurnitureSignature),
@@ -571,8 +571,8 @@ const LEGACY_QA_LAB_SIGNATURES = new Set(
 const PREVIOUS_QA_LAB_SIGNATURES = new Set(
   PREVIOUS_QA_LAB_ITEMS.map(createFurnitureSignature),
 );
-const QA_LAB_SIGNATURES = new Set(
-  DEFAULT_QA_LAB_ITEMS.map(createFurnitureSignature),
+const KAHVEHANE_SIGNATURES = new Set(
+  DEFAULT_KAHVEHANE_ITEMS.map(createFurnitureSignature),
 );
 
 const hasSignature = (items: FurnitureItem[], signatures: Set<string>) =>
@@ -685,12 +685,13 @@ export const ensureOfficeServerRoom = (
   ];
 };
 
-export const ensureOfficeGymRoom = (
+export const ensureOfficeBazaar = (
   items: FurnitureItem[],
 ): FurnitureItem[] => {
-  const hasCurrentGymRoom = hasSignature(items, GYM_ROOM_SIGNATURES);
-  if (hasCurrentGymRoom) return items;
+  const hasCurrentBazaar = hasSignature(items, BAZAAR_SIGNATURES);
+  if (hasCurrentBazaar) return items;
 
+  // v4 migration: replace old gym layouts with bazaar
   const hasPreviousGymRoom = hasAllSignatures(
     items,
     PREVIOUS_GYM_ROOM_SIGNATURES,
@@ -698,7 +699,7 @@ export const ensureOfficeGymRoom = (
   if (hasPreviousGymRoom) {
     return [
       ...replaceBySignatureSet(items, PREVIOUS_GYM_ROOM_SIGNATURES),
-      ...DEFAULT_GYM_ITEMS.map((item) => ({ ...item, _uid: nextUid() })),
+      ...DEFAULT_BAZAAR_ITEMS.map((item) => ({ ...item, _uid: nextUid() })),
     ];
   }
 
@@ -706,10 +707,11 @@ export const ensureOfficeGymRoom = (
   if (hasLegacyGymRoom) {
     return [
       ...replaceBySignatureSet(items, LEGACY_GYM_ROOM_SIGNATURES),
-      ...DEFAULT_GYM_ITEMS.map((item) => ({ ...item, _uid: nextUid() })),
+      ...DEFAULT_BAZAAR_ITEMS.map((item) => ({ ...item, _uid: nextUid() })),
     ];
   }
 
+  // Also migrate v3 gym equipment that was already placed
   const hasGymEquipment = items.some((item) =>
     [
       "treadmill",
@@ -722,23 +724,53 @@ export const ensureOfficeGymRoom = (
       "yoga_mat",
     ].includes(item.type),
   );
-  if (hasGymEquipment) return items;
+  if (hasGymEquipment) {
+    const withoutGym = items.filter(
+      (item) =>
+        ![
+          "treadmill",
+          "weight_bench",
+          "dumbbell_rack",
+          "exercise_bike",
+          "punching_bag",
+          "rowing_machine",
+          "kettlebell_rack",
+          "yoga_mat",
+        ].includes(item.type),
+    );
+    return [
+      ...withoutGym,
+      ...DEFAULT_BAZAAR_ITEMS.map((item) => ({ ...item, _uid: nextUid() })),
+    ];
+  }
+
+  const hasBazaarFurniture = items.some((item) =>
+    [
+      "spice_stall",
+      "carpet_stand",
+      "lantern_post",
+      "bazaar_counter",
+      "pottery_shelf",
+    ].includes(item.type),
+  );
+  if (hasBazaarFurniture) return items;
   if (hasGymRoomMigrationApplied()) return items;
   return [
     ...items,
-    ...DEFAULT_GYM_ITEMS.map((item) => ({ ...item, _uid: nextUid() })),
+    ...DEFAULT_BAZAAR_ITEMS.map((item) => ({ ...item, _uid: nextUid() })),
   ];
 };
 
-export const ensureOfficeQaLab = (items: FurnitureItem[]): FurnitureItem[] => {
-  const hasCurrentQaLab = hasSignature(items, QA_LAB_SIGNATURES);
-  if (hasCurrentQaLab) return items;
+export const ensureOfficeKahvehane = (items: FurnitureItem[]): FurnitureItem[] => {
+  const hasCurrentKahvehane = hasSignature(items, KAHVEHANE_SIGNATURES);
+  if (hasCurrentKahvehane) return items;
 
+  // v4 migration: replace old QA Lab layouts with kahvehane
   const hasPreviousQaLab = hasAllSignatures(items, PREVIOUS_QA_LAB_SIGNATURES);
   if (hasPreviousQaLab) {
     return [
       ...replaceBySignatureSet(items, PREVIOUS_QA_LAB_SIGNATURES),
-      ...DEFAULT_QA_LAB_ITEMS.map((item) => ({ ...item, _uid: nextUid() })),
+      ...DEFAULT_KAHVEHANE_ITEMS.map((item) => ({ ...item, _uid: nextUid() })),
     ];
   }
 
@@ -746,18 +778,33 @@ export const ensureOfficeQaLab = (items: FurnitureItem[]): FurnitureItem[] => {
   if (hasLegacyQaLab) {
     return [
       ...replaceBySignatureSet(items, LEGACY_QA_LAB_SIGNATURES),
-      ...DEFAULT_QA_LAB_ITEMS.map((item) => ({ ...item, _uid: nextUid() })),
+      ...DEFAULT_KAHVEHANE_ITEMS.map((item) => ({ ...item, _uid: nextUid() })),
     ];
   }
 
+  // Also migrate v3 QA equipment
   const hasQaFurniture = items.some((item) =>
     ["qa_terminal", "device_rack", "test_bench"].includes(item.type),
   );
-  if (hasQaFurniture) return items;
+  if (hasQaFurniture) {
+    const withoutQa = items.filter(
+      (item) =>
+        !["qa_terminal", "device_rack", "test_bench"].includes(item.type),
+    );
+    return [
+      ...withoutQa,
+      ...DEFAULT_KAHVEHANE_ITEMS.map((item) => ({ ...item, _uid: nextUid() })),
+    ];
+  }
+
+  const hasKahvehaneFurniture = items.some((item) =>
+    ["coffee_table", "sedir", "cezve_station", "backgammon_table", "tulip_lamp"].includes(item.type),
+  );
+  if (hasKahvehaneFurniture) return items;
   if (hasQaLabMigrationApplied()) return items;
 
   return [
     ...items,
-    ...DEFAULT_QA_LAB_ITEMS.map((item) => ({ ...item, _uid: nextUid() })),
+    ...DEFAULT_KAHVEHANE_ITEMS.map((item) => ({ ...item, _uid: nextUid() })),
   ];
 };

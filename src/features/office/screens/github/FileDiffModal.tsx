@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { X } from "lucide-react";
 
+import { t, tReplace } from "@/lib/i18n";
 import type { GitHubInlineCommentSide } from "@/lib/office/github";
 
 import {
@@ -61,7 +62,7 @@ export function FileDiffModal({
     setCommentBusy(true);
     setCommentError(null);
     setSubmissionTone("info");
-    setSubmissionMessage("Submitting inline comment...");
+    setSubmissionMessage(t("fileDiff.submittingInline"));
     setCommentBody("");
     setSelectedLineId(null);
 
@@ -76,14 +77,14 @@ export function FileDiffModal({
     })
       .then(() => {
         setSubmissionTone("success");
-        setSubmissionMessage("Inline comment submitted.");
+        setSubmissionMessage(t("fileDiff.inlineSubmitted"));
       })
       .catch((error) => {
         setSubmissionTone("error");
         setSubmissionMessage(
           error instanceof Error
             ? error.message
-            : "Unable to submit the inline comment.",
+            : t("fileDiff.unableSubmitInline"),
         );
       })
       .finally(() => {
@@ -139,7 +140,7 @@ export function FileDiffModal({
             type="button"
             onClick={onClose}
             className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition-colors hover:border-white/18 hover:text-white"
-            aria-label="Close file diff"
+            aria-label={t("fileDiff.closeFileDiff")}
           >
             <X className="h-4 w-4" />
           </button>
@@ -148,7 +149,7 @@ export function FileDiffModal({
         <div className="min-h-0 flex-1 overflow-auto p-4">
           <div className="overflow-hidden rounded-2xl border border-white/8 bg-[#050b15]">
             <div className="border-b border-white/8 px-4 py-3 text-[11px] uppercase tracking-[0.22em] text-white/40">
-              Patch
+              {t("fileDiff.patch")}
             </div>
             {submissionMessage ? (
               <div
@@ -201,13 +202,12 @@ export function FileDiffModal({
                   {selectedLine?.id === line.id ? (
                     <div className="mx-3 my-2 rounded-2xl border border-cyan-300/14 bg-[#0b172c] p-4">
                       <div className="text-[11px] uppercase tracking-[0.18em] text-cyan-100/58">
-                        Comment on {(selectedLine.side ?? "RIGHT").toLowerCase()} side
-                        line {selectedLine.lineNumber}
+                        {tReplace("fileDiff.commentOnSideLine", { side: (selectedLine.side ?? "RIGHT").toLowerCase(), lineNumber: selectedLine.lineNumber ?? 0 })}
                       </div>
                       <textarea
                         value={commentBody}
                         onChange={(event) => setCommentBody(event.target.value)}
-                        placeholder="Add an inline comment."
+                        placeholder={t("fileDiff.inlinePlaceholder")}
                         className="mt-3 h-28 w-full resize-none rounded-2xl border border-white/8 bg-black/22 px-4 py-3 text-sm text-white outline-none placeholder:text-white/28"
                       />
                       {commentError ? (
@@ -217,7 +217,7 @@ export function FileDiffModal({
                       ) : null}
                       <div className="mt-3 flex items-center justify-between gap-3">
                         <div className="text-[12px] text-white/45">
-                          This posts directly to GitHub on the selected diff line.
+                          {t("fileDiff.postsToGithub")}
                         </div>
                         <div className="flex items-center gap-2">
                           <button
@@ -237,7 +237,7 @@ export function FileDiffModal({
                             onClick={() => void handleSubmitComment()}
                             className="inline-flex items-center rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-[12px] text-cyan-100 transition-colors hover:border-cyan-200/38 hover:bg-cyan-300/16 disabled:cursor-not-allowed disabled:opacity-60"
                           >
-                            {commentBusy ? "Submitting..." : "Add Comment"}
+                            {commentBusy ? t("fileDiff.submitting") : t("fileDiff.addComment")}
                           </button>
                         </div>
                       </div>

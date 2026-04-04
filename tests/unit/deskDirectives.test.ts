@@ -3,10 +3,10 @@ import { describe, expect, it } from "vitest";
 import type { TranscriptEntry } from "@/features/agents/state/transcript";
 import {
   reduceOfficeDeskHoldState,
-  reduceOfficeQaHoldState,
+  reduceOfficeKahvehaneHoldState,
   resolveOfficeIntentSnapshot,
   resolveOfficeDeskDirective,
-  resolveOfficeQaDirective,
+  resolveOfficeKahvehaneDirective,
 } from "@/lib/office/deskDirectives";
 
 const createUserEntry = (
@@ -39,14 +39,14 @@ describe("deskDirectives", () => {
 
   it("builds a unified office intent snapshot", () => {
     expect(resolveOfficeIntentSnapshot("Let's go to the gym.")).toMatchObject({
-      gym: { directive: "gym", source: "manual" },
+      bazaar: { directive: "bazaar", source: "manual" },
       desk: null,
       standup: null,
     });
     expect(resolveOfficeIntentSnapshot("lets have a scrum meeting")).toMatchObject({
       standup: "standup",
-      gym: null,
-      qa: null,
+      bazaar: null,
+      kahvehane: null,
     });
   });
 
@@ -84,20 +84,20 @@ describe("deskDirectives", () => {
   });
 
   it("recognizes QA lab directives and releases", () => {
-    expect(resolveOfficeQaDirective("Please write tests for this flow.")).toBe("qa_lab");
-    expect(resolveOfficeQaDirective("Can you run tests and verify it?")).toBe(
-      "qa_lab",
+    expect(resolveOfficeKahvehaneDirective("Please write tests for this flow.")).toBe("kahvehane");
+    expect(resolveOfficeKahvehaneDirective("Can you run tests and verify it?")).toBe(
+      "kahvehane",
     );
-    expect(resolveOfficeQaDirective("Reproduce this bug in the QA room.")).toBe(
-      "qa_lab",
+    expect(resolveOfficeKahvehaneDirective("Reproduce this bug in the QA room.")).toBe(
+      "kahvehane",
     );
-    expect(resolveOfficeQaDirective("done testing")).toBe("release");
-    expect(resolveOfficeQaDirective("leave the QA lab")).toBe("release");
+    expect(resolveOfficeKahvehaneDirective("done testing")).toBe("release");
+    expect(resolveOfficeKahvehaneDirective("leave the QA lab")).toBe("release");
   });
 
   it("rebuilds the QA lab hold from transcript history", () => {
     expect(
-      reduceOfficeQaHoldState({
+      reduceOfficeKahvehaneHoldState({
         currentHeld: false,
         lastUserMessage: "What failed?",
         transcriptEntries: [
@@ -110,7 +110,7 @@ describe("deskDirectives", () => {
 
   it("clears the QA lab hold when a release directive arrives", () => {
     expect(
-      reduceOfficeQaHoldState({
+      reduceOfficeKahvehaneHoldState({
         currentHeld: true,
         lastUserMessage: "stop testing",
         transcriptEntries: [createUserEntry("> Run tests in the QA lab.", 1)],

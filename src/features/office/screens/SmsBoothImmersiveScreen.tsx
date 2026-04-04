@@ -2,6 +2,7 @@
 
 import { CheckCheck, MessageSquareText, Send, Smartphone } from "lucide-react";
 import type { MockTextMessageScenario } from "@/lib/office/text/types";
+import { t } from "@/lib/i18n";
 
 export type TextMessageStep =
   | "selecting_contact"
@@ -28,16 +29,16 @@ export function SmsBoothImmersiveScreen({
 }) {
   const statusLabel =
     step === "selecting_contact"
-      ? "Selecting contact"
+      ? t("sms.selectingContact")
       : step === "composing"
-      ? "Composing"
+      ? t("sms.composing")
       : step === "sending"
-        ? "Sending"
+        ? t("sms.sending")
         : step === "delivered"
-          ? "Delivered"
+          ? t("sms.delivered")
           : step === "reply"
-            ? "Reply received"
-            : "Message complete";
+            ? t("sms.replyReceived")
+            : t("sms.messageComplete");
   const messageBody = typedMessage || scenario.messageText || "";
 
   return (
@@ -48,7 +49,7 @@ export function SmsBoothImmersiveScreen({
           <div className="rounded-[32px] border border-sky-300/18 bg-slate-950/65 p-8 shadow-[0_24px_90px_rgba(2,8,23,0.75)]">
             <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.28em] text-sky-200/70">
               <MessageSquareText className="h-4 w-4" />
-              Messaging Booth
+              {t("sms.messagingBooth")}
             </div>
             <div className="mt-4 text-4xl font-semibold tracking-[0.08em] text-sky-50">
               {scenario.recipient}
@@ -58,21 +59,21 @@ export function SmsBoothImmersiveScreen({
             </div>
             <div className="mt-8 rounded-[28px] border border-sky-300/16 bg-slate-900/90 p-6">
               <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.24em] text-sky-200/60">
-                <span>Typing from booth</span>
-                <span>iPhone relay</span>
+                <span>{t("sms.typingFromBooth")}</span>
+                <span>{t("sms.iphoneRelay")}</span>
               </div>
               <div className="mt-5 rounded-[24px] border border-slate-700 bg-slate-950/80 px-5 py-4 text-base leading-7 text-sky-50">
-                {messageBody || "Waiting for the first characters."}
+                {messageBody || t("sms.waitingForChars")}
                 {step === "composing" ? <span className="ml-1 inline-block animate-pulse">|</span> : null}
               </div>
               <div className="mt-5 flex items-center justify-end gap-3 text-sm uppercase tracking-[0.22em]">
                 <div className="inline-flex items-center gap-2 rounded-2xl border border-sky-300/22 bg-sky-400/10 px-4 py-2 text-sky-100/80">
                   <Smartphone className="h-4 w-4" />
-                  Active
+                  {t("sms.active")}
                 </div>
                 <div className="inline-flex items-center gap-2 rounded-2xl border border-emerald-300/24 bg-emerald-400/10 px-4 py-2 text-emerald-100/80">
                   {step === "sending" ? <Send className="h-4 w-4" /> : <CheckCheck className="h-4 w-4" />}
-                  {step === "composing" ? "Drafting" : statusLabel}
+                  {step === "composing" ? t("sms.drafting") : statusLabel}
                 </div>
               </div>
             </div>
@@ -83,7 +84,7 @@ export function SmsBoothImmersiveScreen({
               <div className="absolute left-1/2 top-3 h-1.5 w-28 -translate-x-1/2 rounded-full bg-slate-700" />
               <div className="relative flex h-full flex-col overflow-hidden rounded-[34px] border border-sky-300/12 bg-[linear-gradient(180deg,#081225_0%,#020617_100%)] px-5 py-6">
                 <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.24em] text-sky-200/65">
-                  <span>Messages</span>
+                  <span>{t("sms.messages")}</span>
                   <Smartphone className="h-4 w-4" />
                 </div>
                 <div className="mt-5 text-center">
@@ -104,20 +105,20 @@ export function SmsBoothImmersiveScreen({
                     <div className="space-y-4">
                       <Bubble
                         align="right"
-                        label="Agent"
-                        text={messageBody || "Starting draft."}
+                        label={t("sms.agent")}
+                        text={messageBody || t("sms.startingDraft")}
                         tone="primary"
                       />
                       {step === "delivered" || step === "reply" || step === "complete" ? (
                         <div className="text-right text-[11px] uppercase tracking-[0.2em] text-sky-200/45">
-                          Delivered
+                          {t("sms.delivered")}
                         </div>
                       ) : null}
                       {step === "reply" || step === "complete" ? (
                         <Bubble
                           align="left"
                           label={scenario.recipient}
-                          text={scenario.confirmationText ?? "Delivered."}
+                          text={scenario.confirmationText ?? t("mock.deliveredShort")}
                           tone="secondary"
                         />
                       ) : null}
@@ -172,7 +173,7 @@ function ContactList({
             >
               <div className="text-sm font-medium">{contact}</div>
               <div className="mt-1 text-[11px] uppercase tracking-[0.18em] opacity-60">
-                {active ? "Opening conversation" : "Recent thread"}
+                {active ? t("sms.openingConversation") : t("sms.recentThread")}
               </div>
             </div>
           );

@@ -2,6 +2,7 @@
 
 import type { ComponentProps } from "react";
 import type { AgentState } from "@/features/agents/state/store";
+import { t } from "@/lib/i18n";
 import { TaskBoardView } from "@/features/office/tasks/TaskBoardView";
 import type { TaskBoardCard, TaskBoardStatus } from "@/features/office/tasks/types";
 import type { CronJobSummary } from "@/lib/cron/types";
@@ -39,8 +40,8 @@ export function TaskBoardPanel({
 }) {
   return (
     <TaskBoardView
-      title="Kanban"
-      subtitle="Manual tasks, inferred requests, and scheduled playbooks."
+      title={t("hq.taskBoard.title")}
+      subtitle={t("hq.taskBoard.subtitle")}
       agents={agents}
       cardsByStatus={cardsByStatus}
       selectedCard={selectedCard}

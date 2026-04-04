@@ -5,6 +5,7 @@ import { Shuffle } from "lucide-react";
 import type { AgentCreateModalSubmitPayload } from "@/features/agents/creation/types";
 import { AgentAvatar } from "@/features/agents/components/AgentAvatar";
 import { randomUUID } from "@/lib/uuid";
+import { t } from "@/lib/i18n";
 
 type AgentCreateModalProps = {
   open: boolean;
@@ -22,7 +23,7 @@ const labelClassName =
 
 const resolveInitialName = (suggestedName: string): string => {
   const trimmed = suggestedName.trim();
-  if (!trimmed) return "New Agent";
+  if (!trimmed) return t("create.newAgent");
   return trimmed;
 };
 
@@ -50,7 +51,7 @@ const AgentCreateModalContent = ({
       className="fixed inset-0 z-[120] flex items-center justify-center bg-background/80 p-4"
       role="dialog"
       aria-modal="true"
-      aria-label="Create agent"
+      aria-label={t("create.createAgentAriaLabel")}
       onClick={busy ? undefined : onClose}
     >
       <form
@@ -65,10 +66,10 @@ const AgentCreateModalContent = ({
         <div className="flex items-center justify-between border-b border-border/35 px-6 py-6">
           <div>
             <div className="font-mono text-[11px] font-semibold tracking-[0.06em] text-muted-foreground">
-              New agent
+              {t("create.newAgent")}
             </div>
-            <div className="mt-1 text-base font-semibold text-foreground">Launch agent</div>
-            <div className="mt-1 text-xs text-muted-foreground">Name it and activate immediately.</div>
+            <div className="mt-1 text-base font-semibold text-foreground">{t("create.launchAgent")}</div>
+            <div className="mt-1 text-xs text-muted-foreground">{t("create.nameAndActivate")}</div>
           </div>
           <button
             type="button"
@@ -76,26 +77,26 @@ const AgentCreateModalContent = ({
             onClick={onClose}
             disabled={busy}
           >
-            Close
+            {t("create.close")}
           </button>
         </div>
 
         <div className="grid gap-4 px-6 py-5">
           <label className={labelClassName}>
-            Name
+            {t("create.name")}
             <input
-              aria-label="Agent name"
+              aria-label={t("chat.editAgentName")}
               value={name}
               onChange={(event) => setName(event.target.value)}
               className={`mt-1 ${fieldClassName}`}
-              placeholder="My agent"
+              placeholder={t("create.agentNamePlaceholder")}
             />
           </label>
           <div className="-mt-2 text-[11px] text-muted-foreground">
-            You can rename this agent from the main chat header.
+            {t("create.renameHint")}
           </div>
           <div className="grid justify-items-center gap-2 border-t border-border/40 pt-3">
-            <div className={labelClassName}>Choose avatar</div>
+            <div className={labelClassName}>{t("create.chooseAvatar")}</div>
             <AgentAvatar
               seed={avatarSeed}
               name={name.trim() || "New Agent"}
@@ -104,13 +105,13 @@ const AgentCreateModalContent = ({
             />
             <button
               type="button"
-              aria-label="Shuffle avatar selection"
+              aria-label={t("create.shuffleAvatarAriaLabel")}
               className="ui-btn-secondary inline-flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground"
               onClick={() => setAvatarSeed(randomUUID())}
               disabled={busy}
             >
               <Shuffle className="h-3.5 w-3.5" />
-              Shuffle
+              {t("create.shuffle")}
             </button>
           </div>
 
@@ -122,13 +123,13 @@ const AgentCreateModalContent = ({
         </div>
 
         <div className="flex items-center justify-between border-t border-border/45 px-6 pb-4 pt-5">
-          <div className="text-[11px] text-muted-foreground">Authority can be configured after launch.</div>
+          <div className="text-[11px] text-muted-foreground">{t("create.authorityHint")}</div>
           <button
             type="submit"
             className="ui-btn-primary px-3 py-1.5 font-mono text-[11px] font-semibold tracking-[0.06em] disabled:cursor-not-allowed disabled:border-border disabled:bg-muted disabled:text-muted-foreground"
             disabled={!canSubmit || busy}
           >
-            {busy ? "Launching..." : "Launch agent"}
+            {busy ? t("create.launching") : t("create.launchAgent")}
           </button>
         </div>
       </form>

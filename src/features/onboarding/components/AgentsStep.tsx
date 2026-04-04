@@ -2,6 +2,7 @@
  * AgentsStep — Shows discovered agents after gateway connection.
  */
 import { Bot, Users, WifiOff } from "lucide-react";
+import { t, tReplace } from "@/lib/i18n";
 
 export type AgentsStepProps = {
   agentCount: number;
@@ -14,7 +15,7 @@ export const AgentsStep = ({ agentCount, connected }: AgentsStepProps) => {
       <div className="flex flex-col items-center justify-center gap-3 py-8">
         <WifiOff className="h-8 w-8 text-white/30" />
         <p className="text-sm text-white/60">
-          Connect to your gateway first to discover agents.
+          {t("onboarding.agents.connectFirst")}
         </p>
       </div>
     );
@@ -27,21 +28,19 @@ export const AgentsStep = ({ agentCount, connected }: AgentsStepProps) => {
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/5">
             <Bot className="h-6 w-6 text-white/40" />
           </div>
-          <p className="text-sm font-medium text-white">No agents found</p>
+          <p className="text-sm font-medium text-white">{t("onboarding.agents.noAgents")}</p>
           <p className="max-w-xs text-center text-xs text-white/55">
-            Your gateway is connected, but no agents are configured yet.
-            You can create agents from the Claw3D fleet sidebar after
-            completing this wizard.
+            {t("onboarding.agents.noAgentsHint")}
           </p>
         </div>
 
         <div className="rounded-lg border border-white/8 bg-white/[0.02] px-4 py-3">
-          <p className="text-xs font-medium text-white/80">Quick start:</p>
+          <p className="text-xs font-medium text-white/80">{t("onboarding.agents.quickStart")}</p>
           <ol className="mt-2 space-y-1.5 text-[11px] text-white/55">
-            <li>1. Click the + button in the fleet sidebar</li>
-            <li>2. Choose a name and model for your agent</li>
-            <li>3. Configure skills and personality</li>
-            <li>4. Watch your agent appear at their desk!</li>
+            <li>{t("onboarding.agents.quickStep1")}</li>
+            <li>{t("onboarding.agents.quickStep2")}</li>
+            <li>{t("onboarding.agents.quickStep3")}</li>
+            <li>{t("onboarding.agents.quickStep4")}</li>
           </ol>
         </div>
       </div>
@@ -54,24 +53,24 @@ export const AgentsStep = ({ agentCount, connected }: AgentsStepProps) => {
         <Users className="h-5 w-5 text-amber-300" />
         <div>
           <p className="text-sm font-semibold text-white">
-            {agentCount} agent{agentCount !== 1 ? "s" : ""} discovered
+            {tReplace("onboarding.agents.discovered", { count: agentCount })}
           </p>
           <p className="text-[11px] text-white/55">
-            Your AI team is ready and waiting in the office.
+            {t("onboarding.agents.teamReady")}
           </p>
         </div>
       </div>
 
       <div className="space-y-2">
         <p className="text-xs font-medium text-white/70">
-          What you can do with agents:
+          {t("onboarding.agents.whatYouCanDo")}
         </p>
         <div className="grid grid-cols-2 gap-2">
           {[
-            { label: "Chat", desc: "Send messages and get responses" },
-            { label: "Approve", desc: "Review and approve exec commands" },
-            { label: "Configure", desc: "Edit brain files and settings" },
-            { label: "Monitor", desc: "Watch runtime activity in real time" },
+            { label: t("onboarding.agents.chat"), desc: t("onboarding.agents.chatDesc") },
+            { label: t("onboarding.agents.approve"), desc: t("onboarding.agents.approveDesc") },
+            { label: t("onboarding.agents.configure"), desc: t("onboarding.agents.configureDesc") },
+            { label: t("onboarding.agents.monitor"), desc: t("onboarding.agents.monitorDesc") },
           ].map(({ label, desc }) => (
             <div
               key={label}

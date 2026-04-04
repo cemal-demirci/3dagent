@@ -1,4 +1,5 @@
 import type { GatewayStatus } from "@/lib/gateway/GatewayClient";
+import { t, tReplace } from "@/lib/i18n";
 import type { StudioGatewayAdapterType } from "@/lib/studio/settings";
 import { X } from "lucide-react";
 import { resolveGatewayStatusBadgeClass, resolveGatewayStatusLabel } from "./colorSemantics";
@@ -71,7 +72,7 @@ export const ConnectionPanel = ({
             onClick={isConnected ? onDisconnect : onConnect}
             disabled={isConnecting || !gatewayUrl.trim()}
           >
-            {isConnected ? "Disconnect" : "Connect"}
+            {isConnected ? t("connPanel.disconnect") : t("connPanel.connect")}
           </button>
         </div>
         {onClose ? (
@@ -80,16 +81,16 @@ export const ConnectionPanel = ({
             type="button"
             onClick={onClose}
             data-testid="gateway-connection-close"
-            aria-label="Close gateway connection panel"
+            aria-label={t("connPanel.closeGatewayAriaLabel")}
           >
             <X className="h-3.5 w-3.5" />
-            Close
+            {t("connPanel.close")}
           </button>
         ) : null}
       </div>
       <div className="grid gap-3 lg:grid-cols-[1.4fr_1fr]">
         <label className="flex flex-col gap-1 font-mono text-[10px] font-semibold tracking-[0.06em] text-muted-foreground">
-          Upstream URL
+          {t("connect.upstreamUrl")}
           <input
             className="ui-input h-10 rounded-md px-4 font-sans text-sm text-foreground outline-none"
             type="text"
@@ -100,7 +101,7 @@ export const ConnectionPanel = ({
           />
         </label>
         <label className="flex flex-col gap-1 font-mono text-[10px] font-semibold tracking-[0.06em] text-muted-foreground">
-          {tokenOptional ? "Upstream token (optional)" : "Upstream token"}
+          {tokenOptional ? t("connect.upstreamTokenOptional") : t("connect.upstreamToken")}
           <input
             className="ui-input h-10 rounded-md px-4 font-sans text-sm text-foreground outline-none"
             type="password"
@@ -112,9 +113,8 @@ export const ConnectionPanel = ({
         </label>
       </div>
       <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
-        <span className="font-mono">Selected backend: {selectedAdapterType}</span>
-        <span className="font-mono">Active backend: {activeAdapterType}</span>
-        <span>Each backend keeps its own saved URL and token.</span>
+        <span className="font-mono">{tReplace("connect.selectedBackend", { type: selectedAdapterType, active: activeAdapterType })}</span>
+        <span>{t("connect.eachBackendSaves")}</span>
       </div>
       <div className="flex flex-wrap gap-2">
         <button
@@ -122,28 +122,28 @@ export const ConnectionPanel = ({
           type="button"
           onClick={applyDemoPreset}
         >
-          Demo backend
+          {t("connect.demoBackend")}
         </button>
         <button
           className="ui-btn-secondary px-3 py-1.5 text-[11px] font-semibold tracking-[0.05em]"
           type="button"
           onClick={applyHermesPreset}
         >
-          Hermes backend
+          {t("connect.hermesBackend")}
         </button>
         <button
           className="ui-btn-secondary px-3 py-1.5 text-[11px] font-semibold tracking-[0.05em]"
           type="button"
           onClick={applyCustomPreset}
         >
-          Custom backend
+          {t("connect.customBackend")}
         </button>
         <button
           className="ui-btn-secondary px-3 py-1.5 text-[11px] font-semibold tracking-[0.05em]"
           type="button"
           onClick={applyOpenClawPreset}
         >
-          OpenClaw backend
+          {t("connect.openclawBackend")}
         </button>
       </div>
       {error ? (

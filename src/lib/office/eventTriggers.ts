@@ -35,8 +35,8 @@ import {
   resolveOfficeCallDirective,
   resolveOfficeDeskDirective,
   resolveOfficeGithubDirective,
-  resolveOfficeGymDirective,
-  resolveOfficeQaDirective,
+  resolveOfficeBazaarDirective,
+  resolveOfficeKahvehaneDirective,
   resolveOfficeTextDirective,
 } from "@/lib/office/deskDirectives";
 import { extractText, extractThinking } from "@/lib/text/message-extract";
@@ -47,7 +47,7 @@ import { randomUUID } from "@/lib/uuid";
 // 2. Reconciliation rebuilds durable holds from current agent and transcript state.
 // The 3D scene only consumes the distilled result from `buildOfficeAnimationState()`.
 const WORKING_LATCH_MS = 5_000;
-const GYM_WORKOUT_LATCH_MS = 60_000;
+const BAZAAR_BROWSING_LATCH_MS = 60_000;
 const STREAM_ACTIVITY_LATCH_MS = 6_000;
 const THINKING_ACTIVITY_LATCH_MS = 6_000;
 const STANDUP_TRIGGER_MAX_AGE_MS = 30_000;
@@ -92,21 +92,21 @@ export type OfficeAnimationTriggerState = {
   deskHoldByAgentId: BooleanByAgentId;
   githubDirectiveKeyByAgentId: StringByAgentId;
   githubHoldByAgentId: BooleanByAgentId;
-  gymCooldownUntilByAgentId: NumberByAgentId;
-  lastManualGymCommandKeyByAgentId: StringByAgentId;
-  manualGymUntilByAgentId: NumberByAgentId;
+  bazaarCooldownUntilByAgentId: NumberByAgentId;
+  lastManualBazaarCommandKeyByAgentId: StringByAgentId;
+  manualBazaarUntilByAgentId: NumberByAgentId;
   pendingStandupRequest: OfficeStandupTriggerRequest | null;
   phoneCallByAgentId: PhoneCallByAgentId;
   phoneCallDirectiveKeyByAgentId: StringByAgentId;
-  qaDirectiveKeyByAgentId: StringByAgentId;
-  qaHoldByAgentId: BooleanByAgentId;
+  kahvehaneDirectiveKeyByAgentId: StringByAgentId;
+  kahvehaneHoldByAgentId: BooleanByAgentId;
   sessionEpochSnapshot: SessionEpochSnapshot;
-  skillGymDirectiveKeyByAgentId: StringByAgentId;
-  skillGymHoldByAgentId: BooleanByAgentId;
+  skillBazaarDirectiveKeyByAgentId: StringByAgentId;
+  skillBazaarHoldByAgentId: BooleanByAgentId;
   streamingUntilByAgentId: NumberByAgentId;
   suppressedPhoneCallDirectiveKeyByAgentId: StringByAgentId;
   suppressedGithubDirectiveKeyByAgentId: StringByAgentId;
-  suppressedQaDirectiveKeyByAgentId: StringByAgentId;
+  suppressedKahvehaneDirectiveKeyByAgentId: StringByAgentId;
   suppressedTextMessageDirectiveKeyByAgentId: StringByAgentId;
   textMessageByAgentId: TextMessageByAgentId;
   textMessageDirectiveKeyByAgentId: StringByAgentId;
@@ -120,15 +120,15 @@ export type OfficeAnimationState = {
   danceUntilByAgentId: NumberByAgentId;
   deskHoldByAgentId: BooleanByAgentId;
   githubHoldByAgentId: BooleanByAgentId;
-  gymHoldByAgentId: BooleanByAgentId;
+  bazaarHoldByAgentId: BooleanByAgentId;
   jukeboxHoldByAgentId: BooleanByAgentId;
-  manualGymUntilByAgentId: NumberByAgentId;
+  manualBazaarUntilByAgentId: NumberByAgentId;
   pendingStandupRequest: OfficeStandupTriggerRequest | null;
   phoneBoothHoldByAgentId: BooleanByAgentId;
   phoneCallByAgentId: PhoneCallByAgentId;
-  qaHoldByAgentId: BooleanByAgentId;
+  kahvehaneHoldByAgentId: BooleanByAgentId;
   smsBoothHoldByAgentId: BooleanByAgentId;
-  skillGymHoldByAgentId: BooleanByAgentId;
+  skillBazaarHoldByAgentId: BooleanByAgentId;
   streamingByAgentId: BooleanByAgentId;
   textMessageByAgentId: TextMessageByAgentId;
   thinkingByAgentId: BooleanByAgentId;
@@ -526,8 +526,8 @@ const hasOtherOfficeDirective = (
   Boolean(
     snapshot.desk ||
     snapshot.github ||
-    snapshot.gym ||
-    snapshot.qa ||
+    snapshot.bazaar ||
+    snapshot.kahvehane ||
     snapshot.art ||
     snapshot.standup ||
     snapshot.call ||
@@ -590,7 +590,7 @@ const resolveTextMessageFollowUpRequest = (params: {
 
 const applyHoldDirective = (
   currentHeld: boolean,
-  directive: LatestDirective<"desk" | "github" | "qa_lab" | "release"> | null,
+  directive: LatestDirective<"desk" | "github" | "kahvehane" | "release"> | null,
 ): boolean => {
   if (!directive) return currentHeld;
   if (directive.directive === "release") return false;
@@ -618,22 +618,22 @@ const pruneOfficeAnimationTriggerState = (
       state.githubHoldByAgentId,
       activeAgentIds,
     ),
-    gymCooldownUntilByAgentId: pruneFutureMap(
-      state.gymCooldownUntilByAgentId,
+    bazaarCooldownUntilByAgentId: pruneFutureMap(
+      state.bazaarCooldownUntilByAgentId,
       activeAgentIds,
       nowMs,
     ),
-    lastManualGymCommandKeyByAgentId: pruneStringMap(
-      state.lastManualGymCommandKeyByAgentId,
+    lastManualBazaarCommandKeyByAgentId: pruneStringMap(
+      state.lastManualBazaarCommandKeyByAgentId,
       activeAgentIds,
     ),
-    manualGymUntilByAgentId: pruneFutureMap(
-      state.manualGymUntilByAgentId,
+    manualBazaarUntilByAgentId: pruneFutureMap(
+      state.manualBazaarUntilByAgentId,
       activeAgentIds,
       nowMs,
     ),
-    qaDirectiveKeyByAgentId: pruneStringMap(
-      state.qaDirectiveKeyByAgentId,
+    kahvehaneDirectiveKeyByAgentId: pruneStringMap(
+      state.kahvehaneDirectiveKeyByAgentId,
       activeAgentIds,
     ),
     phoneCallByAgentId: prunePhoneCallMap(
@@ -644,13 +644,13 @@ const pruneOfficeAnimationTriggerState = (
       state.phoneCallDirectiveKeyByAgentId,
       activeAgentIds,
     ),
-    qaHoldByAgentId: pruneBooleanMap(state.qaHoldByAgentId, activeAgentIds),
-    skillGymDirectiveKeyByAgentId: pruneStringMap(
-      state.skillGymDirectiveKeyByAgentId,
+    kahvehaneHoldByAgentId: pruneBooleanMap(state.kahvehaneHoldByAgentId, activeAgentIds),
+    skillBazaarDirectiveKeyByAgentId: pruneStringMap(
+      state.skillBazaarDirectiveKeyByAgentId,
       activeAgentIds,
     ),
-    skillGymHoldByAgentId: pruneBooleanMap(
-      state.skillGymHoldByAgentId,
+    skillBazaarHoldByAgentId: pruneBooleanMap(
+      state.skillBazaarHoldByAgentId,
       activeAgentIds,
     ),
     streamingUntilByAgentId: pruneFutureMap(
@@ -666,8 +666,8 @@ const pruneOfficeAnimationTriggerState = (
       state.suppressedGithubDirectiveKeyByAgentId,
       activeAgentIds,
     ),
-    suppressedQaDirectiveKeyByAgentId: pruneStringMap(
-      state.suppressedQaDirectiveKeyByAgentId,
+    suppressedKahvehaneDirectiveKeyByAgentId: pruneStringMap(
+      state.suppressedKahvehaneDirectiveKeyByAgentId,
       activeAgentIds,
     ),
     suppressedTextMessageDirectiveKeyByAgentId: pruneStringMap(
@@ -771,38 +771,38 @@ const applyUserMessageTriggers = (params: {
           : { ...next.githubHoldByAgentId, [params.agentId]: true },
     };
   }
-  const qaDirective = intentSnapshot.qa;
-  if (qaDirective) {
+  const kahvehaneDirective = intentSnapshot.kahvehane;
+  if (kahvehaneDirective) {
     const directiveKey = normalizeCommandText(params.message);
     const isSuppressed =
-      next.suppressedQaDirectiveKeyByAgentId[params.agentId] === directiveKey;
+      next.suppressedKahvehaneDirectiveKeyByAgentId[params.agentId] === directiveKey;
     next = {
       ...next,
-      qaDirectiveKeyByAgentId: {
-        ...next.qaDirectiveKeyByAgentId,
+      kahvehaneDirectiveKeyByAgentId: {
+        ...next.kahvehaneDirectiveKeyByAgentId,
         [params.agentId]: directiveKey,
       },
-      qaHoldByAgentId:
-        qaDirective === "release" || isSuppressed
+      kahvehaneHoldByAgentId:
+        kahvehaneDirective === "release" || isSuppressed
           ? Object.fromEntries(
-              Object.entries(next.qaHoldByAgentId).filter(
+              Object.entries(next.kahvehaneHoldByAgentId).filter(
                 ([agentId]) => agentId !== params.agentId,
               ),
             )
-          : { ...next.qaHoldByAgentId, [params.agentId]: true },
+          : { ...next.kahvehaneHoldByAgentId, [params.agentId]: true },
     };
   }
-  if (intentSnapshot.gym?.source === "manual") {
-    const gymCommandKey = normalizeCommandText(params.message);
+  if (intentSnapshot.bazaar?.source === "manual") {
+    const bazaarCommandKey = normalizeCommandText(params.message);
     next = {
       ...next,
-      lastManualGymCommandKeyByAgentId: {
-        ...next.lastManualGymCommandKeyByAgentId,
-        [params.agentId]: gymCommandKey,
+      lastManualBazaarCommandKeyByAgentId: {
+        ...next.lastManualBazaarCommandKeyByAgentId,
+        [params.agentId]: bazaarCommandKey,
       },
-      manualGymUntilByAgentId: {
-        ...next.manualGymUntilByAgentId,
-        [params.agentId]: params.nowMs + GYM_WORKOUT_LATCH_MS,
+      manualBazaarUntilByAgentId: {
+        ...next.manualBazaarUntilByAgentId,
+        [params.agentId]: params.nowMs + BAZAAR_BROWSING_LATCH_MS,
       },
     };
   }
@@ -901,21 +901,21 @@ export const createOfficeAnimationTriggerState =
     deskHoldByAgentId: emptyObject(),
     githubDirectiveKeyByAgentId: emptyObject(),
     githubHoldByAgentId: emptyObject(),
-    gymCooldownUntilByAgentId: emptyObject(),
-    lastManualGymCommandKeyByAgentId: emptyObject(),
-    manualGymUntilByAgentId: emptyObject(),
+    bazaarCooldownUntilByAgentId: emptyObject(),
+    lastManualBazaarCommandKeyByAgentId: emptyObject(),
+    manualBazaarUntilByAgentId: emptyObject(),
     pendingStandupRequest: null,
     phoneCallByAgentId: emptyObject(),
     phoneCallDirectiveKeyByAgentId: emptyObject(),
-    qaDirectiveKeyByAgentId: emptyObject(),
-    qaHoldByAgentId: emptyObject(),
+    kahvehaneDirectiveKeyByAgentId: emptyObject(),
+    kahvehaneHoldByAgentId: emptyObject(),
     sessionEpochSnapshot: {},
-    skillGymDirectiveKeyByAgentId: emptyObject(),
-    skillGymHoldByAgentId: emptyObject(),
+    skillBazaarDirectiveKeyByAgentId: emptyObject(),
+    skillBazaarHoldByAgentId: emptyObject(),
     streamingUntilByAgentId: emptyObject(),
     suppressedPhoneCallDirectiveKeyByAgentId: emptyObject(),
     suppressedGithubDirectiveKeyByAgentId: emptyObject(),
-    suppressedQaDirectiveKeyByAgentId: emptyObject(),
+    suppressedKahvehaneDirectiveKeyByAgentId: emptyObject(),
     suppressedTextMessageDirectiveKeyByAgentId: emptyObject(),
     textMessageByAgentId: emptyObject(),
     textMessageDirectiveKeyByAgentId: emptyObject(),
@@ -1087,7 +1087,7 @@ export const reconcileOfficeAnimationTriggerState = (params: {
 
   const activeAgentIds = new Set(params.agents.map((agent) => agent.agentId));
   const currentImmediateGymKeys = pruneStringMap(
-    next.lastManualGymCommandKeyByAgentId,
+    next.lastManualBazaarCommandKeyByAgentId,
     activeAgentIds,
   );
 
@@ -1097,14 +1097,14 @@ export const reconcileOfficeAnimationTriggerState = (params: {
   const githubDirectiveKeyByAgentId: StringByAgentId = {};
   const phoneCallByAgentId: PhoneCallByAgentId = {};
   const phoneCallDirectiveKeyByAgentId: StringByAgentId = {};
-  const qaHoldByAgentId: BooleanByAgentId = {};
-  const qaDirectiveKeyByAgentId: StringByAgentId = {};
-  const skillGymHoldByAgentId: BooleanByAgentId = {};
-  const skillGymDirectiveKeyByAgentId: StringByAgentId = {};
+  const kahvehaneHoldByAgentId: BooleanByAgentId = {};
+  const kahvehaneDirectiveKeyByAgentId: StringByAgentId = {};
+  const skillBazaarHoldByAgentId: BooleanByAgentId = {};
+  const skillBazaarDirectiveKeyByAgentId: StringByAgentId = {};
   const textMessageByAgentId: TextMessageByAgentId = {};
   const textMessageDirectiveKeyByAgentId: StringByAgentId = {};
   let workingUntilByAgentId = next.workingUntilByAgentId;
-  const manualGymUntilByAgentId = next.manualGymUntilByAgentId;
+  const manualBazaarUntilByAgentId = next.manualBazaarUntilByAgentId;
   let pendingStandupRequest = next.pendingStandupRequest;
   if (
     pendingStandupRequest &&
@@ -1162,38 +1162,38 @@ export const reconcileOfficeAnimationTriggerState = (params: {
       githubHoldByAgentId[agentId] = true;
     }
 
-    const qaDirective = resolveLatestDirective({
+    const kahvehaneLatestDirective = resolveLatestDirective({
       lastUserMessage: agent.lastUserMessage,
       transcriptEntries: agent.transcriptEntries,
-      resolver: resolveOfficeQaDirective,
+      resolver: resolveOfficeKahvehaneDirective,
     });
-    if (qaDirective) {
-      qaDirectiveKeyByAgentId[agentId] = qaDirective.key;
+    if (kahvehaneLatestDirective) {
+      kahvehaneDirectiveKeyByAgentId[agentId] = kahvehaneLatestDirective.key;
       const suppressedKey =
-        next.suppressedQaDirectiveKeyByAgentId[agentId] ?? "";
+        next.suppressedKahvehaneDirectiveKeyByAgentId[agentId] ?? "";
       if (
-        qaDirective.directive !== "release" &&
-        suppressedKey !== qaDirective.key
+        kahvehaneLatestDirective.directive !== "release" &&
+        suppressedKey !== kahvehaneLatestDirective.key
       ) {
-        qaHoldByAgentId[agentId] = true;
+        kahvehaneHoldByAgentId[agentId] = true;
       }
-    } else if (next.qaHoldByAgentId[agentId]) {
-      qaHoldByAgentId[agentId] = true;
+    } else if (next.kahvehaneHoldByAgentId[agentId]) {
+      kahvehaneHoldByAgentId[agentId] = true;
     }
 
-    const skillGymDirective = resolveLatestDirective({
+    const skillBazaarDirective = resolveLatestDirective({
       lastUserMessage: agent.lastUserMessage,
       transcriptEntries: agent.transcriptEntries,
-      resolver: resolveOfficeGymDirective,
+      resolver: resolveOfficeBazaarDirective,
     });
-    if (skillGymDirective) {
-      skillGymDirectiveKeyByAgentId[agentId] = skillGymDirective.key;
-      if (skillGymDirective.directive === "gym") {
-        skillGymHoldByAgentId[agentId] = true;
+    if (skillBazaarDirective) {
+      skillBazaarDirectiveKeyByAgentId[agentId] = skillBazaarDirective.key;
+      if (skillBazaarDirective.directive === "bazaar") {
+        skillBazaarHoldByAgentId[agentId] = true;
       }
-      // "release" directive clears the gym hold — do not set skillGymHoldByAgentId[agentId]
-    } else if (next.skillGymHoldByAgentId[agentId]) {
-      skillGymHoldByAgentId[agentId] = true;
+      // "release" directive clears the bazaar hold — do not set skillBazaarHoldByAgentId[agentId]
+    } else if (next.skillBazaarHoldByAgentId[agentId]) {
+      skillBazaarHoldByAgentId[agentId] = true;
     }
 
     const phoneCallRequest = resolveLatestPhoneCallRequest({
@@ -1251,16 +1251,16 @@ export const reconcileOfficeAnimationTriggerState = (params: {
     deskHoldByAgentId,
     githubDirectiveKeyByAgentId,
     githubHoldByAgentId,
-    lastManualGymCommandKeyByAgentId: currentImmediateGymKeys,
-    manualGymUntilByAgentId,
+    lastManualBazaarCommandKeyByAgentId: currentImmediateGymKeys,
+    manualBazaarUntilByAgentId,
     pendingStandupRequest,
     phoneCallByAgentId,
     phoneCallDirectiveKeyByAgentId,
-    qaDirectiveKeyByAgentId,
-    qaHoldByAgentId,
+    kahvehaneDirectiveKeyByAgentId,
+    kahvehaneHoldByAgentId,
     sessionEpochSnapshot: buildSessionEpochSnapshot(params.agents),
-    skillGymDirectiveKeyByAgentId,
-    skillGymHoldByAgentId,
+    skillBazaarDirectiveKeyByAgentId,
+    skillBazaarHoldByAgentId,
     textMessageByAgentId,
     textMessageDirectiveKeyByAgentId,
     workingUntilByAgentId,
@@ -1269,7 +1269,7 @@ export const reconcileOfficeAnimationTriggerState = (params: {
 
 export const clearOfficeAnimationTriggerHold = (params: {
   agentId: string;
-  hold: "github" | "qa" | "call" | "text";
+  hold: "github" | "kahvehane" | "call" | "text";
   state: OfficeAnimationTriggerState;
 }): OfficeAnimationTriggerState => {
   const next = { ...params.state };
@@ -1320,34 +1320,34 @@ export const clearOfficeAnimationTriggerHold = (params: {
         : next.suppressedTextMessageDirectiveKeyByAgentId,
     };
   }
-  const directiveKey = next.qaDirectiveKeyByAgentId[params.agentId] ?? "";
-  const qaHoldByAgentId = { ...next.qaHoldByAgentId };
-  delete qaHoldByAgentId[params.agentId];
+  const directiveKey = next.kahvehaneDirectiveKeyByAgentId[params.agentId] ?? "";
+  const kahvehaneHoldByAgentId = { ...next.kahvehaneHoldByAgentId };
+  delete kahvehaneHoldByAgentId[params.agentId];
   return {
     ...next,
-    qaHoldByAgentId,
-    suppressedQaDirectiveKeyByAgentId: directiveKey
+    kahvehaneHoldByAgentId,
+    suppressedKahvehaneDirectiveKeyByAgentId: directiveKey
       ? {
-          ...next.suppressedQaDirectiveKeyByAgentId,
+          ...next.suppressedKahvehaneDirectiveKeyByAgentId,
           [params.agentId]: directiveKey,
         }
-      : next.suppressedQaDirectiveKeyByAgentId,
+      : next.suppressedKahvehaneDirectiveKeyByAgentId,
   };
 };
 
 export const buildOfficeAnimationState = (params: {
   agents: AgentState[];
-  marketplaceGymHoldByAgentId?: BooleanByAgentId;
+  marketplaceBazaarHoldByAgentId?: BooleanByAgentId;
   nowMs?: number;
   state: OfficeAnimationTriggerState;
 }): OfficeAnimationState => {
   // This final projection is intentionally smaller than the trigger state because the scene
   // only needs present-tense booleans and timers, not the bookkeeping used to derive them.
   const nowMs = params.nowMs ?? Date.now();
-  const marketplaceGymHoldByAgentId = params.marketplaceGymHoldByAgentId ?? {};
+  const marketplaceBazaarHoldByAgentId = params.marketplaceBazaarHoldByAgentId ?? {};
   const awaitingApprovalByAgentId: BooleanByAgentId = {};
   const deskHoldByAgentId: BooleanByAgentId = {};
-  const gymHoldByAgentId: BooleanByAgentId = {};
+  const bazaarHoldByAgentId: BooleanByAgentId = {};
   const jukeboxHoldByAgentId: BooleanByAgentId = {};
   const phoneBoothHoldByAgentId: BooleanByAgentId = {};
   const phoneCallByAgentId: PhoneCallByAgentId = {};
@@ -1362,12 +1362,12 @@ export const buildOfficeAnimationState = (params: {
       awaitingApprovalByAgentId[agentId] = true;
     }
     if (
-      params.state.skillGymHoldByAgentId[agentId] ||
-      marketplaceGymHoldByAgentId[agentId] ||
-      (params.state.manualGymUntilByAgentId[agentId] ?? 0) > nowMs ||
-      (params.state.gymCooldownUntilByAgentId[agentId] ?? 0) > nowMs
+      params.state.skillBazaarHoldByAgentId[agentId] ||
+      marketplaceBazaarHoldByAgentId[agentId] ||
+      (params.state.manualBazaarUntilByAgentId[agentId] ?? 0) > nowMs ||
+      (params.state.bazaarCooldownUntilByAgentId[agentId] ?? 0) > nowMs
     ) {
-      gymHoldByAgentId[agentId] = true;
+      bazaarHoldByAgentId[agentId] = true;
     }
     if ((params.state.streamingUntilByAgentId[agentId] ?? 0) > nowMs) {
       streamingByAgentId[agentId] = true;
@@ -1389,7 +1389,7 @@ export const buildOfficeAnimationState = (params: {
         smsBoothHoldByAgentId[agentId] = true;
       }
     }
-    if (params.state.deskHoldByAgentId[agentId] && !gymHoldByAgentId[agentId]) {
+    if (params.state.deskHoldByAgentId[agentId] && !bazaarHoldByAgentId[agentId]) {
       deskHoldByAgentId[agentId] = true;
     }
   }
@@ -1400,15 +1400,15 @@ export const buildOfficeAnimationState = (params: {
     danceUntilByAgentId: {},
     deskHoldByAgentId,
     githubHoldByAgentId: params.state.githubHoldByAgentId,
-    gymHoldByAgentId,
+    bazaarHoldByAgentId,
     jukeboxHoldByAgentId,
-    manualGymUntilByAgentId: params.state.manualGymUntilByAgentId,
+    manualBazaarUntilByAgentId: params.state.manualBazaarUntilByAgentId,
     pendingStandupRequest: params.state.pendingStandupRequest,
     phoneBoothHoldByAgentId,
     phoneCallByAgentId,
-    qaHoldByAgentId: params.state.qaHoldByAgentId,
+    kahvehaneHoldByAgentId: params.state.kahvehaneHoldByAgentId,
     smsBoothHoldByAgentId,
-    skillGymHoldByAgentId: params.state.skillGymHoldByAgentId,
+    skillBazaarHoldByAgentId: params.state.skillBazaarHoldByAgentId,
     streamingByAgentId,
     textMessageByAgentId,
     thinkingByAgentId,

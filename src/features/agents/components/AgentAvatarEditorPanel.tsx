@@ -14,6 +14,7 @@ import {
   type AgentAvatarProfile,
   createDefaultAgentAvatarProfile,
 } from "@/lib/avatars/profile";
+import { t } from "@/lib/i18n";
 import { AgentAvatarPreview3D } from "@/features/agents/components/AgentAvatarPreview3D";
 import { randomUUID } from "@/lib/uuid";
 
@@ -114,7 +115,7 @@ export const AgentAvatarEditorPanel = forwardRef<
             disabled={saving}
           >
             <RefreshCcw className="h-3.5 w-3.5" />
-            Reset
+            {t("avatarEditor.reset")}
           </button>
           <button
             type="button"

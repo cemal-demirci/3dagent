@@ -5,7 +5,7 @@
  * When connected: shows a compact "connected" badge + AI key configuration cards.
  */
 import { useCallback, useEffect, useState } from "react";
-import { CheckCircle2, Eye, EyeOff, Key, Wifi, WifiOff } from "lucide-react";
+import { CheckCircle2, Eye, EyeOff, Key, Terminal, Wifi, WifiOff } from "lucide-react";
 import { RunningAvatarLoader } from "@/features/agents/components/RunningAvatarLoader";
 import { t } from "@/lib/i18n";
 
@@ -79,6 +79,28 @@ export const ConnectStep = ({
     [callGateway, keyDrafts, fetchAIStatus],
   );
 
+  // Fetch CLI/SDK status from gateway setup.status
+  const [cliStatus, setCliStatus] = useState<{ agentSdk?: boolean; cli?: boolean } | null>(null);
+
+  const fetchCliStatus = useCallback(async () => {
+    if (!callGateway || !connected) return;
+    try {
+      const result = (await callGateway("setup.status", {})) as {
+        agentSdk?: boolean;
+        cli?: boolean;
+      };
+      if (result) setCliStatus(result);
+    } catch {
+      // setup.status may not exist on all gateways — silently ignore
+    }
+  }, [callGateway, connected]);
+
+  useEffect(() => {
+    void fetchCliStatus();
+  }, [fetchCliStatus]);
+
+  const hasAnyCli = cliStatus?.agentSdk || cliStatus?.cli;
+
   if (connected) {
     return (
       <div className="space-y-4">
@@ -89,7 +111,43 @@ export const ConnectStep = ({
           <p className="ml-auto text-[10px] text-white/40">{t("onboarding.connect.connectedHint")}</p>
         </div>
 
-        {/* AI Provider Setup */}
+        {/* CLI/SDK Status Badges */}
+        {cliStatus && (
+          <div className="space-y-2">
+            {cliStatus.agentSdk && (
+              <div className="flex items-center gap-2 rounded-lg border border-emerald-500/15 bg-emerald-500/5 px-3 py-2">
+                <Terminal className="h-3.5 w-3.5 text-emerald-400" />
+                <span className="text-[11px] font-medium text-emerald-300">
+                  {t("setup.cliReady.claude")}
+                </span>
+              </div>
+            )}
+            {cliStatus.cli && (
+              <div className="flex items-center gap-2 rounded-lg border border-emerald-500/15 bg-emerald-500/5 px-3 py-2">
+                <Terminal className="h-3.5 w-3.5 text-emerald-400" />
+                <span className="text-[11px] font-medium text-emerald-300">
+                  {t("setup.cliReady.gemini")}
+                </span>
+              </div>
+            )}
+            {!hasAnyCli && (
+              <div className="flex items-center gap-2 rounded-lg border border-amber-500/15 bg-amber-500/5 px-3 py-2">
+                <Terminal className="h-3.5 w-3.5 text-amber-400" />
+                <span className="text-[11px] text-amber-300/80">
+                  {t("setup.noCli")}
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* AI Provider Setup — show "already configured" badge when CLI is active */}
+        {hasAnyCli ? (
+          <div className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/[0.02] px-3 py-2.5">
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+            <span className="text-[11px] text-white/60">{t("setup.alreadyConfigured")}</span>
+          </div>
+        ) : (
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <Key className="h-3.5 w-3.5 text-amber-400" />
@@ -164,6 +222,7 @@ export const ConnectStep = ({
 
           <p className="text-[10px] text-white/30">{t("onboarding.connect.aiSetup.skipHint")}</p>
         </div>
+        )}
       </div>
     );
   }

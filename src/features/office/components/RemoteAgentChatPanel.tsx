@@ -6,6 +6,7 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
+import { t } from "@/lib/i18n";
 
 export type RemoteAgentChatMessage = {
   id: string;
@@ -49,8 +50,8 @@ export const RemoteAgentChatPanel = memo(function RemoteAgentChatPanel({
   const sendDisabled = !canSend || sending || !draftValue.trim();
   const helperText = useMemo(() => {
     if (disabledReason?.trim()) return disabledReason.trim();
-    if (sending) return "Forwarding your message to the remote gateway.";
-    return "Text-only relay. Remote replies are not mirrored here yet.";
+    if (sending) return t("remoteChat.forwardingHint");
+    return t("remoteChat.defaultHint");
   }, [disabledReason, sending]);
 
   useEffect(() => {
@@ -78,7 +79,7 @@ export const RemoteAgentChatPanel = memo(function RemoteAgentChatPanel({
     <div className="flex min-h-0 flex-1 flex-col bg-[#0e0a04]">
       <div className="border-b border-white/10 px-4 py-3">
         <div className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300/70">
-          Remote Agent
+          {t("remoteChat.title")}
         </div>
         <div className="mt-1 text-sm font-medium text-white">{agentName}</div>
         <div className="mt-2 font-mono text-[11px] text-white/45">{helperText}</div>
@@ -87,7 +88,7 @@ export const RemoteAgentChatPanel = memo(function RemoteAgentChatPanel({
       <div ref={feedRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
         {messages.length === 0 ? (
           <div className="rounded border border-dashed border-white/10 bg-black/10 px-3 py-3 font-mono text-[11px] text-white/35">
-            Send a plain-text note to this remote agent.
+            {t("remoteChat.emptyHint")}
           </div>
         ) : (
           messages.map((message) => (
@@ -124,18 +125,18 @@ export const RemoteAgentChatPanel = memo(function RemoteAgentChatPanel({
             onDraftChange(nextValue);
           }}
           onKeyDown={handleKeyDown}
-          placeholder="Message the remote agent."
+          placeholder={t("remoteChat.placeholder")}
           className="min-h-[92px] w-full resize-none rounded border border-white/10 bg-black/20 px-3 py-2 text-sm text-white outline-none transition focus:border-cyan-400/50"
         />
         <div className="mt-3 flex items-center justify-between gap-3">
-          <div className="font-mono text-[10px] text-white/35">Enter sends. Shift+Enter adds a line.</div>
+          <div className="font-mono text-[10px] text-white/35">{t("remoteChat.keyboardHint")}</div>
           <button
             type="button"
             onClick={handleSend}
             disabled={sendDisabled}
             className="rounded border border-cyan-400/40 bg-cyan-500/10 px-3 py-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-500/15 disabled:cursor-not-allowed disabled:opacity-45"
           >
-            {sending ? "Sending..." : "Send"}
+            {sending ? t("remoteChat.sending") : t("remoteChat.send")}
           </button>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import type { MockPhoneCallScenario } from "@/lib/office/call/types";
+import { t, tReplace } from "@/lib/i18n";
 
 const normalizeWhitespace = (value: string | null | undefined): string =>
   (value ?? "").replace(/\s+/g, " ").trim();
@@ -12,35 +13,35 @@ const isPhoneNumberLike = (value: string): boolean => /[\d+]/.test(value);
 
 const formatCalleeLabel = (callee: string): string => {
   const normalized = normalizeWhitespace(callee).toLowerCase();
-  if (!normalized) return "your contact";
-  if (normalized === "my wife") return "your wife";
-  if (normalized === "my husband") return "your husband";
-  if (normalized === "my mom") return "your mom";
-  if (normalized === "my dad") return "your dad";
+  if (!normalized) return t("mock.yourContact");
+  if (normalized === "my wife" || normalized === "kişim") return t("mock.yourContact");
+  if (normalized === "my husband") return t("mock.yourHusband");
+  if (normalized === "my mom") return t("mock.yourMom");
+  if (normalized === "my dad") return t("mock.yourDad");
   if (isPhoneNumberLike(normalized)) return normalized;
   return titleCase(normalized);
 };
 
 const buildPromptText = (calleeLabel: string): string =>
-  `What should I say to ${calleeLabel}?`;
+  tReplace("mock.whatShouldISayTo", { callee: calleeLabel });
 
 const DEMO_DIAL_NUMBER = "973-619-4672";
 
 const resolveDialNumber = (): string => DEMO_DIAL_NUMBER;
 
 const buildSpokenText = (message: string): string =>
-  `Hi, this is Luke assistant. He told me to tell you ${message}. Thank you.`;
+  tReplace("mock.hiThisIsAssistant", { message });
 
 const buildRecipientReply = (message: string): string => {
   const normalized = normalizeWhitespace(message).toLowerCase();
-  if (normalized.includes("late for dinner")) {
-    return "Okay, thanks for letting me know.";
+  if (normalized.includes("late for dinner") || normalized.includes("geç")) {
+    return t("mock.okayThanks");
   }
-  if (normalized.includes("on my way")) return "Okay, see you soon.";
-  if (normalized.includes("love you")) return "Love you too. Talk soon.";
-  if (normalized.includes("be there")) return "Sounds good. I will be ready.";
-  if (normalized.includes("running late")) return "Thanks for letting me know.";
-  return "Got it. I will pass that along on this mock line.";
+  if (normalized.includes("on my way") || normalized.includes("yoldayım")) return t("mock.seeYouSoon");
+  if (normalized.includes("love you") || normalized.includes("seviyorum")) return t("mock.loveToo");
+  if (normalized.includes("be there") || normalized.includes("orada")) return t("mock.soundsGood");
+  if (normalized.includes("running late") || normalized.includes("gecikiyorum")) return t("mock.thanksForLettingKnow");
+  return t("mock.gotIt");
 };
 
 export const buildMockPhoneCallScenario = (params: {
@@ -59,7 +60,7 @@ export const buildMockPhoneCallScenario = (params: {
       promptText: buildPromptText(calleeLabel),
       spokenText: null,
       recipientReply: null,
-      statusLine: `Waiting for your message to ${calleeLabel}.`,
+      statusLine: tReplace("mock.waitingForMessageTo", { callee: calleeLabel }),
       voiceAvailable: params.voiceAvailable,
     };
   }
@@ -70,7 +71,7 @@ export const buildMockPhoneCallScenario = (params: {
     promptText: null,
     spokenText: buildSpokenText(message),
     recipientReply: buildRecipientReply(message),
-    statusLine: `Connected to ${calleeLabel}.`,
+    statusLine: tReplace("mock.connectedTo", { callee: calleeLabel }),
     voiceAvailable: params.voiceAvailable,
   };
 };

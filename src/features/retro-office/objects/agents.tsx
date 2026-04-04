@@ -89,13 +89,13 @@ export const AgentModel = memo(function AgentModel({
     while (rotDelta > Math.PI) rotDelta -= Math.PI * 2;
     while (rotDelta < -Math.PI) rotDelta += Math.PI * 2;
     groupRef.current.rotation.y += rotDelta * 0.12;
-    const isWorkout = agent.state === "working_out";
+    const isWorkout = agent.state === "browsing";
     const isDancing = agent.state === "dancing";
     const isJanitor = "role" in agent && agent.role === "janitor";
     const janitorTool = isJanitor
       ? (agent as RenderAgent & JanitorActor).janitorTool
       : undefined;
-    const workoutStyle = agent.workoutStyle ?? "lift";
+    const browsingStyle = agent.browsingStyle ?? "chatting";
     const frameValue = agent.frame + (agent.phaseOffset ?? 0) / WALK_ANIM_SPEED;
     const walkPhase = Math.sin(frameValue * WALK_ANIM_SPEED);
     const workoutPhase = Math.sin(
@@ -111,15 +111,15 @@ export const AgentModel = memo(function AgentModel({
         : isDancing
           ? Math.sin(agent.frame * 0.18 + (agent.phaseOffset ?? 0)) * 0.06
           : isWorkout
-            ? workoutStyle === "bike"
+            ? browsingStyle === "inspecting"
               ? 0.18
-              : workoutStyle === "row"
+              : browsingStyle === "haggling"
                 ? -0.12 + Math.max(0, workoutPhase) * 0.08
-                : workoutStyle === "stretch"
+                : browsingStyle === "resting"
                   ? -0.08
-                  : workoutStyle === "run"
+                  : browsingStyle === "shopping"
                     ? 0.08
-                    : workoutStyle === "box"
+                    : browsingStyle === "admiring"
                       ? 0.04
                       : 0.02
             : agent.pingPongUntil
@@ -133,9 +133,9 @@ export const AgentModel = memo(function AgentModel({
             Math.abs(Math.sin(agent.frame * 0.22 + (agent.phaseOffset ?? 0))) *
               0.05
           : isWorkout
-            ? workoutStyle === "stretch"
+            ? browsingStyle === "resting"
               ? 0.012 + Math.abs(workoutPhase) * 0.018
-              : workoutStyle === "row"
+              : browsingStyle === "haggling"
                 ? 0.015 + Math.abs(workoutPhase) * 0.028
                 : 0.02 + Math.abs(workoutPhase) * 0.04
             : 0;
@@ -162,21 +162,21 @@ export const AgentModel = memo(function AgentModel({
         leftArmRef.current.rotation.y = -0.08;
         groupRef.current.rotation.z = Math.sin(agent.frame * 0.12) * 0.08;
       } else if (isWorkout) {
-        if (workoutStyle === "run") {
+        if (browsingStyle === "shopping") {
           leftArmRef.current.rotation.x = -(0.28 + workoutPhase * 1.05);
           leftArmRef.current.rotation.z = -0.08;
-        } else if (workoutStyle === "bike") {
+        } else if (browsingStyle === "inspecting") {
           leftArmRef.current.rotation.x = -(1.05 + workoutPushPhase * 0.16);
           leftArmRef.current.rotation.z = -0.18;
           leftArmRef.current.rotation.y = -0.12;
-        } else if (workoutStyle === "row") {
+        } else if (browsingStyle === "haggling") {
           leftArmRef.current.rotation.x = -(
             0.95 -
             Math.max(0, workoutPhase) * 0.7
           );
           leftArmRef.current.rotation.z = -0.16;
           leftArmRef.current.rotation.y = -0.1;
-        } else if (workoutStyle === "box") {
+        } else if (browsingStyle === "admiring") {
           leftArmRef.current.rotation.x = -(
             0.92 +
             Math.max(0, workoutPushPhase) * 0.45
@@ -184,7 +184,7 @@ export const AgentModel = memo(function AgentModel({
           leftArmRef.current.rotation.z = -0.52;
           leftArmRef.current.rotation.y = -0.06;
           groupRef.current.rotation.z = 0.05;
-        } else if (workoutStyle === "stretch") {
+        } else if (browsingStyle === "resting") {
           leftArmRef.current.rotation.x = -1.58;
           leftArmRef.current.rotation.z = -0.42;
           leftArmRef.current.rotation.y = -0.08;
@@ -221,21 +221,21 @@ export const AgentModel = memo(function AgentModel({
         rightArmRef.current.rotation.y = 0.08;
         groupRef.current.rotation.z = Math.sin(agent.frame * 0.12) * 0.08;
       } else if (isWorkout) {
-        if (workoutStyle === "run") {
+        if (browsingStyle === "shopping") {
           rightArmRef.current.rotation.x = -(0.28 - workoutPhase * 1.05);
           rightArmRef.current.rotation.z = 0.08;
-        } else if (workoutStyle === "bike") {
+        } else if (browsingStyle === "inspecting") {
           rightArmRef.current.rotation.x = -(1.05 - workoutPushPhase * 0.16);
           rightArmRef.current.rotation.z = 0.18;
           rightArmRef.current.rotation.y = 0.12;
-        } else if (workoutStyle === "row") {
+        } else if (browsingStyle === "haggling") {
           rightArmRef.current.rotation.x = -(
             0.95 -
             Math.max(0, -workoutPhase) * 0.7
           );
           rightArmRef.current.rotation.z = 0.16;
           rightArmRef.current.rotation.y = 0.1;
-        } else if (workoutStyle === "box") {
+        } else if (browsingStyle === "admiring") {
           rightArmRef.current.rotation.x = -(
             0.92 +
             Math.max(0, -workoutPushPhase) * 0.45
@@ -243,7 +243,7 @@ export const AgentModel = memo(function AgentModel({
           rightArmRef.current.rotation.z = 0.52;
           rightArmRef.current.rotation.y = 0.06;
           groupRef.current.rotation.z = -0.05;
-        } else if (workoutStyle === "stretch") {
+        } else if (browsingStyle === "resting") {
           rightArmRef.current.rotation.x = -1.58;
           rightArmRef.current.rotation.z = 0.42;
           rightArmRef.current.rotation.y = 0.08;
@@ -269,15 +269,15 @@ export const AgentModel = memo(function AgentModel({
           : isDancing
             ? Math.sin(agent.frame * 0.22 + (agent.phaseOffset ?? 0)) * 0.35
             : isWorkout
-              ? workoutStyle === "run"
+              ? browsingStyle === "shopping"
                 ? workoutPhase * 0.7
-                : workoutStyle === "bike"
+                : browsingStyle === "inspecting"
                   ? workoutPhase * 0.82
-                  : workoutStyle === "row"
+                  : browsingStyle === "haggling"
                     ? 0.14 + Math.max(0, workoutPhase) * 0.42
-                    : workoutStyle === "stretch"
+                    : browsingStyle === "resting"
                       ? -0.2 + Math.abs(workoutPhase) * 0.08
-                      : workoutStyle === "box"
+                      : browsingStyle === "admiring"
                         ? 0.06 + workoutPhase * 0.14
                         : workoutPhase * 0.18
               : 0;
@@ -289,15 +289,15 @@ export const AgentModel = memo(function AgentModel({
           : isDancing
             ? -Math.sin(agent.frame * 0.22 + (agent.phaseOffset ?? 0)) * 0.35
             : isWorkout
-              ? workoutStyle === "run"
+              ? browsingStyle === "shopping"
                 ? -workoutPhase * 0.7
-                : workoutStyle === "bike"
+                : browsingStyle === "inspecting"
                   ? -workoutPhase * 0.82
-                  : workoutStyle === "row"
+                  : browsingStyle === "haggling"
                     ? 0.14 + Math.max(0, -workoutPhase) * 0.42
-                    : workoutStyle === "stretch"
+                    : browsingStyle === "resting"
                       ? -0.12 + Math.abs(workoutPhase) * 0.08
-                      : workoutStyle === "box"
+                      : browsingStyle === "admiring"
                         ? 0.06 - workoutPhase * 0.14
                         : -workoutPhase * 0.18
               : 0;

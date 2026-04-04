@@ -2,6 +2,7 @@
 
 import { AudioLines, PhoneCall, Smartphone } from "lucide-react";
 import type { MockPhoneCallScenario } from "@/lib/office/call/types";
+import { t, tReplace } from "@/lib/i18n";
 
 export type PhoneCallStep =
   | "dialing"
@@ -21,14 +22,14 @@ export function PhoneBoothImmersiveScreen({
 }) {
   const statusLabel =
     step === "dialing"
-      ? "Dialing"
+      ? t("phone.dialing")
       : step === "ringing"
-        ? "Waiting for answer"
+        ? t("phone.waitingForAnswer")
         : step === "speaking"
-          ? "Connected"
+          ? t("phone.connected")
           : step === "reply"
-            ? "On the line"
-            : "Call complete";
+            ? t("phone.onTheLine")
+            : t("phone.callComplete");
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-[radial-gradient(circle_at_top,#0f172a_0%,#050816_46%,#02030a_100%)] text-white">
@@ -38,7 +39,7 @@ export function PhoneBoothImmersiveScreen({
           <div className="rounded-[32px] border border-sky-300/18 bg-slate-950/65 p-8 shadow-[0_24px_90px_rgba(2,8,23,0.75)]">
             <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.28em] text-sky-200/70">
               <PhoneCall className="h-4 w-4" />
-              Phone Booth Call
+              {t("phone.boothCall")}
             </div>
             <div className="mt-4 text-4xl font-semibold tracking-[0.08em] text-sky-50">
               {scenario.callee}
@@ -48,8 +49,8 @@ export function PhoneBoothImmersiveScreen({
             </div>
             <div className="mt-8 rounded-[28px] border border-sky-300/16 bg-slate-900/90 p-6">
               <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.24em] text-sky-200/60">
-                <span>Calling from booth</span>
-                <span>{scenario.voiceAvailable ? "ElevenLabs ready" : "Text fallback"}</span>
+                <span>{t("phone.callingFromBooth")}</span>
+                <span>{scenario.voiceAvailable ? t("phone.elevenLabsReady") : t("phone.textFallback")}</span>
               </div>
               <div className="mt-5 text-3xl font-medium tracking-[0.24em] text-sky-50">
                 {typedDigits || scenario.dialNumber}
@@ -77,7 +78,7 @@ export function PhoneBoothImmersiveScreen({
                   }`}
                 >
                   <PhoneCall className="h-4 w-4" />
-                  {step === "dialing" ? "Ready to call" : "Calling"}
+                  {step === "dialing" ? t("phone.readyToCall") : t("phone.calling")}
                 </div>
               </div>
             </div>
@@ -88,7 +89,7 @@ export function PhoneBoothImmersiveScreen({
               <div className="absolute left-1/2 top-3 h-1.5 w-28 -translate-x-1/2 rounded-full bg-slate-700" />
               <div className="relative flex h-full flex-col overflow-hidden rounded-[34px] border border-sky-300/12 bg-[linear-gradient(180deg,#081225_0%,#020617_100%)] px-6 py-8">
                 <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.24em] text-sky-200/65">
-                  <span>Cellular relay</span>
+                  <span>{t("phone.cellularRelay")}</span>
                   <Smartphone className="h-4 w-4" />
                 </div>
                 <div className="mt-8 flex h-28 w-28 items-center justify-center self-center rounded-full border border-sky-300/22 bg-sky-400/10 text-sky-100">
@@ -111,20 +112,20 @@ export function PhoneBoothImmersiveScreen({
                 </div>
                 <div className="mt-8 flex-1 space-y-4">
                   <Bubble
-                    label="Agent"
+                    label={t("phone.agent")}
                     text={
                       step === "dialing"
-                        ? `Typing ${typedDigits || scenario.dialNumber}.`
+                        ? tReplace("phone.typing", { digits: typedDigits || scenario.dialNumber })
                         : step === "ringing"
-                          ? `Pressed call and waiting for ${scenario.callee} to answer.`
-                          : scenario.spokenText ?? "Preparing the line."
+                          ? tReplace("phone.waitingForCallee", { callee: scenario.callee })
+                          : scenario.spokenText ?? t("phone.preparingLine")
                     }
                     tone="primary"
                   />
                   {step === "reply" || step === "complete" ? (
                     <Bubble
                       label={scenario.callee}
-                      text={scenario.recipientReply ?? "The line is quiet."}
+                      text={scenario.recipientReply ?? t("phone.lineQuiet")}
                       tone="secondary"
                     />
                   ) : null}

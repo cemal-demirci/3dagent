@@ -12,6 +12,7 @@ import {
   formatNumber,
   toDateInputValue,
 } from "@/lib/office/usageAnalyticsPresentation";
+import { t, tReplace } from "@/lib/i18n";
 
 const PIN_STORAGE_KEY = "openclaw_atm_pin_code";
 
@@ -33,7 +34,7 @@ export function AtmImmersiveScreen(props: OfficeUsageAnalyticsParams) {
 
   const handlePinSubmit = () => {
     if (inputPin.length < 4) {
-      setError("PIN must be at least 4 digits");
+      setError(t("atm.pinMinDigits"));
       return;
     }
 
@@ -47,7 +48,7 @@ export function AtmImmersiveScreen(props: OfficeUsageAnalyticsParams) {
         setIsAuthenticated(true);
         setError(null);
       } else {
-        setError("Incorrect PIN");
+        setError(t("atm.incorrectPin"));
         setInputPin("");
       }
     }
@@ -75,15 +76,15 @@ export function AtmImmersiveScreen(props: OfficeUsageAnalyticsParams) {
   );
   const overviewCards = useMemo(
     () => [
-      { label: "Total Spend", value: formatCurrency(usage.totals.totalCost) },
-      { label: "Total Tokens", value: formatNumber(usage.totals.totalTokens) },
-      { label: "Sessions", value: formatNumber(usage.sessions.length) },
-      { label: "Messages", value: formatNumber(usage.aggregates.messages.total) },
-      { label: "Tool Calls", value: formatNumber(usage.aggregates.tools.totalCalls) },
-      { label: "Unique Tools", value: formatNumber(usage.aggregates.tools.uniqueTools) },
-      { label: "Errors", value: formatNumber(usage.aggregates.messages.errors) },
+      { label: t("atm.totalSpend"), value: formatCurrency(usage.totals.totalCost) },
+      { label: t("atm.totalTokens"), value: formatNumber(usage.totals.totalTokens) },
+      { label: t("atm.sessions"), value: formatNumber(usage.sessions.length) },
+      { label: t("atm.messages"), value: formatNumber(usage.aggregates.messages.total) },
+      { label: t("atm.toolCalls"), value: formatNumber(usage.aggregates.tools.totalCalls) },
+      { label: t("atm.uniqueTools"), value: formatNumber(usage.aggregates.tools.uniqueTools) },
+      { label: t("atm.errors"), value: formatNumber(usage.aggregates.messages.errors) },
       {
-        label: "Avg Session Cost",
+        label: t("atm.avgSessionCost"),
         value:
           usage.sessions.length > 0
             ? formatCurrency(usage.totals.totalCost / usage.sessions.length)
@@ -136,12 +137,12 @@ export function AtmImmersiveScreen(props: OfficeUsageAnalyticsParams) {
           </div>
 
           <h2 className="text-[24px] font-medium tracking-[0.1em] text-[#dbfff6]">
-            {pinMode === "setup" ? "CREATE ACCESS PIN" : "ENTER PIN CODE"}
+            {pinMode === "setup" ? t("atm.createAccessPin") : t("atm.enterPinCode")}
           </h2>
           <p className="mt-2 text-[13px] uppercase tracking-[0.15em] text-[#83fff0]/60">
             {pinMode === "setup"
-              ? "Set a secure code for your treasury ledger"
-              : "Authentication required to view ledger"}
+              ? t("atm.setSecureCode")
+              : t("atm.authRequired")}
           </p>
 
           <div className="mb-8 mt-10 flex gap-4">
@@ -177,7 +178,7 @@ export function AtmImmersiveScreen(props: OfficeUsageAnalyticsParams) {
               onClick={() => handleKeyPad("clear")}
               className="flex h-16 w-24 items-center justify-center rounded-xl border border-rose-500/20 bg-[#1a0505]/60 text-[14px] font-medium uppercase tracking-wider text-rose-200 transition-all hover:bg-rose-900/40 active:scale-95"
             >
-              Clear
+              {t("atm.clear")}
             </button>
             <button
               onClick={() => handleKeyPad("0")}
@@ -206,25 +207,25 @@ export function AtmImmersiveScreen(props: OfficeUsageAnalyticsParams) {
           <div>
             <div className="flex items-center gap-3 text-[12px] uppercase tracking-[0.32em] text-[#83fff0]/70">
               <Landmark className="h-4 w-4" />
-              OpenClaw Treasury ATM
+              {t("atm.treasuryAtm")}
             </div>
             <div className="mt-3 text-[13px] uppercase tracking-[0.24em] text-[#7ddfd2]/62">
-              Token Usage Ledger
+              {t("atm.tokenUsageLedger")}
             </div>
             <div className="mt-2 text-[44px] font-semibold tracking-[0.08em] text-[#dbfff6]">
               {formatNumber(usage.totals.totalTokens)}
             </div>
             <div className="mt-2 text-[15px] uppercase tracking-[0.28em] text-[#89fff1]/72">
-              Total tokens used
+              {t("atm.totalTokensUsed")}
             </div>
             <div className="mt-4 inline-flex items-center rounded-full border border-[#7cffef]/20 bg-black/20 px-4 py-2 text-[13px] uppercase tracking-[0.24em] text-[#bafff7]/85">
-              USD equivalent {formatCurrency(usage.totals.totalCost)}
+              {tReplace("atm.usdEquivalent", { value: formatCurrency(usage.totals.totalCost) })}
             </div>
           </div>
           <div className="w-[320px] rounded-[24px] border border-[#7dfff0]/18 bg-black/22 p-5 shadow-[0_18px_50px_rgba(0,0,0,0.34)]">
             <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.24em] text-[#88fff1]/62">
               <Wallet className="h-4 w-4" />
-              Account summary
+              {t("atm.accountSummary")}
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
               {[
@@ -247,25 +248,25 @@ export function AtmImmersiveScreen(props: OfficeUsageAnalyticsParams) {
               ))}
             </div>
             <div className="mt-4 grid grid-cols-2 gap-3">
-              <SummaryCard label="Input" value={formatCurrency(usage.totals.inputCost)} />
-              <SummaryCard label="Output" value={formatCurrency(usage.totals.outputCost)} />
-              <SummaryCard label="Cache read" value={formatCurrency(usage.totals.cacheReadCost)} />
-              <SummaryCard label="Cache write" value={formatCurrency(usage.totals.cacheWriteCost)} />
+              <SummaryCard label={t("atm.input")} value={formatCurrency(usage.totals.inputCost)} />
+              <SummaryCard label={t("atm.output")} value={formatCurrency(usage.totals.outputCost)} />
+              <SummaryCard label={t("atm.cacheRead")} value={formatCurrency(usage.totals.cacheReadCost)} />
+              <SummaryCard label={t("atm.cacheWrite")} value={formatCurrency(usage.totals.cacheWriteCost)} />
             </div>
             <div className="mt-4 rounded-2xl border border-[#7dfff0]/12 bg-[#031314]/80 px-4 py-3 text-[12px] uppercase tracking-[0.18em] text-[#9ffef0]/76">
               {usage.lastRefreshedAt
-                ? `Last refresh ${new Date(usage.lastRefreshedAt).toLocaleTimeString()}`
+                ? tReplace("atm.lastRefresh", { time: new Date(usage.lastRefreshedAt).toLocaleTimeString() })
                 : settingsLoaded
-                  ? "Awaiting first usage snapshot"
-                  : "Loading account preferences"}
+                  ? t("atm.awaitingFirstSnapshot")
+                  : t("atm.loadingAccountPrefs")}
             </div>
           </div>
         </div>
 
         <div className="mt-7 space-y-6">
           <SectionCard
-            title="Usage Overview"
-            subtitle="Expanded OpenClaw expense data for the selected ledger window."
+            title={t("atm.usageOverview")}
+            subtitle={t("atm.usageOverviewSubtitle")}
             action={
               <button
                 type="button"
@@ -277,7 +278,7 @@ export function AtmImmersiveScreen(props: OfficeUsageAnalyticsParams) {
                 ) : (
                   <RefreshCw className="h-3.5 w-3.5" />
                 )}
-                Refresh
+                {t("atm.refresh")}
               </button>
             }
           >
@@ -290,13 +291,13 @@ export function AtmImmersiveScreen(props: OfficeUsageAnalyticsParams) {
           </SectionCard>
 
           <SectionCard
-            title="Daily Withdrawals"
-            subtitle="Recent cost movement across the last seven days."
+            title={t("atm.dailyWithdrawals")}
+            subtitle={t("atm.dailyWithdrawalsSubtitle")}
           >
             {usage.loading && recentCostDaily.length === 0 ? (
-              <EmptyPanelState message="Loading ATM ledger." />
+              <EmptyPanelState message={t("atm.loadingAtmLedger")} />
             ) : recentCostDaily.length === 0 ? (
-              <EmptyPanelState message="No token spend recorded for the current ledger window." />
+              <EmptyPanelState message={t("atm.noTokenSpend")} />
             ) : (
               <div className="grid grid-cols-7 gap-3">
                 {recentCostDaily.map((entry) => {
@@ -325,8 +326,8 @@ export function AtmImmersiveScreen(props: OfficeUsageAnalyticsParams) {
 
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
             <SectionCard
-              title="Activity By Day"
-              subtitle="Daily tokens, cost, messages, tool calls, and errors."
+              title={t("atm.activityByDay")}
+              subtitle={t("atm.activityByDaySubtitle")}
             >
               <div className="space-y-3">
                 {usage.aggregates.daily.map((entry) => (
@@ -338,14 +339,14 @@ export function AtmImmersiveScreen(props: OfficeUsageAnalyticsParams) {
                   />
                 ))}
                 {usage.aggregates.daily.length === 0 ? (
-                  <EmptyPanelState message="No daily activity rows available yet." />
+                  <EmptyPanelState message={t("atm.noDailyActivity")} />
                 ) : null}
               </div>
             </SectionCard>
 
             <SectionCard
-              title="Budget Alerts"
-              subtitle="Threshold warnings for daily, monthly, and per-agent spend."
+              title={t("atm.budgetAlerts")}
+              subtitle={t("atm.budgetAlertsSubtitle")}
             >
               <div className="space-y-3">
                 {usage.budgetAlerts.map((alert) => (
@@ -367,7 +368,7 @@ export function AtmImmersiveScreen(props: OfficeUsageAnalyticsParams) {
                 ))}
                 {usage.budgetAlerts.length === 0 ? (
                   <EmptyPanelState
-                    message="Budget thresholds are healthy for the current ATM ledger window."
+                    message={t("atm.budgetsHealthy")}
                     tone="success"
                   />
                 ) : null}
@@ -376,7 +377,7 @@ export function AtmImmersiveScreen(props: OfficeUsageAnalyticsParams) {
           </div>
 
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-            <SectionCard title="Agent Expenses" subtitle="All agents ranked by total spend.">
+            <SectionCard title={t("atm.agentExpenses")} subtitle={t("atm.agentExpensesSubtitle")}>
               <div className="space-y-3">
                 {usage.aggregates.byAgent.map((entry, index) => (
                   <ListRow
@@ -387,14 +388,14 @@ export function AtmImmersiveScreen(props: OfficeUsageAnalyticsParams) {
                   />
                 ))}
                 {usage.aggregates.byAgent.length === 0 ? (
-                  <EmptyPanelState message="No agent token activity yet." />
+                  <EmptyPanelState message={t("atm.noAgentActivity")} />
                 ) : null}
               </div>
             </SectionCard>
 
             <SectionCard
-              title="Model Expenses"
-              subtitle="Provider and model spend breakdown."
+              title={t("atm.modelExpenses")}
+              subtitle={t("atm.modelExpensesSubtitle")}
             >
               <div className="space-y-3">
                 {usage.aggregates.byModel.map((entry, index) => (
@@ -406,48 +407,48 @@ export function AtmImmersiveScreen(props: OfficeUsageAnalyticsParams) {
                   />
                 ))}
                 {usage.aggregates.byModel.length === 0 ? (
-                  <EmptyPanelState message="No model cost routes recorded yet." />
+                  <EmptyPanelState message={t("atm.noModelCostRoutes")} />
                 ) : null}
               </div>
             </SectionCard>
           </div>
 
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-            <SectionCard title="Tool Usage" subtitle="All tools observed in the selected sessions.">
+            <SectionCard title={t("atm.toolUsage")} subtitle={t("atm.toolUsageSubtitle")}>
               <div className="space-y-3">
                 {usage.aggregates.tools.tools.map((tool, index) => (
                   <ListRow
                     key={tool.name}
                     title={`Tool ${String(index + 1).padStart(2, "0")} · ${tool.name}`}
                     primary={formatNumber(tool.count)}
-                    secondary="total invocations"
+                    secondary={t("atm.totalInvocations")}
                   />
                 ))}
                 {usage.aggregates.tools.tools.length === 0 ? (
-                  <EmptyPanelState message="No tool usage has been recorded yet." />
+                  <EmptyPanelState message={t("atm.noToolUsage")} />
                 ) : null}
               </div>
             </SectionCard>
 
             <SectionCard
-              title="Message Totals"
-              subtitle="Conversation activity across all selected sessions."
+              title={t("atm.messageTotals")}
+              subtitle={t("atm.messageTotalsSubtitle")}
             >
               <div className="grid grid-cols-2 gap-3">
                 <SummaryCard
-                  label="All Messages"
+                  label={t("atm.allMessages")}
                   value={formatNumber(usage.aggregates.messages.total)}
                 />
                 <SummaryCard
-                  label="User"
+                  label={t("atm.user")}
                   value={formatNumber(usage.aggregates.messages.user)}
                 />
                 <SummaryCard
-                  label="Assistant"
+                  label={t("atm.assistant")}
                   value={formatNumber(usage.aggregates.messages.assistant)}
                 />
                 <SummaryCard
-                  label="Tool Results"
+                  label={t("atm.toolResults")}
                   value={formatNumber(usage.aggregates.messages.toolResults)}
                 />
               </div>
@@ -455,8 +456,8 @@ export function AtmImmersiveScreen(props: OfficeUsageAnalyticsParams) {
           </div>
 
           <SectionCard
-            title="Recent Sessions"
-            subtitle="Latest sessions with cost and token totals."
+            title={t("atm.recentSessions")}
+            subtitle={t("atm.recentSessionsSubtitle")}
           >
             <div className="space-y-3">
               {recentSessions.map((session) => (
@@ -469,12 +470,12 @@ export function AtmImmersiveScreen(props: OfficeUsageAnalyticsParams) {
                   secondary={`${session.provider ?? "unknown"} / ${session.model ?? "unknown"} · ${
                     session.updatedAt
                       ? new Date(session.updatedAt).toLocaleString()
-                      : "no timestamp"
+                      : t("atm.noTimestamp")
                   }`}
                 />
               ))}
               {recentSessions.length === 0 ? (
-                <EmptyPanelState message="No sessions available for the selected range." />
+                <EmptyPanelState message={t("atm.noSessions")} />
               ) : null}
             </div>
           </SectionCard>

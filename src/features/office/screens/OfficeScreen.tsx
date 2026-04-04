@@ -882,11 +882,11 @@ export function OfficeScreen({
       {
         agent: AgentState;
         deskHeld: boolean;
-        gymHeld: boolean;
+        bazaarHeld: boolean;
         latchedWorking: boolean;
         officeAgent: OfficeAgent;
         phoneBoothHeld: boolean;
-        qaHeld: boolean;
+        kahvehaneHeld: boolean;
         smsBoothHeld: boolean;
       }
     >
@@ -918,17 +918,17 @@ export function OfficeScreen({
   const [lastSeenByAgentId, setLastSeenByAgentId] = useState<
     Record<string, number>
   >({});
-  const [marketplaceGymHoldByAgentId, setMarketplaceGymHoldByAgentId] =
+  const [marketplaceBazaarHoldByAgentId, setMarketplaceBazaarHoldByAgentId] =
     useState<Record<string, boolean>>({});
-  const [gymCooldownUntilByAgentId, setGymCooldownUntilByAgentId] = useState<
+  const [bazaarCooldownUntilByAgentId, setBazaarCooldownUntilByAgentId] = useState<
     Record<string, number>
   >({});
-  const prevImmediateGymHoldRef = useRef<Record<string, boolean>>({});
+  const prevImmediateBazaarHoldRef = useRef<Record<string, boolean>>({});
   const [monitorAgentId, setMonitorAgentId] = useState<string | null>(null);
   const [githubReviewAgentId, setGithubReviewAgentId] = useState<string | null>(
     null,
   );
-  const [qaTestingAgentId, setQaTestingAgentId] = useState<string | null>(null);
+  const [kahvehaneTestingAgentId, setKahvehaneTestingAgentId] = useState<string | null>(null);
   const gatewayConfigSnapshot = useRef<GatewayModelPolicySnapshot | null>(null);
   const loadAgentsInFlightRef = useRef<Promise<void> | null>(null);
   const connectionEpochRef = useRef(0);
@@ -1690,7 +1690,7 @@ export function OfficeScreen({
     setAgentEditorAgentId((current) => (current === agentId ? null : current));
     setMonitorAgentId((current) => (current === agentId ? null : current));
     setGithubReviewAgentId((current) => (current === agentId ? null : current));
-    setQaTestingAgentId((current) => (current === agentId ? null : current));
+    setKahvehaneTestingAgentId((current) => (current === agentId ? null : current));
     setPreparedPhoneCallsByAgentId((current) => {
       if (!(agentId in current)) return current;
       const next = { ...current };
@@ -2595,7 +2595,7 @@ export function OfficeScreen({
   }, [state.agents]);
 
   useEffect(() => {
-    setMarketplaceGymHoldByAgentId((previous) => {
+    setMarketplaceBazaarHoldByAgentId((previous) => {
       const activeAgentIds = new Set(
         state.agents.map((agent) => agent.agentId),
       );
@@ -2631,12 +2631,12 @@ export function OfficeScreen({
   }, [githubReviewAgentId, state.agents]);
 
   useEffect(() => {
-    if (!qaTestingAgentId) return;
-    if (state.agents.some((agent) => agent.agentId === qaTestingAgentId)) {
+    if (!kahvehaneTestingAgentId) return;
+    if (state.agents.some((agent) => agent.agentId === kahvehaneTestingAgentId)) {
       return;
     }
-    setQaTestingAgentId(null);
-  }, [qaTestingAgentId, state.agents]);
+    setKahvehaneTestingAgentId(null);
+  }, [kahvehaneTestingAgentId, state.agents]);
 
   useEffect(() => {
     if (status !== "connected") return;
@@ -2752,13 +2752,13 @@ export function OfficeScreen({
     await taskBoard.refreshRemoteTasks();
   };
   const handleMarketplaceGymStart = useCallback((agentId: string) => {
-    setMarketplaceGymHoldByAgentId((previous) => ({
+    setMarketplaceBazaarHoldByAgentId((previous) => ({
       ...previous,
       [agentId]: true,
     }));
   }, []);
   const handleMarketplaceGymEnd = useCallback((agentId: string) => {
-    setMarketplaceGymHoldByAgentId((previous) => {
+    setMarketplaceBazaarHoldByAgentId((previous) => {
       if (!previous[agentId]) return previous;
       const next = { ...previous };
       delete next[agentId];
@@ -2785,7 +2785,7 @@ export function OfficeScreen({
     const base = buildOfficeAnimationState({
       state: officeTriggerState,
       agents: state.agents,
-      marketplaceGymHoldByAgentId,
+      marketplaceBazaarHoldByAgentId,
       nowMs: animationNowMs,
     });
     const skillTriggerHoldMaps = buildOfficeSkillTriggerHoldMaps(
@@ -2803,27 +2803,27 @@ export function OfficeScreen({
         ...base.githubHoldByAgentId,
         ...skillTriggerHoldMaps.githubHoldByAgentId,
       },
-      gymHoldByAgentId: {
-        ...base.gymHoldByAgentId,
-        ...skillTriggerHoldMaps.gymHoldByAgentId,
+      bazaarHoldByAgentId: {
+        ...base.bazaarHoldByAgentId,
+        ...skillTriggerHoldMaps.bazaarHoldByAgentId,
       },
       jukeboxHoldByAgentId: {
         ...base.jukeboxHoldByAgentId,
         ...skillTriggerHoldMaps.jukeboxHoldByAgentId,
       },
-      qaHoldByAgentId: {
-        ...base.qaHoldByAgentId,
-        ...skillTriggerHoldMaps.qaHoldByAgentId,
+      kahvehaneHoldByAgentId: {
+        ...base.kahvehaneHoldByAgentId,
+        ...skillTriggerHoldMaps.kahvehaneHoldByAgentId,
       },
-      skillGymHoldByAgentId: {
-        ...base.skillGymHoldByAgentId,
-        ...skillTriggerHoldMaps.skillGymHoldByAgentId,
+      skillBazaarHoldByAgentId: {
+        ...base.skillBazaarHoldByAgentId,
+        ...skillTriggerHoldMaps.skillBazaarHoldByAgentId,
       },
     };
   }, [
     animationNowMs,
     danceUntilByAgentId,
-    marketplaceGymHoldByAgentId,
+    marketplaceBazaarHoldByAgentId,
     officeTriggerState,
     skillTriggers.movementTargetByAgentId,
     state.agents,
@@ -2832,33 +2832,33 @@ export function OfficeScreen({
     deskHoldByAgentId,
     githubHoldByAgentId,
     jukeboxHoldByAgentId,
-    manualGymUntilByAgentId,
+    manualBazaarUntilByAgentId,
     pendingStandupRequest,
     phoneBoothHoldByAgentId,
     phoneCallByAgentId,
-    qaHoldByAgentId,
+    kahvehaneHoldByAgentId,
     smsBoothHoldByAgentId,
-    skillGymHoldByAgentId,
+    skillBazaarHoldByAgentId,
     textMessageByAgentId,
     workingUntilByAgentId,
   } = officeAnimationState;
-  const immediateGymHoldByAgentId = useMemo(
+  const immediateBazaarHoldByAgentId = useMemo(
     () => ({
-      ...marketplaceGymHoldByAgentId,
-      ...skillGymHoldByAgentId,
+      ...marketplaceBazaarHoldByAgentId,
+      ...skillBazaarHoldByAgentId,
     }),
-    [marketplaceGymHoldByAgentId, skillGymHoldByAgentId],
+    [marketplaceBazaarHoldByAgentId, skillBazaarHoldByAgentId],
   );
 
   useEffect(() => {
     const now = Date.now();
-    setGymCooldownUntilByAgentId((previous) => {
+    setBazaarCooldownUntilByAgentId((previous) => {
       const next: Record<string, number> = {};
       for (const agent of state.agents) {
         const agentId = agent.agentId;
-        const immediateHeld = Boolean(immediateGymHoldByAgentId[agentId]);
+        const immediateHeld = Boolean(immediateBazaarHoldByAgentId[agentId]);
         const wasImmediateHeld =
-          prevImmediateGymHoldRef.current[agentId] ?? false;
+          prevImmediateBazaarHoldRef.current[agentId] ?? false;
         const previousUntil = previous[agentId] ?? 0;
         if (immediateHeld) {
           if (previousUntil > now) {
@@ -2874,10 +2874,10 @@ export function OfficeScreen({
           next[agentId] = previousUntil;
         }
       }
-      prevImmediateGymHoldRef.current = Object.fromEntries(
+      prevImmediateBazaarHoldRef.current = Object.fromEntries(
         state.agents.map((agent) => [
           agent.agentId,
-          Boolean(immediateGymHoldByAgentId[agent.agentId]),
+          Boolean(immediateBazaarHoldByAgentId[agent.agentId]),
         ]),
       );
       const prevKeys = Object.keys(previous);
@@ -2890,7 +2890,7 @@ export function OfficeScreen({
       }
       return next;
     });
-  }, [immediateGymHoldByAgentId, state.agents]);
+  }, [immediateBazaarHoldByAgentId, state.agents]);
 
   const activeGithubReviewAgentId = useMemo(
     () =>
@@ -2900,9 +2900,9 @@ export function OfficeScreen({
   );
   const activeQaTestingAgentId = useMemo(
     () =>
-      state.agents.find((agent) => qaHoldByAgentId[agent.agentId])?.agentId ??
+      state.agents.find((agent) => kahvehaneHoldByAgentId[agent.agentId])?.agentId ??
       null,
-    [qaHoldByAgentId, state.agents],
+    [kahvehaneHoldByAgentId, state.agents],
   );
   useEffect(() => {
     setGithubReviewAgentId(activeGithubReviewAgentId);
@@ -2914,7 +2914,7 @@ export function OfficeScreen({
   }, [activeGithubReviewAgentId, focusLocalAgent]);
 
   useEffect(() => {
-    setQaTestingAgentId(activeQaTestingAgentId);
+    setKahvehaneTestingAgentId(activeQaTestingAgentId);
   }, [activeQaTestingAgentId]);
 
   useEffect(() => {
@@ -3236,14 +3236,14 @@ export function OfficeScreen({
     [dispatch, textMessageByAgentId],
   );
 
-  const gymHoldByAgentId = useMemo(() => {
+  const bazaarHoldByAgentId = useMemo(() => {
     const next: Record<string, boolean> = {};
     for (const agent of state.agents) {
       const agentId = agent.agentId;
       if (
-        immediateGymHoldByAgentId[agentId] ||
-        (manualGymUntilByAgentId[agentId] ?? 0) > animationNowMs ||
-        (gymCooldownUntilByAgentId[agentId] ?? 0) > animationNowMs
+        immediateBazaarHoldByAgentId[agentId] ||
+        (manualBazaarUntilByAgentId[agentId] ?? 0) > animationNowMs ||
+        (bazaarCooldownUntilByAgentId[agentId] ?? 0) > animationNowMs
       ) {
         next[agentId] = true;
       }
@@ -3251,9 +3251,9 @@ export function OfficeScreen({
     return next;
   }, [
     animationNowMs,
-    gymCooldownUntilByAgentId,
-    immediateGymHoldByAgentId,
-    manualGymUntilByAgentId,
+    bazaarCooldownUntilByAgentId,
+    immediateBazaarHoldByAgentId,
+    manualBazaarUntilByAgentId,
     state.agents,
   ]);
 
@@ -3405,16 +3405,16 @@ export function OfficeScreen({
     );
   }, [githubReviewAgentId]);
 
-  const handleQaDismiss = useCallback(() => {
-    if (!qaTestingAgentId) return;
+  const handleKahvehaneDismiss = useCallback(() => {
+    if (!kahvehaneTestingAgentId) return;
     setOfficeTriggerState((previous) =>
       clearOfficeAnimationTriggerHold({
         state: previous,
-        hold: "qa",
-        agentId: qaTestingAgentId,
+        hold: "kahvehane",
+        agentId: kahvehaneTestingAgentId,
       }),
     );
-  }, [qaTestingAgentId]);
+  }, [kahvehaneTestingAgentId]);
 
   const handleChatSend = useCallback(
     async (agentId: string, sessionKey: string, message: string) => {
@@ -3433,7 +3433,7 @@ export function OfficeScreen({
           createOpenClawLogEntry({
             eventName: "office-intent",
             eventKind: "derived",
-            summary: `agent=${agentId} gym=${intentSnapshot.gym?.source ?? "-"} qa=${intentSnapshot.qa ?? "-"} github=${intentSnapshot.github ?? "-"} desk=${intentSnapshot.desk ?? "-"} text=${intentSnapshot.text?.phase ?? "-"}`,
+            summary: `agent=${agentId} bazaar=${intentSnapshot.bazaar?.source ?? "-"} kahvehane=${intentSnapshot.kahvehane ?? "-"} github=${intentSnapshot.github ?? "-"} desk=${intentSnapshot.desk ?? "-"} text=${intentSnapshot.text?.phase ?? "-"}`,
             payload: {
               agentId,
               message: trimmed,
@@ -3449,8 +3449,8 @@ export function OfficeScreen({
       const hasImmediateOfficeTrigger = Boolean(
         intentSnapshot.desk ||
           intentSnapshot.github ||
-          intentSnapshot.gym ||
-          intentSnapshot.qa ||
+          intentSnapshot.bazaar ||
+          intentSnapshot.kahvehane ||
           intentSnapshot.standup ||
           intentSnapshot.text,
       );
@@ -3460,8 +3460,8 @@ export function OfficeScreen({
         !intentSnapshot.text &&
         !intentSnapshot.desk &&
         !intentSnapshot.github &&
-        !intentSnapshot.gym &&
-        !intentSnapshot.qa &&
+        !intentSnapshot.bazaar &&
+        !intentSnapshot.kahvehane &&
         !intentSnapshot.standup;
       const isTextMessageFollowUp =
         pendingTextMessage?.phase === "needs_message" &&
@@ -3469,8 +3469,8 @@ export function OfficeScreen({
         !intentSnapshot.text &&
         !intentSnapshot.desk &&
         !intentSnapshot.github &&
-        !intentSnapshot.gym &&
-        !intentSnapshot.qa &&
+        !intentSnapshot.bazaar &&
+        !intentSnapshot.kahvehane &&
         !intentSnapshot.standup;
 
       if (
@@ -3709,20 +3709,20 @@ export function OfficeScreen({
       {
         agent: AgentState;
         deskHeld: boolean;
-        gymHeld: boolean;
+        bazaarHeld: boolean;
         latchedWorking: boolean;
         officeAgent: OfficeAgent;
         phoneBoothHeld: boolean;
-        qaHeld: boolean;
+        kahvehaneHeld: boolean;
         smsBoothHeld: boolean;
       }
     >();
     const nextOfficeAgents = state.agents.map((agent) => {
       const latchedWorking = (workingUntilByAgentId[agent.agentId] ?? 0) > now;
       const deskHeld = Boolean(deskHoldByAgentId[agent.agentId]);
-      const gymHeld = Boolean(gymHoldByAgentId[agent.agentId]);
+      const bazaarHeld = Boolean(bazaarHoldByAgentId[agent.agentId]);
       const phoneBoothHeld = Boolean(phoneBoothHoldByAgentId[agent.agentId]);
-      const qaHeld = Boolean(qaHoldByAgentId[agent.agentId]);
+      const kahvehaneHeld = Boolean(kahvehaneHoldByAgentId[agent.agentId]);
       const smsBoothHeld = Boolean(smsBoothHoldByAgentId[agent.agentId]);
       const cached = officeAgentCacheRef.current.get(agent.agentId);
       if (
@@ -3730,9 +3730,9 @@ export function OfficeScreen({
         cached.agent === agent &&
         cached.latchedWorking === latchedWorking &&
         cached.deskHeld === deskHeld &&
-        cached.gymHeld === gymHeld &&
+        cached.bazaarHeld === bazaarHeld &&
         cached.phoneBoothHeld === phoneBoothHeld &&
-        cached.qaHeld === qaHeld &&
+        cached.kahvehaneHeld === kahvehaneHeld &&
         cached.smsBoothHeld === smsBoothHeld
       ) {
         nextCache.set(agent.agentId, cached);
@@ -3745,21 +3745,21 @@ export function OfficeScreen({
               status: "running",
               runId: agent.runId ?? `latched-${agent.agentId}`,
             }
-          : (deskHeld || gymHeld || qaHeld || phoneBoothHeld || smsBoothHeld) &&
+          : (deskHeld || bazaarHeld || kahvehaneHeld || phoneBoothHeld || smsBoothHeld) &&
               agent.status !== "error"
             ? {
                 ...agent,
                 status: "running",
                 runId:
                   agent.runId ??
-                  (qaHeld
-                    ? `qa-hold-${agent.agentId}`
+                  (kahvehaneHeld
+                    ? `kahvehane-hold-${agent.agentId}`
                     : smsBoothHeld
                       ? `text-hold-${agent.agentId}`
                     : phoneBoothHeld
                       ? `call-hold-${agent.agentId}`
-                    : gymHeld
-                      ? `gym-hold-${agent.agentId}`
+                    : bazaarHeld
+                      ? `bazaar-hold-${agent.agentId}`
                       : `desk-hold-${agent.agentId}`),
               }
             : agent;
@@ -3767,11 +3767,11 @@ export function OfficeScreen({
       nextCache.set(agent.agentId, {
         agent,
         deskHeld,
-        gymHeld,
+        bazaarHeld,
         latchedWorking,
         officeAgent,
         phoneBoothHeld,
-        qaHeld,
+        kahvehaneHeld,
         smsBoothHeld,
       });
       return officeAgent;
@@ -3781,9 +3781,9 @@ export function OfficeScreen({
   }, [
     clockTick,
     deskHoldByAgentId,
-    gymHoldByAgentId,
+    bazaarHoldByAgentId,
     phoneBoothHoldByAgentId,
-    qaHoldByAgentId,
+    kahvehaneHoldByAgentId,
     smsBoothHoldByAgentId,
     state.agents,
     workingUntilByAgentId,
@@ -4183,11 +4183,11 @@ export function OfficeScreen({
     (agent) =>
       agent.status === "running" ||
       deskHoldByAgentId[agent.agentId] ||
-      gymHoldByAgentId[agent.agentId] ||
+      bazaarHoldByAgentId[agent.agentId] ||
       jukeboxHoldByAgentId[agent.agentId] ||
       phoneBoothHoldByAgentId[agent.agentId] ||
       smsBoothHoldByAgentId[agent.agentId] ||
-      qaHoldByAgentId[agent.agentId],
+      kahvehaneHoldByAgentId[agent.agentId],
   ).length;
   const unseenInboxCount = state.agents.filter(
     (agent) => agent.hasUnseenActivity,
@@ -4244,7 +4244,7 @@ export function OfficeScreen({
           animationState={officeAnimationState}
           deskAssignmentByDeskUid={deskAssignmentByDeskUid}
           githubReviewAgentId={githubReviewAgentId}
-          qaTestingAgentId={qaTestingAgentId}
+          kahvehaneTestingAgentId={kahvehaneTestingAgentId}
           phoneBoothAgentId={activePhoneBoothAgentId}
           phoneCallScenario={activePhoneCallScenario}
           smsBoothAgentId={activeSmsBoothAgentId}
@@ -4343,8 +4343,8 @@ export function OfficeScreen({
           onGithubReviewDismiss={() => {
             handleGithubReviewDismiss();
           }}
-          onQaLabDismiss={() => {
-            handleQaDismiss();
+          onKahvehaneDismiss={() => {
+            handleKahvehaneDismiss();
           }}
           onPhoneCallSpeak={handlePhoneCallSpeak}
           onPhoneCallComplete={handlePhoneCallComplete}

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import { t } from "@/lib/i18n";
 import { AgentSkillsSetupModal } from "@/features/agents/components/AgentSkillsSetupModal";
 import {
   buildSkillMissingDetails,
@@ -211,9 +212,9 @@ export const SystemSkillsPanel = ({
         <input
           value={skillsFilter}
           onChange={(event) => setSkillsFilter(event.target.value)}
-          placeholder="Search skills"
+          placeholder={t("systemSkills.searchPlaceholder")}
           className="w-full rounded-md border border-border/60 bg-surface-1 px-3 py-2 text-[11px] text-foreground outline-none transition focus:border-border"
-          aria-label="Search skills"
+          aria-label={t("systemSkills.searchAriaLabel")}
         />
       </div>
       <div className="mt-2 flex flex-wrap gap-1">

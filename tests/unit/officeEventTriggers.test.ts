@@ -119,8 +119,8 @@ describe("office event triggers", () => {
     });
 
     expect(animationState.githubHoldByAgentId.main).toBe(true);
-    expect(animationState.qaHoldByAgentId.qa).toBe(true);
-    expect(animationState.skillGymHoldByAgentId.skill).toBe(true);
+    expect(animationState.kahvehaneHoldByAgentId.qa).toBe(true);
+    expect(animationState.skillBazaarHoldByAgentId.skill).toBe(true);
   });
 
   it("reacts to runtime chat commands regardless of channel transport", () => {
@@ -176,7 +176,7 @@ describe("office event triggers", () => {
       nowMs: 6_000,
     });
 
-    expect(afterStandup.manualGymUntilByAgentId.worker).toBeGreaterThan(5_000);
+    expect(afterStandup.manualBazaarUntilByAgentId.worker).toBeGreaterThan(5_000);
     expect(afterStandup.pendingStandupRequest?.message).toBe(
       "Start the standup meeting.",
     );
@@ -256,7 +256,7 @@ describe("office event triggers", () => {
     });
 
     expect(afterGym.deskHoldByAgentId.worker).toBe(true);
-    expect(afterGym.manualGymUntilByAgentId.worker).toBeGreaterThan(8_000);
+    expect(afterGym.manualBazaarUntilByAgentId.worker).toBeGreaterThan(8_000);
   });
 
   it("tracks streaming and reasoning activity from runtime events", () => {
@@ -329,11 +329,11 @@ describe("office event triggers", () => {
       state: {
         ...createOfficeAnimationTriggerState(),
         deskHoldByAgentId: { "agent-1": true },
-        manualGymUntilByAgentId: { "agent-1": 12_000 },
+        manualBazaarUntilByAgentId: { "agent-1": 12_000 },
       },
     });
 
-    expect(animationState.gymHoldByAgentId["agent-1"]).toBe(true);
+    expect(animationState.bazaarHoldByAgentId["agent-1"]).toBe(true);
     expect(animationState.deskHoldByAgentId["agent-1"]).toBeUndefined();
   });
 

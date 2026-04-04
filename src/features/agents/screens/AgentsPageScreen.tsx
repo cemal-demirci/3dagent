@@ -118,6 +118,7 @@ import {
   type SettingsRouteTab,
 } from "@/features/agents/operations/settingsRouteWorkflow";
 import { useSettingsRouteController } from "@/features/agents/operations/useSettingsRouteController";
+import { t } from "@/lib/i18n";
 
 const PENDING_EXEC_APPROVAL_PRUNE_GRACE_MS = 500;
 
@@ -1698,8 +1699,8 @@ const AgentsPageScreen = () => {
                     )
                   ) : (
                     <EmptyStatePanel
-                      title="Agent not found."
-                      description="Back to chat and select an available agent."
+                      title={t("agents.notFound")}
+                      description={t("agents.backToChat")}
                       fillHeight
                       className="items-center p-6 text-center text-sm"
                     />
@@ -1799,13 +1800,13 @@ const AgentsPageScreen = () => {
                   </div>
                 ) : (
                   <EmptyStatePanel
-                    title={hasAnyAgents ? "No agents match this filter." : "No agents available."}
+                    title={hasAnyAgents ? t("agents.noMatchFilter") : t("agents.noAvailable")}
                     description={
                       hasAnyAgents
                         ? undefined
                         : status === "connected"
-                          ? "Use New Agent in the sidebar to add your first agent."
-                          : "Connect to your gateway to load agents into the studio."
+                          ? t("agents.useNewAgent")
+                          : t("agents.connectGateway")
                     }
                     fillHeight
                     className="items-center p-6 text-center text-sm"
@@ -1852,17 +1853,17 @@ const AgentsPageScreen = () => {
           data-testid="agent-create-restart-modal"
           role="dialog"
           aria-modal="true"
-          aria-label="Creating agent"
+          aria-label={t("agents.creatingAgentAriaLabel")}
         >
           <div className="ui-panel w-full max-w-md p-6">
             <div className="font-mono text-[10px] font-semibold tracking-[0.06em] text-muted-foreground">
-              Agent create in progress
+              {t("agents.createInProgress")}
             </div>
             <div className="mt-2 text-base font-semibold text-foreground">
               {createAgentBlock.agentName}
             </div>
             <div className="mt-3 text-sm text-muted-foreground">
-              Studio is temporarily locked until creation finishes.
+              {t("agents.studioLocked")}
             </div>
             {createBlockStatusLine ? (
               <div className="ui-card mt-4 px-3 py-2 font-mono text-[11px] tracking-[0.06em] text-foreground">

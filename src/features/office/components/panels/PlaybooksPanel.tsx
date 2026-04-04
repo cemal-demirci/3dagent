@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import type { AgentState } from "@/features/agents/state/store";
+import { t, tReplace } from "@/lib/i18n";
 import type { OfficeStandupController } from "@/features/office/hooks/useOfficeStandupController";
 import {
   createCronJob,
@@ -20,6 +21,8 @@ import { isGatewayDisconnectLikeError } from "@/lib/gateway/GatewayClient";
 type TemplateDefinition = {
   id: string;
   name: string;
+  nameKey: string;
+  descKey: string;
   description: string;
   buildInput: (agent: AgentState, customName: string) => CronJobCreateInput;
 };
@@ -28,6 +31,8 @@ const PLAYBOOK_TEMPLATES: TemplateDefinition[] = [
   {
     id: "daily-briefing",
     name: "Daily Morning Briefing",
+    nameKey: "hq.playbooks.templateDailyBriefing",
+    descKey: "hq.playbooks.templateDailyBriefingDesc",
     description: "Every day at 9am. Summarize priorities, blockers, and what changed overnight.",
     buildInput: (agent, customName) => ({
       name: customName || "Daily Morning Briefing",
@@ -48,6 +53,8 @@ const PLAYBOOK_TEMPLATES: TemplateDefinition[] = [
   {
     id: "nightly-code-review",
     name: "Nightly Code Review Digest",
+    nameKey: "hq.playbooks.templateNightlyReview",
+    descKey: "hq.playbooks.templateNightlyReviewDesc",
     description: "Every night at midnight. Review the day and summarize risky changes or regressions.",
     buildInput: (agent, customName) => ({
       name: customName || "Nightly Code Review Digest",
@@ -68,6 +75,8 @@ const PLAYBOOK_TEMPLATES: TemplateDefinition[] = [
   {
     id: "hourly-health-check",
     name: "Hourly Health Check",
+    nameKey: "hq.playbooks.templateHourlyHealth",
+    descKey: "hq.playbooks.templateHourlyHealthDesc",
     description: "Every 60 minutes. Report runtime health, failures, and anything that needs intervention.",
     buildInput: (agent, customName) => ({
       name: customName || "Hourly Health Check",
@@ -88,6 +97,8 @@ const PLAYBOOK_TEMPLATES: TemplateDefinition[] = [
   {
     id: "weekly-progress-report",
     name: "Weekly Progress Report",
+    nameKey: "hq.playbooks.templateWeeklyReport",
+    descKey: "hq.playbooks.templateWeeklyReportDesc",
     description: "Every Monday at 8am. Roll up wins, unfinished work, and next steps.",
     buildInput: (agent, customName) => ({
       name: customName || "Weekly Progress Report",
@@ -108,6 +119,8 @@ const PLAYBOOK_TEMPLATES: TemplateDefinition[] = [
   {
     id: "continuous-monitor",
     name: "Continuous Monitor",
+    nameKey: "hq.playbooks.templateContinuousMonitor",
+    descKey: "hq.playbooks.templateContinuousMonitorDesc",
     description: "Every 15 minutes. Watch for drift, silent failures, or anything unusual.",
     buildInput: (agent, customName) => ({
       name: customName || "Continuous Monitor",
@@ -128,7 +141,7 @@ const PLAYBOOK_TEMPLATES: TemplateDefinition[] = [
 ];
 
 const formatRelativeDateTime = (timestampMs?: number) => {
-  if (!timestampMs || !Number.isFinite(timestampMs)) return "Unknown";
+  if (!timestampMs || !Number.isFinite(timestampMs)) return t("hq.playbooks.unknown");
   return new Date(timestampMs).toLocaleString([], {
     month: "short",
     day: "numeric",
@@ -231,7 +244,7 @@ export function PlaybooksPanel({
       const result = await listCronJobs(client, { includeDisabled: true });
       setJobs(sortCronJobsByUpdatedAt(result.jobs));
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to load playbooks.";
+      const message = err instanceof Error ? err.message : t("hq.playbooks.failedToLoadPlaybooks");
       setError(message);
       if (!isGatewayDisconnectLikeError(err)) {
         console.error(message);
@@ -247,13 +260,13 @@ export function PlaybooksPanel({
 
   const handleCreate = useCallback(async () => {
     if (!cronEnabled) {
-      setError("This runtime does not expose scheduled playbooks.");
+      setError(t("hq.playbooks.notExposed"));
       return;
     }
     if (!activeTemplate) return;
     const agent = agentById.get(selectedAgentId);
     if (!agent) {
-      setError("Pick an agent before launching a playbook.");
+      setError(t("hq.playbooks.pickAgentError"));
       return;
     }
 
@@ -262,13 +275,13 @@ export function PlaybooksPanel({
     setActionMessage(null);
     try {
       await createCronJob(client, activeTemplate.buildInput(agent, nameOverride.trim()));
-      setActionMessage(`Created "${nameOverride.trim() || activeTemplate.name}".`);
+      setActionMessage(tReplace("hq.playbooks.createdPlaybook", { name: nameOverride.trim() || activeTemplate.name }));
       setSelectedTemplateId(null);
       setSelectedAgentId("");
       setNameOverride("");
       await loadJobs();
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to create playbook.";
+      const message = err instanceof Error ? err.message : t("hq.playbooks.failedToCreatePlaybook");
       setError(message);
     } finally {
       setCreateBusy(false);
@@ -278,7 +291,7 @@ export function PlaybooksPanel({
   const handleRunNow = useCallback(
     async (jobId: string) => {
       if (!cronEnabled) {
-        setError("This runtime does not expose scheduled playbooks.");
+        setError(t("hq.playbooks.notExposed"));
         return;
       }
       setRunBusyJobId(jobId);
@@ -286,10 +299,10 @@ export function PlaybooksPanel({
       setActionMessage(null);
       try {
         const result = await runCronJobNow(client, jobId);
-        setActionMessage(result.ok ? "Playbook triggered." : "Playbook trigger failed.");
+        setActionMessage(result.ok ? t("hq.playbooks.playbookTriggered") : t("hq.playbooks.playbookTriggerFailed"));
         await loadJobs();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to run playbook.");
+        setError(err instanceof Error ? err.message : t("hq.playbooks.failedToRunPlaybook"));
       } finally {
         setRunBusyJobId(null);
       }
@@ -300,7 +313,7 @@ export function PlaybooksPanel({
   const handleDelete = useCallback(
     async (jobId: string) => {
       if (!cronEnabled) {
-        setError("This runtime does not expose scheduled playbooks.");
+        setError(t("hq.playbooks.notExposed"));
         return;
       }
       setDeleteBusyJobId(jobId);
@@ -308,10 +321,10 @@ export function PlaybooksPanel({
       setActionMessage(null);
       try {
         const result = await removeCronJob(client, jobId);
-        setActionMessage(result.ok && result.removed ? "Playbook removed." : "Playbook was not removed.");
+        setActionMessage(result.ok && result.removed ? t("hq.playbooks.playbookRemoved") : t("hq.playbooks.playbookNotRemoved"));
         await loadJobs();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to delete playbook.");
+        setError(err instanceof Error ? err.message : t("hq.playbooks.failedToDeletePlaybook"));
       } finally {
         setDeleteBusyJobId(null);
       }
@@ -340,9 +353,9 @@ export function PlaybooksPanel({
           jql: jiraJql.trim(),
         },
       });
-      setActionMessage("Standup settings saved.");
+      setActionMessage(t("hq.playbooks.standupSettingsSaved"));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save standup settings.");
+      setError(err instanceof Error ? err.message : t("hq.playbooks.failedToSaveStandup"));
     }
   }, [
     jiraApiToken,
@@ -361,7 +374,7 @@ export function PlaybooksPanel({
 
   const handleSaveManualNotes = useCallback(async () => {
     if (!standupAgentId) {
-      setError("Pick an agent before saving standup notes.");
+      setError(t("hq.playbooks.pickAgentStandupError"));
       return;
     }
     setError(null);
@@ -373,9 +386,9 @@ export function PlaybooksPanel({
         blockers: manualBlockers.trim(),
         note: manualNote.trim(),
       });
-      setActionMessage("Standup notes saved.");
+      setActionMessage(t("hq.playbooks.standupNotesSaved"));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save standup notes.");
+      setError(err instanceof Error ? err.message : t("hq.playbooks.failedToSaveStandupNotes"));
     }
   }, [
     manualBlockers,
@@ -392,10 +405,10 @@ export function PlaybooksPanel({
         <div className="flex items-center justify-between gap-2">
           <div>
             <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/70">
-              Playbooks
+              {t("hq.playbooks.title")}
             </div>
             <div className="mt-1 font-mono text-[11px] text-white/40">
-              Launch reusable schedules for the whole headquarters.
+              {t("hq.playbooks.subtitle")}
             </div>
           </div>
           <button
@@ -404,12 +417,12 @@ export function PlaybooksPanel({
             disabled={!cronEnabled}
             className="rounded border border-cyan-500/20 bg-cyan-500/10 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-cyan-200 transition-colors hover:border-cyan-400/40 hover:text-cyan-100"
           >
-            Refresh
+            {t("hq.playbooks.refresh")}
           </button>
         </div>
         {!cronEnabled ? (
           <div className="mt-2 font-mono text-[11px] text-white/35">
-            This runtime does not expose scheduled playbooks.
+            {t("hq.playbooks.notExposed")}
           </div>
         ) : null}
         {error ? <div className="mt-2 font-mono text-[11px] text-rose-300">{error}</div> : null}
@@ -421,16 +434,16 @@ export function PlaybooksPanel({
       <div className="min-h-0 flex-1 overflow-y-auto">
         <div className="border-b border-cyan-500/10 px-4 py-3">
           <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">
-            Active Jobs
+            {t("hq.playbooks.activeJobs")}
           </div>
           <div className="mt-3 space-y-2">
             {loading ? (
-              <div className="font-mono text-[11px] text-white/40">Loading scheduled jobs.</div>
+              <div className="font-mono text-[11px] text-white/40">{t("hq.playbooks.loadingJobs")}</div>
             ) : jobs.length === 0 ? (
-              <div className="font-mono text-[11px] text-white/35">No active playbooks yet.</div>
+              <div className="font-mono text-[11px] text-white/35">{t("hq.playbooks.noActivePlaybooks")}</div>
             ) : (
               jobs.map((job) => {
-                const agentName = agentById.get(job.agentId ?? "")?.name || job.agentId || "Unknown";
+                const agentName = agentById.get(job.agentId ?? "")?.name || job.agentId || t("hq.playbooks.unknown");
                 return (
                   <div
                     key={job.id}
@@ -450,8 +463,8 @@ export function PlaybooksPanel({
 
                     <div className="mt-3 space-y-1 font-mono text-[11px] text-white/65">
                       <div>{formatCronSchedule(job.schedule)}</div>
-                      <div>Next run: {formatRelativeDateTime(job.state.nextRunAtMs)}</div>
-                      <div>Last run: {formatRelativeDateTime(job.state.lastRunAtMs)}</div>
+                      <div>{tReplace("hq.playbooks.nextRun", { time: formatRelativeDateTime(job.state.nextRunAtMs) })}</div>
+                      <div>{tReplace("hq.playbooks.lastRun", { time: formatRelativeDateTime(job.state.lastRunAtMs) })}</div>
                     </div>
 
                     <div className="mt-3 flex gap-2">
@@ -461,7 +474,7 @@ export function PlaybooksPanel({
                         disabled={runBusyJobId === job.id || deleteBusyJobId === job.id}
                         className="rounded border border-amber-500/25 bg-amber-500/10 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-amber-200 transition-colors hover:border-amber-400/50 hover:text-amber-100 disabled:cursor-not-allowed disabled:opacity-50"
                       >
-                        {runBusyJobId === job.id ? "Running" : "Run now"}
+                        {runBusyJobId === job.id ? t("hq.playbooks.runningNow") : t("hq.playbooks.runNow")}
                       </button>
                       <button
                         type="button"
@@ -469,7 +482,7 @@ export function PlaybooksPanel({
                         disabled={deleteBusyJobId === job.id || runBusyJobId === job.id}
                         className="rounded border border-rose-500/25 bg-rose-500/10 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-rose-200 transition-colors hover:border-rose-400/50 hover:text-rose-100 disabled:cursor-not-allowed disabled:opacity-50"
                       >
-                        {deleteBusyJobId === job.id ? "Deleting" : "Delete"}
+                        {deleteBusyJobId === job.id ? t("hq.playbooks.deleting") : t("hq.playbooks.delete")}
                       </button>
                     </div>
                   </div>
@@ -484,10 +497,10 @@ export function PlaybooksPanel({
             <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-emerald-200/85">
-                  Automated Standup
+                  {t("hq.playbooks.automatedStandup")}
                 </div>
                 <div className="mt-1 font-mono text-[11px] leading-5 text-white/50">
-                  Configure the daily meeting, Jira source, and manual notes board.
+                  {t("hq.playbooks.standupDesc")}
                 </div>
               </div>
               <button
@@ -495,7 +508,7 @@ export function PlaybooksPanel({
                 onClick={() => void standup.startMeeting("manual")}
                 className="rounded border border-emerald-500/25 bg-emerald-500/10 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-emerald-100 transition-colors hover:border-emerald-400/50 hover:text-white"
               >
-                Start now
+                {t("hq.playbooks.startNow")}
               </button>
             </div>
 
@@ -506,12 +519,12 @@ export function PlaybooksPanel({
                   checked={standupScheduleEnabled}
                   onChange={(event) => setStandupScheduleEnabled(event.target.checked)}
                 />
-                Enable scheduled standup.
+                {t("hq.playbooks.enableScheduledStandup")}
               </label>
 
               <label className="flex flex-col gap-1">
                 <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">
-                  Cron expression
+                  {t("hq.playbooks.cronExpression")}
                 </span>
                 <input
                   value={standupCronExpr}
@@ -522,7 +535,7 @@ export function PlaybooksPanel({
 
               <label className="flex flex-col gap-1">
                 <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">
-                  Timezone
+                  {t("hq.playbooks.timezone")}
                 </span>
                 <input
                   value={standupTimezone}
@@ -533,7 +546,7 @@ export function PlaybooksPanel({
 
               <label className="flex flex-col gap-1">
                 <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">
-                  Seconds per speaker
+                  {t("hq.playbooks.secondsPerSpeaker")}
                 </span>
                 <input
                   value={standupSpeakerSeconds}
@@ -548,7 +561,7 @@ export function PlaybooksPanel({
                   checked={standupAutoOpenBoard}
                   onChange={(event) => setStandupAutoOpenBoard(event.target.checked)}
                 />
-                Auto-open the standup board when a meeting starts.
+                {t("hq.playbooks.autoOpenBoard")}
               </label>
 
               <label className="flex items-center gap-2 font-mono text-[11px] text-white/75">
@@ -557,12 +570,12 @@ export function PlaybooksPanel({
                   checked={jiraEnabled}
                   onChange={(event) => setJiraEnabled(event.target.checked)}
                 />
-                Enable Jira source.
+                {t("hq.playbooks.enableJiraSource")}
               </label>
 
               <label className="flex flex-col gap-1">
                 <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">
-                  Jira base URL
+                  {t("hq.playbooks.jiraBaseUrl")}
                 </span>
                 <input
                   value={jiraBaseUrl}
@@ -574,7 +587,7 @@ export function PlaybooksPanel({
 
               <label className="flex flex-col gap-1">
                 <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">
-                  Jira email
+                  {t("hq.playbooks.jiraEmail")}
                 </span>
                 <input
                   value={jiraEmail}
@@ -585,7 +598,7 @@ export function PlaybooksPanel({
 
               <label className="flex flex-col gap-1">
                 <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">
-                  Jira API token
+                  {t("hq.playbooks.jiraApiToken")}
                 </span>
                 <input
                   type="password"
@@ -595,20 +608,20 @@ export function PlaybooksPanel({
                     setJiraApiTokenConfigured(event.target.value.trim().length > 0);
                   }}
                   placeholder={
-                    jiraApiTokenConfigured ? "Stored on Studio host. Enter to replace." : ""
+                    jiraApiTokenConfigured ? t("hq.playbooks.jiraApiTokenPlaceholder") : ""
                   }
                   className="rounded border border-white/10 bg-black/50 px-2 py-2 font-mono text-[11px] text-white/80 outline-none"
                 />
                 {jiraApiTokenConfigured ? (
                   <span className="text-[10px] text-white/45">
-                    A Jira API token is already stored on the Studio host.
+                    {t("hq.playbooks.jiraApiTokenStored")}
                   </span>
                 ) : null}
               </label>
 
               <label className="flex flex-col gap-1">
                 <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">
-                  Jira project key
+                  {t("hq.playbooks.jiraProjectKey")}
                 </span>
                 <input
                   value={jiraProjectKey}
@@ -619,7 +632,7 @@ export function PlaybooksPanel({
 
               <label className="flex flex-col gap-1">
                 <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">
-                  Jira JQL override
+                  {t("hq.playbooks.jiraJqlOverride")}
                 </span>
                 <textarea
                   value={jiraJql}
@@ -635,25 +648,25 @@ export function PlaybooksPanel({
                 disabled={standup.saving}
                 className="rounded border border-emerald-500/25 bg-emerald-500/10 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-emerald-100 transition-colors hover:border-emerald-400/50 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {standup.saving ? "Saving standup settings" : "Save standup settings"}
+                {standup.saving ? t("hq.playbooks.savingStandupSettings") : t("hq.playbooks.saveStandupSettings")}
               </button>
             </div>
 
             <div className="mt-4 border-t border-white/10 pt-4">
               <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">
-                Manual board input
+                {t("hq.playbooks.manualBoardInput")}
               </div>
               <div className="mt-3 grid gap-3">
                 <label className="flex flex-col gap-1">
                   <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">
-                    Agent
+                    {t("hq.playbooks.agent")}
                   </span>
                   <select
                     value={standupAgentId}
                     onChange={(event) => setStandupAgentId(event.target.value)}
                     className="rounded border border-white/10 bg-black/50 px-2 py-2 font-mono text-[11px] text-white/80 outline-none"
                   >
-                    <option value="">Select an agent</option>
+                    <option value="">{t("hq.playbooks.selectAnAgent")}</option>
                     {agents.map((agent) => (
                       <option key={agent.agentId} value={agent.agentId}>
                         {agent.name || agent.agentId}
@@ -664,7 +677,7 @@ export function PlaybooksPanel({
 
                 <label className="flex flex-col gap-1">
                   <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">
-                    Jira assignee hint
+                    {t("hq.playbooks.jiraAssigneeHint")}
                   </span>
                   <input
                     value={manualJiraAssignee}
@@ -675,7 +688,7 @@ export function PlaybooksPanel({
 
                 <label className="flex flex-col gap-1">
                   <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">
-                    Current task
+                    {t("hq.playbooks.currentTask")}
                   </span>
                   <input
                     value={manualTask}
@@ -686,7 +699,7 @@ export function PlaybooksPanel({
 
                 <label className="flex flex-col gap-1">
                   <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">
-                    Blockers
+                    {t("hq.playbooks.blockers")}
                   </span>
                   <textarea
                     value={manualBlockers}
@@ -698,7 +711,7 @@ export function PlaybooksPanel({
 
                 <label className="flex flex-col gap-1">
                   <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">
-                    Manual note
+                    {t("hq.playbooks.manualNote")}
                   </span>
                   <textarea
                     value={manualNote}
@@ -713,24 +726,24 @@ export function PlaybooksPanel({
                   onClick={() => void handleSaveManualNotes()}
                   className="rounded border border-cyan-500/25 bg-cyan-500/10 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-cyan-100 transition-colors hover:border-cyan-400/50 hover:text-white"
                 >
-                  Save manual notes
+                  {t("hq.playbooks.saveManualNotes")}
                 </button>
               </div>
             </div>
 
             {standup.meeting ? (
               <div className="mt-4 rounded border border-white/8 bg-white/[0.03] px-3 py-3 font-mono text-[11px] text-white/65">
-                <div>Meeting phase: {standup.meeting.phase}</div>
-                <div>Participants: {standup.meeting.participantOrder.length}</div>
+                <div>{tReplace("hq.playbooks.meetingPhase", { phase: standup.meeting.phase })}</div>
+                <div>{tReplace("hq.playbooks.participants", { count: standup.meeting.participantOrder.length })}</div>
                 <div>
-                  Current speaker: {standup.meeting.currentSpeakerAgentId ?? "Waiting"}
+                  {tReplace("hq.playbooks.currentSpeaker", { speaker: standup.meeting.currentSpeakerAgentId ?? t("hq.playbooks.waiting") })}
                 </div>
               </div>
             ) : null}
           </div>
 
           <div className="mt-4 font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">
-            Templates
+            {t("hq.playbooks.templates")}
           </div>
           <div className="mt-3 space-y-2">
             {PLAYBOOK_TEMPLATES.map((template) => {
@@ -756,10 +769,10 @@ export function PlaybooksPanel({
                     className="w-full text-left"
                   >
                     <div className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-white/85">
-                      {template.name}
+                      {t(template.nameKey as any)}
                     </div>
                     <div className="mt-1 font-mono text-[11px] leading-5 text-white/50">
-                      {template.description}
+                      {t(template.descKey as any)}
                     </div>
                   </button>
 
@@ -767,14 +780,14 @@ export function PlaybooksPanel({
                     <div className="mt-3 space-y-3 border-t border-cyan-500/10 pt-3">
                       <label className="flex flex-col gap-1">
                         <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">
-                          Agent
+                          {t("hq.playbooks.agent")}
                         </span>
                         <select
                           value={selectedAgentId}
                           onChange={(event) => setSelectedAgentId(event.target.value)}
                           className="rounded border border-white/10 bg-black/50 px-2 py-2 font-mono text-[11px] text-white/80 outline-none"
                         >
-                          <option value="">Select an agent</option>
+                          <option value="">{t("hq.playbooks.selectAnAgent")}</option>
                           {agents.map((agent) => (
                             <option key={agent.agentId} value={agent.agentId}>
                               {agent.name || agent.agentId}
@@ -785,12 +798,12 @@ export function PlaybooksPanel({
 
                       <label className="flex flex-col gap-1">
                         <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">
-                          Name override
+                          {t("hq.playbooks.nameOverride")}
                         </span>
                         <input
                           value={nameOverride}
                           onChange={(event) => setNameOverride(event.target.value)}
-                          placeholder={template.name}
+                          placeholder={t(template.nameKey as any)}
                           className="rounded border border-white/10 bg-black/50 px-2 py-2 font-mono text-[11px] text-white/80 outline-none placeholder:text-white/20"
                         />
                       </label>
@@ -801,7 +814,7 @@ export function PlaybooksPanel({
                         disabled={createBusy}
                         className="w-full rounded border border-cyan-500/25 bg-cyan-500/10 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-cyan-100 transition-colors hover:border-cyan-400/50 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                       >
-                        {createBusy ? "Creating playbook" : "Launch playbook"}
+                        {createBusy ? t("hq.playbooks.creatingPlaybook") : t("hq.playbooks.launchPlaybook")}
                       </button>
                     </div>
                   ) : null}

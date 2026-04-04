@@ -80,11 +80,11 @@ import {
 } from "@/features/retro-office/core/constants";
 import {
   ensureOfficeAtm,
-  ensureOfficeGymRoom,
+  ensureOfficeBazaar,
   ensureOfficeKanbanBoard,
   ensureOfficePhoneBooth,
   ensureOfficePingPongTable,
-  ensureOfficeQaLab,
+  ensureOfficeKahvehane,
   ensureOfficeSmsBooth,
   ensureOfficeJukebox,
   ensureOfficeServerRoom,
@@ -121,18 +121,18 @@ import {
   astar,
   buildNavGrid,
   getDeskLocations,
-  getGymWorkoutLocations,
+  getBazaarBrowsingLocations,
   getJanitorCleaningStops,
   getMeetingSeatLocations,
-  getQaLabStations,
-  GYM_DEFAULT_TARGET,
+  getKahvehaneSeatingLocations,
+  BAZAAR_DEFAULT_TARGET,
   MEETING_OVERFLOW_LOCATIONS,
-  QA_LAB_DEFAULT_TARGET,
+  KAHVEHANE_DEFAULT_TARGET,
   resolveDeskIndexForItem,
-  resolveGymRoute,
+  resolveBazaarRoute,
   resolvePhoneBoothRoute,
   resolvePingPongTargets,
-  resolveQaLabRoute,
+  resolveKahvehaneRoute,
   resolveSmsBoothRoute,
   resolveServerRoomRoute,
   ROAM_POINTS,
@@ -152,7 +152,7 @@ import type {
   FurnitureItem,
   JanitorActor,
   OfficeAgent,
-  QaLabStationLocation,
+  KahvehaneSeatingLocation,
   RenderAgent,
   SceneActor,
 } from "@/features/retro-office/core/types";
@@ -175,22 +175,21 @@ import {
 } from "@/features/retro-office/objects/kitchen";
 import {
   AtmMachineModel as InteractiveAtmMachineModel,
-  DeviceRackModel as InteractiveDeviceRackModel,
-  DumbbellRackModel as InteractiveDumbbellRackModel,
-  ExerciseBikeModel as InteractiveExerciseBikeModel,
-  KettlebellRackModel as InteractiveKettlebellRackModel,
+  SpiceStallModel as InteractiveSpiceStallModel,
+  BazaarCounterModel as InteractiveBazaarCounterModel,
+  LanternPostModel as InteractiveLanternPostModel,
+  CezveStationModel as InteractiveCezveStationModel,
   PingPongTableModel as MachinePingPongTableModel,
   PhoneBoothModel as InteractivePhoneBoothModel,
-  PunchingBagModel as InteractivePunchingBagModel,
-  QaTerminalModel as InteractiveQaTerminalModel,
-  RowingMachineModel as InteractiveRowingMachineModel,
+  TulipLampModel as InteractiveTulipLampModel,
+  CoffeeTableModel as InteractiveCoffeeTableModel,
+  PotteryShelfModel as InteractivePotteryShelfModel,
   ServerRackModel as InteractiveServerRackModel,
   ServerTerminalModel as InteractiveServerTerminalModel,
   SmsBoothModel as InteractiveSmsBoothModel,
-  TestBenchModel as InteractiveTestBenchModel,
-  TreadmillModel as InteractiveTreadmillModel,
-  WeightBenchModel as InteractiveWeightBenchModel,
-  YogaMatModel as InteractiveYogaMatModel,
+  BackgammonTableModel as InteractiveBackgammonTableModel,
+  CarpetStandModel as InteractiveCarpetStandModel,
+  SedirModel as InteractiveSedirModel,
 } from "@/features/retro-office/objects/machines";
 import {
   ClockModel as PrimitiveClockModel,
@@ -223,6 +222,7 @@ import {
   TrailSystem as AgentTrailSystem,
 } from "@/features/retro-office/systems/visualSystems";
 import type { OfficeCleaningCue } from "@/lib/office/janitorReset";
+import { t } from "@/lib/i18n";
 
 type OfficeDeskMonitorMap = Record<string, OfficeDeskMonitor>;
 type RenderAgentUiSnapshot = Pick<RenderAgent, "state" | "status">;
@@ -622,8 +622,8 @@ const ReadOnlyFurnitureClone = memo(function ReadOnlyFurnitureClone({
             onPointerOver={NOOP_FURNITURE_UID_HANDLER}
             onPointerOut={NOOP_FURNITURE_HANDLER}
           />
-        ) : item.type === "qa_terminal" ? (
-          <InteractiveQaTerminalModel
+        ) : item.type === "coffee_table" ? (
+          <InteractiveCoffeeTableModel
             key={item._uid}
             item={item}
             isSelected={false}
@@ -633,8 +633,8 @@ const ReadOnlyFurnitureClone = memo(function ReadOnlyFurnitureClone({
             onPointerOver={NOOP_FURNITURE_UID_HANDLER}
             onPointerOut={NOOP_FURNITURE_HANDLER}
           />
-        ) : item.type === "device_rack" ? (
-          <InteractiveDeviceRackModel
+        ) : item.type === "sedir" ? (
+          <InteractiveSedirModel
             key={item._uid}
             item={item}
             isSelected={false}
@@ -644,8 +644,8 @@ const ReadOnlyFurnitureClone = memo(function ReadOnlyFurnitureClone({
             onPointerOver={NOOP_FURNITURE_UID_HANDLER}
             onPointerOut={NOOP_FURNITURE_HANDLER}
           />
-        ) : item.type === "test_bench" ? (
-          <InteractiveTestBenchModel
+        ) : item.type === "backgammon_table" ? (
+          <InteractiveBackgammonTableModel
             key={item._uid}
             item={item}
             isSelected={false}
@@ -655,8 +655,8 @@ const ReadOnlyFurnitureClone = memo(function ReadOnlyFurnitureClone({
             onPointerOver={NOOP_FURNITURE_UID_HANDLER}
             onPointerOut={NOOP_FURNITURE_HANDLER}
           />
-        ) : item.type === "treadmill" ? (
-          <InteractiveTreadmillModel
+        ) : item.type === "spice_stall" ? (
+          <InteractiveSpiceStallModel
             key={item._uid}
             item={item}
             isSelected={false}
@@ -666,8 +666,8 @@ const ReadOnlyFurnitureClone = memo(function ReadOnlyFurnitureClone({
             onPointerOver={NOOP_FURNITURE_UID_HANDLER}
             onPointerOut={NOOP_FURNITURE_HANDLER}
           />
-        ) : item.type === "weight_bench" ? (
-          <InteractiveWeightBenchModel
+        ) : item.type === "carpet_stand" ? (
+          <InteractiveCarpetStandModel
             key={item._uid}
             item={item}
             isSelected={false}
@@ -677,8 +677,8 @@ const ReadOnlyFurnitureClone = memo(function ReadOnlyFurnitureClone({
             onPointerOver={NOOP_FURNITURE_UID_HANDLER}
             onPointerOut={NOOP_FURNITURE_HANDLER}
           />
-        ) : item.type === "dumbbell_rack" ? (
-          <InteractiveDumbbellRackModel
+        ) : item.type === "bazaar_counter" ? (
+          <InteractiveBazaarCounterModel
             key={item._uid}
             item={item}
             isSelected={false}
@@ -688,8 +688,8 @@ const ReadOnlyFurnitureClone = memo(function ReadOnlyFurnitureClone({
             onPointerOver={NOOP_FURNITURE_UID_HANDLER}
             onPointerOut={NOOP_FURNITURE_HANDLER}
           />
-        ) : item.type === "exercise_bike" ? (
-          <InteractiveExerciseBikeModel
+        ) : item.type === "lantern_post" ? (
+          <InteractiveLanternPostModel
             key={item._uid}
             item={item}
             isSelected={false}
@@ -699,8 +699,8 @@ const ReadOnlyFurnitureClone = memo(function ReadOnlyFurnitureClone({
             onPointerOver={NOOP_FURNITURE_UID_HANDLER}
             onPointerOut={NOOP_FURNITURE_HANDLER}
           />
-        ) : item.type === "rowing_machine" ? (
-          <InteractiveRowingMachineModel
+        ) : item.type === "pottery_shelf" ? (
+          <InteractivePotteryShelfModel
             key={item._uid}
             item={item}
             isSelected={false}
@@ -710,8 +710,8 @@ const ReadOnlyFurnitureClone = memo(function ReadOnlyFurnitureClone({
             onPointerOver={NOOP_FURNITURE_UID_HANDLER}
             onPointerOut={NOOP_FURNITURE_HANDLER}
           />
-        ) : item.type === "kettlebell_rack" ? (
-          <InteractiveKettlebellRackModel
+        ) : item.type === "cezve_station" ? (
+          <InteractiveCezveStationModel
             key={item._uid}
             item={item}
             isSelected={false}
@@ -721,19 +721,8 @@ const ReadOnlyFurnitureClone = memo(function ReadOnlyFurnitureClone({
             onPointerOver={NOOP_FURNITURE_UID_HANDLER}
             onPointerOut={NOOP_FURNITURE_HANDLER}
           />
-        ) : item.type === "punching_bag" ? (
-          <InteractivePunchingBagModel
-            key={item._uid}
-            item={item}
-            isSelected={false}
-            isHovered={false}
-            editMode={false}
-            onPointerDown={NOOP_FURNITURE_UID_HANDLER}
-            onPointerOver={NOOP_FURNITURE_UID_HANDLER}
-            onPointerOut={NOOP_FURNITURE_HANDLER}
-          />
-        ) : item.type === "yoga_mat" ? (
-          <InteractiveYogaMatModel
+        ) : item.type === "tulip_lamp" ? (
+          <InteractiveTulipLampModel
             key={item._uid}
             item={item}
             isSelected={false}
@@ -850,33 +839,33 @@ function useAgentTick(
   agents: SceneActor[],
   deskLocations: { x: number; y: number }[],
   assignedDeskIndexByAgentId: Record<string, number> = {},
-  gymWorkoutLocations: {
+  bazaarBrowsingLocations: {
     x: number;
     y: number;
     facing: number;
-    workoutStyle: "run" | "lift" | "bike" | "box" | "row" | "stretch";
+    browsingStyle: "shopping" | "inspecting" | "haggling" | "admiring" | "resting" | "chatting";
   }[],
-  qaLabStations: QaLabStationLocation[],
+  kahvehaneSeatingLocations: KahvehaneSeatingLocation[],
   meetingSeatLocations: { x: number; y: number; facing: number }[],
   furnitureRef: React.RefObject<FurnitureItem[]>,
   lastSeenByAgentId: Record<string, number> = {},
   deskHoldByAgentId: Record<string, boolean> = {},
   danceUntilByAgentId: Record<string, number> = {},
-  gymHoldByAgentId: Record<string, boolean> = {},
+  bazaarHoldByAgentId: Record<string, boolean> = {},
   smsBoothHoldByAgentId: Record<string, boolean> = {},
   phoneBoothHoldByAgentId: Record<string, boolean> = {},
-  qaHoldByAgentId: Record<string, boolean> = {},
+  kahvehaneHoldByAgentId: Record<string, boolean> = {},
   githubReviewByAgentId: Record<string, boolean> = {},
   standupMeeting: StandupMeeting | null = null,
 ) {
   const renderAgentsRef = useRef<RenderAgent[]>([]);
   const renderAgentLookupRef = useRef<Map<string, RenderAgent>>(new Map());
   const deskByAgentRef = useRef<Map<string, number>>(new Map());
-  const gymByAgentRef = useRef<Map<string, number>>(new Map());
-  const qaByAgentRef = useRef<Map<string, number>>(new Map());
+  const bazaarByAgentRef = useRef<Map<string, number>>(new Map());
+  const kahvehaneByAgentRef = useRef<Map<string, number>>(new Map());
   const stickyUntilRef = useRef<Map<string, number>>(new Map());
-  const nextGymRef = useRef(0);
-  const nextQaRef = useRef(0);
+  const nextBazaarRef = useRef(0);
+  const nextKahvehaneRef = useRef(0);
 
   // Nav grid is rebuilt lazily whenever the furniture array reference changes.
   const navGridRef = useRef<NavGrid | null>(null);
@@ -940,10 +929,10 @@ function useAgentTick(
     const activeIds = new Set(agents.map((a) => a.id));
     for (const id of deskByAgentRef.current.keys())
       if (!activeIds.has(id)) deskByAgentRef.current.delete(id);
-    for (const id of gymByAgentRef.current.keys())
-      if (!activeIds.has(id)) gymByAgentRef.current.delete(id);
-    for (const id of qaByAgentRef.current.keys())
-      if (!activeIds.has(id)) qaByAgentRef.current.delete(id);
+    for (const id of bazaarByAgentRef.current.keys())
+      if (!activeIds.has(id)) bazaarByAgentRef.current.delete(id);
+    for (const id of kahvehaneByAgentRef.current.keys())
+      if (!activeIds.has(id)) kahvehaneByAgentRef.current.delete(id);
     for (const id of stickyUntilRef.current.keys())
       if (!activeIds.has(id)) stickyUntilRef.current.delete(id);
 
@@ -999,55 +988,55 @@ function useAgentTick(
       } else {
         deskByAgentRef.current.delete(agent.id);
       }
-      if (!gymByAgentRef.current.has(agent.id)) {
-        gymByAgentRef.current.set(
+      if (!bazaarByAgentRef.current.has(agent.id)) {
+        bazaarByAgentRef.current.set(
           agent.id,
-          nextGymRef.current % Math.max(gymWorkoutLocations.length, 1),
+          nextBazaarRef.current % Math.max(bazaarBrowsingLocations.length, 1),
         );
-        nextGymRef.current += 1;
+        nextBazaarRef.current += 1;
       }
-      if (!qaByAgentRef.current.has(agent.id)) {
-        qaByAgentRef.current.set(
+      if (!kahvehaneByAgentRef.current.has(agent.id)) {
+        kahvehaneByAgentRef.current.set(
           agent.id,
-          nextQaRef.current % Math.max(qaLabStations.length, 1),
+          nextKahvehaneRef.current % Math.max(kahvehaneSeatingLocations.length, 1),
         );
-        nextQaRef.current += 1;
+        nextKahvehaneRef.current += 1;
       }
       const explicitDeskHold = Boolean(deskHoldByAgentId[agent.id]);
-      const explicitGymHold = Boolean(gymHoldByAgentId[agent.id]);
+      const explicitGymHold = Boolean(bazaarHoldByAgentId[agent.id]);
       const explicitSmsBoothHold = Boolean(smsBoothHoldByAgentId[agent.id]);
       const explicitPhoneBoothHold = Boolean(phoneBoothHoldByAgentId[agent.id]);
-      const explicitQaHold = Boolean(qaHoldByAgentId[agent.id]);
+      const explicitQaHold = Boolean(kahvehaneHoldByAgentId[agent.id]);
       const explicitGithubHold = Boolean(githubReviewByAgentId[agent.id]);
       if (
         explicitGymHold &&
-        gymWorkoutLocations.length > 0 &&
-        existing?.interactionTarget !== "gym"
+        bazaarBrowsingLocations.length > 0 &&
+        existing?.interactionTarget !== "bazaar"
       ) {
-        gymByAgentRef.current.set(
+        bazaarByAgentRef.current.set(
           agent.id,
-          nextGymRef.current % Math.max(gymWorkoutLocations.length, 1),
+          nextBazaarRef.current % Math.max(bazaarBrowsingLocations.length, 1),
         );
-        nextGymRef.current += 1;
+        nextBazaarRef.current += 1;
       }
       if (
         explicitQaHold &&
-        qaLabStations.length > 0 &&
-        existing?.interactionTarget !== "qa_lab"
+        kahvehaneSeatingLocations.length > 0 &&
+        existing?.interactionTarget !== "kahvehane"
       ) {
-        qaByAgentRef.current.set(
+        kahvehaneByAgentRef.current.set(
           agent.id,
-          nextQaRef.current % Math.max(qaLabStations.length, 1),
+          nextKahvehaneRef.current % Math.max(kahvehaneSeatingLocations.length, 1),
         );
-        nextQaRef.current += 1;
+        nextKahvehaneRef.current += 1;
       }
       const deskIdx = deskByAgentRef.current.get(agent.id);
       const gymIdx =
-        gymByAgentRef.current.get(agent.id) ??
-        idx % Math.max(gymWorkoutLocations.length, 1);
+        bazaarByAgentRef.current.get(agent.id) ??
+        idx % Math.max(bazaarBrowsingLocations.length, 1);
       const qaIdx =
-        qaByAgentRef.current.get(agent.id) ??
-        idx % Math.max(qaLabStations.length, 1);
+        kahvehaneByAgentRef.current.get(agent.id) ??
+        idx % Math.max(kahvehaneSeatingLocations.length, 1);
       const deskPos =
         typeof deskIdx === "number" ? (deskLocations[deskIdx] ?? null) : null;
       // Unassigned agents intentionally have no synthetic desk fallback. Desk routing is now
@@ -1055,10 +1044,10 @@ function useAgentTick(
       if (!deskPos) {
         stickyUntilRef.current.delete(agent.id);
       }
-      const gymWorkoutPos = gymWorkoutLocations[gymIdx] ?? GYM_DEFAULT_TARGET;
-      const qaStationPos = qaLabStations[qaIdx] ?? {
-        ...QA_LAB_DEFAULT_TARGET,
-        stationType: "console" as const,
+      const bazaarBrowsingPos = bazaarBrowsingLocations[gymIdx] ?? BAZAAR_DEFAULT_TARGET;
+      const kahvehaneSeatingPos = kahvehaneSeatingLocations[qaIdx] ?? {
+        ...KAHVEHANE_DEFAULT_TARGET,
+        kahvehaneActivity: "coffee" as const,
       };
       const explicitMeetingHold =
         standupActive && meetingParticipants.has(agent.id);
@@ -1109,10 +1098,10 @@ function useAgentTick(
           ns.interactionTarget = "meeting_room";
           ns.phoneBoothStage = undefined;
           ns.serverRoomStage = undefined;
-          ns.gymStage = undefined;
-          ns.qaLabStage = undefined;
-          ns.qaLabStationType = undefined;
-          ns.workoutStyle = undefined;
+          ns.bazaarStage = undefined;
+          ns.kahvehaneStage = undefined;
+          ns.kahvehaneActivity = undefined;
+          ns.browsingStyle = undefined;
           const targetChanged =
             existing.targetX !== meetingTarget.x ||
             existing.targetY !== meetingTarget.y ||
@@ -1136,10 +1125,10 @@ function useAgentTick(
               : "walking";
           ns.facing = meetingTarget.facing;
         } else if (explicitGymHold) {
-          const gymRoute = resolveGymRoute(
+          const gymRoute = resolveBazaarRoute(
             existing.x,
             existing.y,
-            gymWorkoutPos,
+            bazaarBrowsingPos,
           );
           ns.pingPongUntil = undefined;
           ns.pingPongTargetX = undefined;
@@ -1151,17 +1140,17 @@ function useAgentTick(
           ns.walkSpeed =
             existing.pingPongPreviousWalkSpeed ?? existing.walkSpeed;
           ns.pingPongPreviousWalkSpeed = undefined;
-          ns.interactionTarget = "gym";
+          ns.interactionTarget = "bazaar";
           ns.phoneBoothStage = undefined;
           ns.serverRoomStage = undefined;
-          ns.gymStage = gymRoute.stage;
-          ns.qaLabStage = undefined;
-          ns.qaLabStationType = undefined;
-          ns.workoutStyle = gymWorkoutPos.workoutStyle;
+          ns.bazaarStage = gymRoute.stage;
+          ns.kahvehaneStage = undefined;
+          ns.kahvehaneActivity = undefined;
+          ns.browsingStyle = bazaarBrowsingPos.browsingStyle;
           const targetChanged =
             existing.targetX !== gymRoute.targetX ||
             existing.targetY !== gymRoute.targetY ||
-            existing.gymStage !== gymRoute.stage;
+            existing.bazaarStage !== gymRoute.stage;
           ns.targetX = gymRoute.targetX;
           ns.targetY = gymRoute.targetY;
           if (targetChanged) {
@@ -1177,16 +1166,16 @@ function useAgentTick(
               existing.x - gymRoute.targetX,
               existing.y - gymRoute.targetY,
             ) < 15
-              ? gymRoute.stage === "workout"
-                ? "working_out"
+              ? gymRoute.stage === "browsing"
+                ? "browsing"
                 : "standing"
               : "walking";
           ns.facing = gymRoute.facing;
         } else if (explicitQaHold) {
-          const qaLabRoute = resolveQaLabRoute(
+          const qaLabRoute = resolveKahvehaneRoute(
             existing.x,
             existing.y,
-            qaStationPos,
+            kahvehaneSeatingPos,
           );
           ns.pingPongUntil = undefined;
           ns.pingPongTargetX = undefined;
@@ -1198,17 +1187,17 @@ function useAgentTick(
           ns.walkSpeed =
             existing.pingPongPreviousWalkSpeed ?? existing.walkSpeed;
           ns.pingPongPreviousWalkSpeed = undefined;
-          ns.interactionTarget = "qa_lab";
+          ns.interactionTarget = "kahvehane";
           ns.phoneBoothStage = undefined;
           ns.serverRoomStage = undefined;
-          ns.gymStage = undefined;
-          ns.qaLabStage = qaLabRoute.stage;
-          ns.qaLabStationType = qaStationPos.stationType;
-          ns.workoutStyle = undefined;
+          ns.bazaarStage = undefined;
+          ns.kahvehaneStage = qaLabRoute.stage;
+          ns.kahvehaneActivity = kahvehaneSeatingPos.kahvehaneActivity;
+          ns.browsingStyle = undefined;
           const targetChanged =
             existing.targetX !== qaLabRoute.targetX ||
             existing.targetY !== qaLabRoute.targetY ||
-            existing.qaLabStage !== qaLabRoute.stage;
+            existing.kahvehaneStage !== qaLabRoute.stage;
           ns.targetX = qaLabRoute.targetX;
           ns.targetY = qaLabRoute.targetY;
           if (targetChanged) {
@@ -1245,10 +1234,10 @@ function useAgentTick(
           ns.interactionTarget = "server_room";
           ns.phoneBoothStage = undefined;
           ns.serverRoomStage = serverRoomRoute.stage;
-          ns.gymStage = undefined;
-          ns.qaLabStage = undefined;
-          ns.qaLabStationType = undefined;
-          ns.workoutStyle = undefined;
+          ns.bazaarStage = undefined;
+          ns.kahvehaneStage = undefined;
+          ns.kahvehaneActivity = undefined;
+          ns.browsingStyle = undefined;
           const targetChanged =
             existing.targetX !== serverRoomRoute.targetX ||
             existing.targetY !== serverRoomRoute.targetY ||
@@ -1291,10 +1280,10 @@ function useAgentTick(
           ns.smsBoothStage = smsBoothRoute.stage;
           ns.phoneBoothStage = undefined;
           ns.serverRoomStage = undefined;
-          ns.gymStage = undefined;
-          ns.qaLabStage = undefined;
-          ns.qaLabStationType = undefined;
-          ns.workoutStyle = undefined;
+          ns.bazaarStage = undefined;
+          ns.kahvehaneStage = undefined;
+          ns.kahvehaneActivity = undefined;
+          ns.browsingStyle = undefined;
           const targetChanged =
             existing.targetX !== smsBoothRoute.targetX ||
             existing.targetY !== smsBoothRoute.targetY ||
@@ -1336,10 +1325,10 @@ function useAgentTick(
           ns.interactionTarget = "phone_booth";
           ns.phoneBoothStage = phoneBoothRoute.stage;
           ns.serverRoomStage = undefined;
-          ns.gymStage = undefined;
-          ns.qaLabStage = undefined;
-          ns.qaLabStationType = undefined;
-          ns.workoutStyle = undefined;
+          ns.bazaarStage = undefined;
+          ns.kahvehaneStage = undefined;
+          ns.kahvehaneActivity = undefined;
+          ns.browsingStyle = undefined;
           const targetChanged =
             existing.targetX !== phoneBoothRoute.targetX ||
             existing.targetY !== phoneBoothRoute.targetY ||
@@ -1376,10 +1365,10 @@ function useAgentTick(
           ns.interactionTarget = "desk";
           ns.phoneBoothStage = undefined;
           ns.serverRoomStage = undefined;
-          ns.gymStage = undefined;
-          ns.qaLabStage = undefined;
-          ns.qaLabStationType = undefined;
-          ns.workoutStyle = undefined;
+          ns.bazaarStage = undefined;
+          ns.kahvehaneStage = undefined;
+          ns.kahvehaneActivity = undefined;
+          ns.browsingStyle = undefined;
           const targetChanged =
             existing.targetX !== deskPos.x || existing.targetY !== deskPos.y;
           ns.targetX = deskPos.x;
@@ -1404,10 +1393,10 @@ function useAgentTick(
           ns.interactionTarget = undefined;
           ns.phoneBoothStage = undefined;
           ns.serverRoomStage = undefined;
-          ns.gymStage = undefined;
-          ns.qaLabStage = undefined;
-          ns.qaLabStationType = undefined;
-          ns.workoutStyle = undefined;
+          ns.bazaarStage = undefined;
+          ns.kahvehaneStage = undefined;
+          ns.kahvehaneActivity = undefined;
+          ns.browsingStyle = undefined;
           ns.targetX = existing.x;
           ns.targetY = existing.y;
           ns.path = [];
@@ -1426,10 +1415,10 @@ function useAgentTick(
           ns.interactionTarget = undefined;
           ns.phoneBoothStage = undefined;
           ns.serverRoomStage = undefined;
-          ns.gymStage = undefined;
-          ns.qaLabStage = undefined;
-          ns.qaLabStationType = undefined;
-          ns.workoutStyle = undefined;
+          ns.bazaarStage = undefined;
+          ns.kahvehaneStage = undefined;
+          ns.kahvehaneActivity = undefined;
+          ns.browsingStyle = undefined;
           ns.targetX = existing.x;
           ns.targetY = existing.y;
           ns.path = [];
@@ -1451,15 +1440,15 @@ function useAgentTick(
               existing.x,
               existing.y,
             );
-            const gymRoute = resolveGymRoute(
+            const gymRoute = resolveBazaarRoute(
               existing.x,
               existing.y,
-              gymWorkoutPos,
+              bazaarBrowsingPos,
             );
-            const qaLabRoute = resolveQaLabRoute(
+            const qaLabRoute = resolveKahvehaneRoute(
               existing.x,
               existing.y,
-              qaStationPos,
+              kahvehaneSeatingPos,
             );
             const nextTarget =
               explicitMeetingHold && meetingTarget
@@ -1487,10 +1476,10 @@ function useAgentTick(
             if (!nextTarget) {
               ns.interactionTarget = undefined;
               ns.serverRoomStage = undefined;
-              ns.gymStage = undefined;
-              ns.qaLabStage = undefined;
-              ns.qaLabStationType = undefined;
-              ns.workoutStyle = undefined;
+              ns.bazaarStage = undefined;
+              ns.kahvehaneStage = undefined;
+              ns.kahvehaneActivity = undefined;
+              ns.browsingStyle = undefined;
               ns.targetX = existing.x;
               ns.targetY = existing.y;
               ns.path = [];
@@ -1505,13 +1494,13 @@ function useAgentTick(
             ns.interactionTarget = explicitMeetingHold
               ? "meeting_room"
               : explicitGymHold
-                ? "gym"
+                ? "bazaar"
                 : explicitSmsBoothHold
                   ? "sms_booth"
                   : explicitPhoneBoothHold
                     ? "phone_booth"
                     : explicitQaHold
-                      ? "qa_lab"
+                      ? "kahvehane"
                       : explicitGithubHold
                         ? "server_room"
                         : "desk";
@@ -1537,12 +1526,12 @@ function useAgentTick(
                     : explicitGithubHold
                       ? serverRoomRoute.stage
                       : undefined;
-            ns.gymStage = explicitMeetingHold
+            ns.bazaarStage = explicitMeetingHold
               ? undefined
               : explicitGymHold
                 ? gymRoute.stage
                 : undefined;
-            ns.qaLabStage = explicitMeetingHold
+            ns.kahvehaneStage = explicitMeetingHold
               ? undefined
               : explicitSmsBoothHold
                 ? undefined
@@ -1551,11 +1540,11 @@ function useAgentTick(
                   : explicitQaHold
                     ? qaLabRoute.stage
                     : undefined;
-            ns.qaLabStationType = explicitQaHold
-              ? qaStationPos.stationType
+            ns.kahvehaneActivity = explicitQaHold
+              ? kahvehaneSeatingPos.kahvehaneActivity
               : undefined;
-            ns.workoutStyle = explicitGymHold
-              ? gymWorkoutPos.workoutStyle
+            ns.browsingStyle = explicitGymHold
+              ? bazaarBrowsingPos.browsingStyle
               : undefined;
             ns.targetX = nextTarget.x;
             ns.targetY = nextTarget.y;
@@ -1571,10 +1560,10 @@ function useAgentTick(
             ns.smsBoothStage = undefined;
             ns.phoneBoothStage = undefined;
             ns.serverRoomStage = undefined;
-            ns.gymStage = undefined;
-            ns.qaLabStage = undefined;
-            ns.qaLabStationType = undefined;
-            ns.workoutStyle = undefined;
+            ns.bazaarStage = undefined;
+            ns.kahvehaneStage = undefined;
+            ns.kahvehaneActivity = undefined;
+            ns.browsingStyle = undefined;
             ns.targetX = existing.x;
             ns.targetY = existing.y;
             ns.path = [];
@@ -1584,10 +1573,10 @@ function useAgentTick(
             ns.smsBoothStage = undefined;
             ns.phoneBoothStage = undefined;
             ns.serverRoomStage = undefined;
-            ns.gymStage = undefined;
-            ns.qaLabStage = undefined;
-            ns.qaLabStationType = undefined;
-            ns.workoutStyle = undefined;
+            ns.bazaarStage = undefined;
+            ns.kahvehaneStage = undefined;
+            ns.kahvehaneActivity = undefined;
+            ns.browsingStyle = undefined;
             const r = pickRoamPoint(agent.id);
             ns.targetX = r.x;
             ns.targetY = r.y;
@@ -1601,8 +1590,8 @@ function useAgentTick(
         const serverRoomRoute = resolveServerRoomRoute(sx, sy);
         const smsBoothRoute = resolveSmsBoothRoute(smsBoothItem, sx, sy);
         const phoneBoothRoute = resolvePhoneBoothRoute(phoneBoothItem, sx, sy);
-        const gymRoute = resolveGymRoute(sx, sy, gymWorkoutPos);
-        const qaLabRoute = resolveQaLabRoute(sx, sy, qaStationPos);
+        const gymRoute = resolveBazaarRoute(sx, sy, bazaarBrowsingPos);
+        const qaLabRoute = resolveKahvehaneRoute(sx, sy, kahvehaneSeatingPos);
         const initialTarget =
           effectiveStatus === "working"
             ? explicitMeetingHold && meetingTarget
@@ -1660,13 +1649,13 @@ function useAgentTick(
           interactionTarget: explicitMeetingHold
             ? "meeting_room"
             : explicitGymHold
-              ? "gym"
+              ? "bazaar"
               : explicitSmsBoothHold
                 ? "sms_booth"
                 : explicitPhoneBoothHold
                   ? "phone_booth"
                   : explicitQaHold
-                    ? "qa_lab"
+                    ? "kahvehane"
                     : explicitGithubHold
                       ? "server_room"
                       : deskPos
@@ -1691,22 +1680,22 @@ function useAgentTick(
             !explicitGithubHold
               ? undefined
               : serverRoomRoute.stage,
-          gymStage:
+          bazaarStage:
             explicitMeetingHold || !explicitGymHold
               ? undefined
               : gymRoute.stage,
-          qaLabStage:
+          kahvehaneStage:
             explicitMeetingHold ||
             explicitSmsBoothHold ||
             explicitPhoneBoothHold ||
             !explicitQaHold
               ? undefined
               : qaLabRoute.stage,
-          qaLabStationType: explicitQaHold
-            ? qaStationPos.stationType
+          kahvehaneActivity: explicitQaHold
+            ? kahvehaneSeatingPos.kahvehaneActivity
             : undefined,
-          workoutStyle: explicitGymHold
-            ? gymWorkoutPos.workoutStyle
+          browsingStyle: explicitGymHold
+            ? bazaarBrowsingPos.browsingStyle
             : undefined,
           facing:
             explicitMeetingHold && meetingTarget
@@ -1728,12 +1717,12 @@ function useAgentTick(
     deskHoldByAgentId,
     deskLocations,
     furnitureRef,
-    gymHoldByAgentId,
-    gymWorkoutLocations,
+    bazaarHoldByAgentId,
+    bazaarBrowsingLocations,
     smsBoothHoldByAgentId,
     phoneBoothHoldByAgentId,
-    qaHoldByAgentId,
-    qaLabStations,
+    kahvehaneHoldByAgentId,
+    kahvehaneSeatingLocations,
     githubReviewByAgentId,
     meetingParticipants,
     meetingSeatLocations,
@@ -1979,13 +1968,13 @@ function useAgentTick(
               };
             }
             if (
-              agent.interactionTarget === "gym" &&
-              agent.gymStage !== "workout"
+              agent.interactionTarget === "bazaar" &&
+              agent.bazaarStage !== "browsing"
             ) {
-              const gymIdx = gymByAgentRef.current.get(agent.id) ?? 0;
+              const gymIdx = bazaarByAgentRef.current.get(agent.id) ?? 0;
               const workoutTarget =
-                gymWorkoutLocations[gymIdx] ?? GYM_DEFAULT_TARGET;
-              const nextGymRoute = resolveGymRoute(nx, ny, workoutTarget);
+                bazaarBrowsingLocations[gymIdx] ?? BAZAAR_DEFAULT_TARGET;
+              const nextGymRoute = resolveBazaarRoute(nx, ny, workoutTarget);
               return {
                 ...agent,
                 x: nx,
@@ -2001,20 +1990,20 @@ function useAgentTick(
                 ),
                 facing: nextGymRoute.facing,
                 state: "walking" as const,
-                gymStage: nextGymRoute.stage,
+                bazaarStage: nextGymRoute.stage,
                 frame: agent.frame + 1,
               };
             }
             if (
-              agent.interactionTarget === "qa_lab" &&
-              agent.qaLabStage !== "station"
+              agent.interactionTarget === "kahvehane" &&
+              agent.kahvehaneStage !== "seated"
             ) {
-              const qaIdx = qaByAgentRef.current.get(agent.id) ?? 0;
-              const qaTarget = qaLabStations[qaIdx] ?? {
-                ...QA_LAB_DEFAULT_TARGET,
-                stationType: "console" as const,
+              const qaIdx = kahvehaneByAgentRef.current.get(agent.id) ?? 0;
+              const qaTarget = kahvehaneSeatingLocations[qaIdx] ?? {
+                ...KAHVEHANE_DEFAULT_TARGET,
+                kahvehaneActivity: "coffee" as const,
               };
-              const nextQaLabRoute = resolveQaLabRoute(nx, ny, qaTarget);
+              const nextQaLabRoute = resolveKahvehaneRoute(nx, ny, qaTarget);
               return {
                 ...agent,
                 x: nx,
@@ -2030,8 +2019,8 @@ function useAgentTick(
                 ),
                 facing: nextQaLabRoute.facing,
                 state: "walking" as const,
-                qaLabStage: nextQaLabRoute.stage,
-                qaLabStationType: qaTarget.stationType,
+                kahvehaneStage: nextQaLabRoute.stage,
+                kahvehaneActivity: qaTarget.kahvehaneActivity,
                 frame: agent.frame + 1,
               };
             }
@@ -2042,9 +2031,9 @@ function useAgentTick(
                   ? "standing"
                   : agent.interactionTarget === "server_room"
                     ? "standing"
-                    : agent.interactionTarget === "gym"
-                      ? "working_out"
-                      : agent.interactionTarget === "qa_lab"
+                    : agent.interactionTarget === "bazaar"
+                      ? "browsing"
+                      : agent.interactionTarget === "kahvehane"
                         ? "standing"
                         : "sitting";
             if (agent.interactionTarget === "sms_booth") {
@@ -2053,9 +2042,9 @@ function useAgentTick(
               nf = agent.facing;
             } else if (agent.interactionTarget === "server_room") {
               nf = SERVER_ROOM_TARGET.facing;
-            } else if (agent.interactionTarget === "gym") {
+            } else if (agent.interactionTarget === "bazaar") {
               nf = agent.facing;
-            } else if (agent.interactionTarget === "qa_lab") {
+            } else if (agent.interactionTarget === "kahvehane") {
               nf = agent.facing;
             } else if (agent.interactionTarget === "meeting_room") {
               nf = agent.facing;
@@ -2189,7 +2178,7 @@ function useAgentTick(
       if ("role" in mi && mi.role === "janitor") continue;
       if (
         moved[i].state === "sitting" ||
-        moved[i].state === "working_out" ||
+        moved[i].state === "browsing" ||
         moved[i].state === "dancing"
       )
         continue;
@@ -2318,14 +2307,14 @@ export function RetroOffice3D({
   deskAssignmentByDeskUid = EMPTY_STRING_RECORD,
   cleaningCues = EMPTY_CLEANING_CUES,
   deskHoldByAgentId = EMPTY_BOOLEAN_RECORD,
-  gymHoldByAgentId = EMPTY_BOOLEAN_RECORD,
+  bazaarHoldByAgentId = EMPTY_BOOLEAN_RECORD,
   githubReviewAgentId = null,
   phoneBoothAgentId = null,
   phoneCallScenario = null,
   smsBoothAgentId = null,
   textMessageScenario = null,
-  qaHoldByAgentId = EMPTY_BOOLEAN_RECORD,
-  qaTestingAgentId = null,
+  kahvehaneHoldByAgentId = EMPTY_BOOLEAN_RECORD,
+  kahvehaneTestingAgentId = null,
   standupMeeting = null,
   standupAutoOpenBoard = true,
   monitorAgentId = null,
@@ -2364,6 +2353,7 @@ export function RetroOffice3D({
   onGatewayTokenChange,
   onGatewayAdapterTypeChange,
   onOpenOnboarding,
+  callGateway,
   atmAnalytics = null,
   feedEvents = EMPTY_FEED_EVENTS,
   gatewayStatus = "disconnected",
@@ -2387,7 +2377,7 @@ export function RetroOffice3D({
   onPhoneCallComplete,
   onPhoneCallSpeak,
   onTextMessageComplete,
-  onQaLabDismiss,
+  onKahvehaneDismiss,
   onOpenGithubSkillSetup,
   onJukeboxInteract,
   onKanbanInteract,
@@ -2420,10 +2410,10 @@ export function RetroOffice3D({
     | "danceUntilByAgentId"
     | "deskHoldByAgentId"
     | "githubHoldByAgentId"
-    | "gymHoldByAgentId"
+    | "bazaarHoldByAgentId"
     | "phoneBoothHoldByAgentId"
     | "smsBoothHoldByAgentId"
-    | "qaHoldByAgentId"
+    | "kahvehaneHoldByAgentId"
     | "jukeboxHoldByAgentId"
   > | null;
   readOnly?: boolean;
@@ -2431,14 +2421,14 @@ export function RetroOffice3D({
   deskAssignmentByDeskUid?: Record<string, string>;
   cleaningCues?: OfficeCleaningCue[];
   deskHoldByAgentId?: Record<string, boolean>;
-  gymHoldByAgentId?: Record<string, boolean>;
+  bazaarHoldByAgentId?: Record<string, boolean>;
   githubReviewAgentId?: string | null;
   phoneBoothAgentId?: string | null;
   phoneCallScenario?: MockPhoneCallScenario | null;
   smsBoothAgentId?: string | null;
   textMessageScenario?: MockTextMessageScenario | null;
-  qaHoldByAgentId?: Record<string, boolean>;
-  qaTestingAgentId?: string | null;
+  kahvehaneHoldByAgentId?: Record<string, boolean>;
+  kahvehaneTestingAgentId?: string | null;
   standupMeeting?: StandupMeeting | null;
   standupAutoOpenBoard?: boolean;
   monitorAgentId?: string | null;
@@ -2479,6 +2469,7 @@ export function RetroOffice3D({
   onGatewayTokenChange?: (value: string) => void;
   onGatewayAdapterTypeChange?: (value: StudioGatewayAdapterType) => void;
   onOpenOnboarding?: () => void;
+  callGateway?: (method: string, params: unknown) => Promise<unknown>;
   atmAnalytics?: OfficeUsageAnalyticsParams | null;
   feedEvents?: FeedEvent[];
   gatewayStatus?: string;
@@ -2506,7 +2497,7 @@ export function RetroOffice3D({
     scenario: MockPhoneCallScenario;
   }) => void;
   onTextMessageComplete?: (agentId: string) => void;
-  onQaLabDismiss?: () => void;
+  onKahvehaneDismiss?: () => void;
   onOpenGithubSkillSetup?: () => void;
   onJukeboxInteract?: () => void;
   onKanbanInteract?: () => void;
@@ -2548,14 +2539,14 @@ export function RetroOffice3D({
   );
   const resolvedDeskHoldByAgentId =
     animationState?.deskHoldByAgentId ?? deskHoldByAgentId;
-  const resolvedGymHoldByAgentId =
-    animationState?.gymHoldByAgentId ?? gymHoldByAgentId;
+  const resolvedBazaarHoldByAgentId =
+    animationState?.bazaarHoldByAgentId ?? bazaarHoldByAgentId;
   const resolvedSmsBoothHoldByAgentId =
     animationState?.smsBoothHoldByAgentId ?? EMPTY_BOOLEAN_RECORD;
   const resolvedPhoneBoothHoldByAgentId =
     animationState?.phoneBoothHoldByAgentId ?? EMPTY_BOOLEAN_RECORD;
-  const resolvedQaHoldByAgentId =
-    animationState?.qaHoldByAgentId ?? qaHoldByAgentId;
+  const resolvedKahvehaneHoldByAgentId =
+    animationState?.kahvehaneHoldByAgentId ?? kahvehaneHoldByAgentId;
   const resolvedGithubReviewByAgentId =
     animationState?.githubHoldByAgentId ??
     (githubReviewAgentId
@@ -2570,8 +2561,8 @@ export function RetroOffice3D({
   const [furniture, setFurniture] = useState<FurnitureItem[]>(() =>
     ensureOfficeKanbanBoard(
       ensureOfficeJukebox(
-        ensureOfficeQaLab(
-          ensureOfficeGymRoom(
+        ensureOfficeKahvehane(
+          ensureOfficeBazaar(
             ensureOfficeServerRoom(
               ensureOfficePhoneBooth(
                 ensureOfficeSmsBooth(
@@ -2787,7 +2778,7 @@ export function RetroOffice3D({
   const [activeGithubTerminalUid, setActiveGithubTerminalUid] = useState<
     string | null
   >(null);
-  const [activeQaTerminalUid, setActiveQaTerminalUid] = useState<string | null>(
+  const [activeCoffeeTableUid, setActiveCoffeeTableUid] = useState<string | null>(
     null,
   );
   const [githubImmersiveReady, setGithubImmersiveReady] = useState(false);
@@ -2848,11 +2839,11 @@ export function RetroOffice3D({
     () => getJanitorCleaningStops(furniture),
     [furniture],
   );
-  const gymWorkoutLocations = useMemo(
-    () => getGymWorkoutLocations(furniture),
+  const bazaarBrowsingLocations = useMemo(
+    () => getBazaarBrowsingLocations(furniture),
     [furniture],
   );
-  const qaLabStations = useMemo(() => getQaLabStations(furniture), [furniture]);
+  const kahvehaneSeatingLocations = useMemo(() => getKahvehaneSeatingLocations(furniture), [furniture]);
   const meetingSeatLocations = useMemo(
     () => getMeetingSeatLocations(furniture),
     [furniture],
@@ -2918,17 +2909,17 @@ export function RetroOffice3D({
     sceneAgents,
     deskLocations,
     assignedDeskIndexByAgentId,
-    gymWorkoutLocations,
-    qaLabStations,
+    bazaarBrowsingLocations,
+    kahvehaneSeatingLocations,
     meetingSeatLocations,
     furnitureRef,
     lastSeenByAgentId,
     resolvedDeskHoldByAgentId,
     resolvedDanceUntilByAgentId,
-    resolvedGymHoldByAgentId,
+    resolvedBazaarHoldByAgentId,
     resolvedSmsBoothHoldByAgentId,
     resolvedPhoneBoothHoldByAgentId,
-    resolvedQaHoldByAgentId,
+    resolvedKahvehaneHoldByAgentId,
     resolvedGithubReviewByAgentId,
     standupMeeting,
   );
@@ -3012,8 +3003,8 @@ export function RetroOffice3D({
     () => furniture.find((item) => item.type === "server_terminal") ?? null,
     [furniture],
   );
-  const qaTerminal = useMemo(
-    () => furniture.find((item) => item.type === "qa_terminal") ?? null,
+  const coffeeTableFurniture = useMemo(
+    () => furniture.find((item) => item.type === "coffee_table") ?? null,
     [furniture],
   );
   const wallItems = useMemo(
@@ -3127,15 +3118,15 @@ export function RetroOffice3D({
         : serverTerminal,
     [activeGithubTerminalUid, furniture, serverTerminal],
   );
-  const activeQaTerminal = useMemo(
+  const activeCoffeeTable = useMemo(
     () =>
-      activeQaTerminalUid
+      activeCoffeeTableUid
         ? (furniture.find(
             (item) =>
-              item._uid === activeQaTerminalUid && item.type === "qa_terminal",
+              item._uid === activeCoffeeTableUid && item.type === "coffee_table",
           ) ?? null)
-        : qaTerminal,
-    [activeQaTerminalUid, furniture, qaTerminal],
+        : coffeeTableFurniture,
+    [activeCoffeeTableUid, furniture, coffeeTableFurniture],
   );
   const [githubCommandArrived, setGithubCommandArrived] = useState(false);
   const [qaCommandArrived, setQaCommandArrived] = useState(false);
@@ -3147,8 +3138,8 @@ export function RetroOffice3D({
     ) && githubImmersiveReady;
   const qaImmersive =
     Boolean(
-      activeQaTerminal &&
-      (activeQaTerminalUid || (qaTestingAgentId && qaCommandArrived)),
+      activeCoffeeTable &&
+      (activeCoffeeTableUid || (kahvehaneTestingAgentId && qaCommandArrived)),
     ) && qaImmersiveReady;
   const standupImmersive = Boolean(standupBoardOpen && standupMeeting);
   const kanbanImmersive = Boolean(activeKanbanBoard);
@@ -3358,14 +3349,14 @@ export function RetroOffice3D({
       !monitorAgentId &&
       !activeAtmUid &&
       !activeGithubTerminalUid &&
-      !activeQaTerminalUid
+      !activeCoffeeTableUid
     ) {
       cameraPresetRef.current = overviewPreset;
     }
   }, [
     activeAtmUid,
     activeGithubTerminalUid,
-    activeQaTerminalUid,
+    activeCoffeeTableUid,
     followAgentId,
     monitorAgentId,
     overviewPreset,
@@ -3388,14 +3379,14 @@ export function RetroOffice3D({
       !monitorAgentId &&
       !activeAtmUid &&
       !activeGithubTerminalUid &&
-      !activeQaTerminalUid
+      !activeCoffeeTableUid
     ) {
       cameraPresetRef.current = overviewPreset;
     }
   }, [
     activeAtmUid,
     activeGithubTerminalUid,
-    activeQaTerminalUid,
+    activeCoffeeTableUid,
     followAgentId,
     monitorAgentId,
     overviewPreset,
@@ -3540,7 +3531,7 @@ export function RetroOffice3D({
   }, [activeGithubTerminalUid, followAgentId, githubReviewAgentId]);
 
   useEffect(() => {
-    if (followAgentId && (activeQaTerminalUid || qaTestingAgentId)) {
+    if (followAgentId && (activeCoffeeTableUid || kahvehaneTestingAgentId)) {
       const timer = window.setTimeout(() => {
         setFollowAgentId(null);
       }, 0);
@@ -3548,7 +3539,7 @@ export function RetroOffice3D({
         window.clearTimeout(timer);
       };
     }
-  }, [activeQaTerminalUid, followAgentId, qaTestingAgentId]);
+  }, [activeCoffeeTableUid, followAgentId, kahvehaneTestingAgentId]);
 
   useEffect(() => {
     if (monitorAgentId && activeAtmUid) {
@@ -3573,15 +3564,15 @@ export function RetroOffice3D({
   }, [activeGithubTerminalUid, monitorAgentId]);
 
   useEffect(() => {
-    if (monitorAgentId && activeQaTerminalUid) {
+    if (monitorAgentId && activeCoffeeTableUid) {
       const timer = window.setTimeout(() => {
-        setActiveQaTerminalUid(null);
+        setActiveCoffeeTableUid(null);
       }, 0);
       return () => {
         window.clearTimeout(timer);
       };
     }
-  }, [activeQaTerminalUid, monitorAgentId]);
+  }, [activeCoffeeTableUid, monitorAgentId]);
 
   useEffect(() => {
     if (activeAtmUid && activeGithubTerminalUid) {
@@ -3595,15 +3586,15 @@ export function RetroOffice3D({
   }, [activeAtmUid, activeGithubTerminalUid]);
 
   useEffect(() => {
-    if (activeAtmUid && activeQaTerminalUid) {
+    if (activeAtmUid && activeCoffeeTableUid) {
       const timer = window.setTimeout(() => {
-        setActiveQaTerminalUid(null);
+        setActiveCoffeeTableUid(null);
       }, 0);
       return () => {
         window.clearTimeout(timer);
       };
     }
-  }, [activeAtmUid, activeQaTerminalUid]);
+  }, [activeAtmUid, activeCoffeeTableUid]);
 
   useEffect(() => {
     if (!smsBoothAgentId) return;
@@ -3614,8 +3605,8 @@ export function RetroOffice3D({
       if (activeGithubTerminalUid) {
         setActiveGithubTerminalUid(null);
       }
-      if (activeQaTerminalUid) {
-        setActiveQaTerminalUid(null);
+      if (activeCoffeeTableUid) {
+        setActiveCoffeeTableUid(null);
       }
       if (monitorAgentId) {
         onMonitorSelect?.(null);
@@ -3627,7 +3618,7 @@ export function RetroOffice3D({
   }, [
     activeAtmUid,
     activeGithubTerminalUid,
-    activeQaTerminalUid,
+    activeCoffeeTableUid,
     monitorAgentId,
     onMonitorSelect,
     smsBoothAgentId,
@@ -3642,8 +3633,8 @@ export function RetroOffice3D({
       if (activeGithubTerminalUid) {
         setActiveGithubTerminalUid(null);
       }
-      if (activeQaTerminalUid) {
-        setActiveQaTerminalUid(null);
+      if (activeCoffeeTableUid) {
+        setActiveCoffeeTableUid(null);
       }
       if (monitorAgentId) {
         onMonitorSelect?.(null);
@@ -3655,22 +3646,22 @@ export function RetroOffice3D({
   }, [
     activeAtmUid,
     activeGithubTerminalUid,
-    activeQaTerminalUid,
+    activeCoffeeTableUid,
     monitorAgentId,
     onMonitorSelect,
     phoneBoothAgentId,
   ]);
 
   useEffect(() => {
-    if (activeGithubTerminalUid && activeQaTerminalUid) {
+    if (activeGithubTerminalUid && activeCoffeeTableUid) {
       const timer = window.setTimeout(() => {
-        setActiveQaTerminalUid(null);
+        setActiveCoffeeTableUid(null);
       }, 0);
       return () => {
         window.clearTimeout(timer);
       };
     }
-  }, [activeGithubTerminalUid, activeQaTerminalUid]);
+  }, [activeGithubTerminalUid, activeCoffeeTableUid]);
 
   useEffect(() => {
     const syncArrivalState = () => {
@@ -3692,14 +3683,14 @@ export function RetroOffice3D({
         );
       }
 
-      if (!qaTestingAgentId) {
+      if (!kahvehaneTestingAgentId) {
         setQaCommandArrived(false);
       } else {
-        const agent = agentLookup.get(qaTestingAgentId);
+        const agent = agentLookup.get(kahvehaneTestingAgentId);
         const arrived = Boolean(
           agent &&
-          agent.interactionTarget === "qa_lab" &&
-          agent.qaLabStage === "station" &&
+          agent.interactionTarget === "kahvehane" &&
+          agent.kahvehaneStage === "seated" &&
           Math.hypot(agent.x - agent.targetX, agent.y - agent.targetY) < 16,
         );
         setQaCommandArrived((current) =>
@@ -3795,7 +3786,7 @@ export function RetroOffice3D({
     manualSmsBoothOpen,
     manualPhoneBoothOpen,
     phoneBoothAgentId,
-    qaTestingAgentId,
+    kahvehaneTestingAgentId,
     renderAgentLookupRef,
     smsBoothAgentId,
     standupActive,
@@ -4234,8 +4225,8 @@ export function RetroOffice3D({
       setQaImmersiveReady(false);
     }, 0);
     const qaViewActive =
-      Boolean(activeQaTerminalUid) ||
-      Boolean(qaTestingAgentId && qaCommandArrived);
+      Boolean(activeCoffeeTableUid) ||
+      Boolean(kahvehaneTestingAgentId && qaCommandArrived);
     if (!qaViewActive) {
       return () => {
         window.clearTimeout(resetTimer);
@@ -4248,7 +4239,7 @@ export function RetroOffice3D({
       window.clearTimeout(resetTimer);
       window.clearTimeout(timer);
     };
-  }, [activeQaTerminalUid, qaCommandArrived, qaTestingAgentId]);
+  }, [activeCoffeeTableUid, qaCommandArrived, kahvehaneTestingAgentId]);
 
   useEffect(() => {
     if (!standupMeeting) {
@@ -4347,15 +4338,15 @@ export function RetroOffice3D({
   }, [activeGithubTerminal, activeGithubTerminalUid]);
 
   useEffect(() => {
-    if (activeQaTerminalUid && !activeQaTerminal) {
+    if (activeCoffeeTableUid && !activeCoffeeTable) {
       const timer = window.setTimeout(() => {
-        setActiveQaTerminalUid(null);
+        setActiveCoffeeTableUid(null);
       }, 0);
       return () => {
         window.clearTimeout(timer);
       };
     }
-  }, [activeQaTerminal, activeQaTerminalUid]);
+  }, [activeCoffeeTable, activeCoffeeTableUid]);
 
   useEffect(() => {
     if (!activeAtmUid && prevAtmUidRef.current) {
@@ -4423,26 +4414,26 @@ export function RetroOffice3D({
   ]);
 
   useEffect(() => {
-    const activeViewKey = activeQaTerminalUid
-      ? `manual:${activeQaTerminalUid}`
-      : qaTestingAgentId && qaCommandArrived
-        ? `agent:${qaTestingAgentId}`
+    const activeViewKey = activeCoffeeTableUid
+      ? `manual:${activeCoffeeTableUid}`
+      : kahvehaneTestingAgentId && qaCommandArrived
+        ? `agent:${kahvehaneTestingAgentId}`
         : null;
     if (!activeViewKey && prevQaViewRef.current) {
       cameraPresetRef.current = overviewPreset;
     }
-    if (!activeViewKey || !activeQaTerminal) {
+    if (!activeViewKey || !activeCoffeeTable) {
       prevQaViewRef.current = activeViewKey;
       return;
     }
-    const { width, height } = getItemBaseSize(activeQaTerminal);
+    const { width, height } = getItemBaseSize(activeCoffeeTable);
     const [wx, , wz] = toWorld(
-      activeQaTerminal.x + width / 2,
-      activeQaTerminal.y + height / 2,
+      activeCoffeeTable.x + width / 2,
+      activeCoffeeTable.y + height / 2,
     );
     const frontVector = new THREE.Vector3(0, 0, 1).applyAxisAngle(
       new THREE.Vector3(0, 1, 0),
-      getItemRotationRadians(activeQaTerminal),
+      getItemRotationRadians(activeCoffeeTable),
     );
     cameraPresetRef.current = {
       pos: [wx + frontVector.x * 0.8, 0.92, wz + frontVector.z * 0.8],
@@ -4451,11 +4442,11 @@ export function RetroOffice3D({
     };
     prevQaViewRef.current = activeViewKey;
   }, [
-    activeQaTerminal,
-    activeQaTerminalUid,
+    activeCoffeeTable,
+    activeCoffeeTableUid,
     overviewPreset,
     qaCommandArrived,
-    qaTestingAgentId,
+    kahvehaneTestingAgentId,
   ]);
 
   // --- Interaction ---
@@ -4498,7 +4489,7 @@ export function RetroOffice3D({
       setFollowAgentId(null);
       setActiveAtmUid(null);
       setActiveGithubTerminalUid(null);
-      setActiveQaTerminalUid(null);
+      setActiveCoffeeTableUid(null);
       if (manualSmsBoothOpen) {
         closeManualSmsBoothView();
       }
@@ -4625,7 +4616,7 @@ export function RetroOffice3D({
         setFollowAgentId(null);
         setActiveKanbanUid(null);
         setActiveGithubTerminalUid(null);
-        setActiveQaTerminalUid(null);
+        setActiveCoffeeTableUid(null);
         onMonitorSelect?.(null);
         setActiveAtmUid(uid);
         return;
@@ -4635,7 +4626,7 @@ export function RetroOffice3D({
         setActiveKanbanUid(null);
         setActiveAtmUid(null);
         setActiveGithubTerminalUid(null);
-        setActiveQaTerminalUid(null);
+        setActiveCoffeeTableUid(null);
         onMonitorSelect?.(null);
         setSmsBoothCommandArrived(true);
         setSmsBoothDoorOpen(true);
@@ -4653,14 +4644,14 @@ export function RetroOffice3D({
         setActiveKanbanUid(null);
         setActiveAtmUid(null);
         setActiveGithubTerminalUid(null);
-        setActiveQaTerminalUid(null);
+        setActiveCoffeeTableUid(null);
         onMonitorSelect?.(null);
         setPhoneBoothCommandArrived(true);
         setPhoneBoothDoorOpen(true);
         setManualPhoneCallScenario(
           buildMockPhoneCallScenario({
-            callee: "my contact",
-            message: "This is a demo call from the OpenClaw phone booth.",
+            callee: t("mock.myContact"),
+            message: t("mock.demoCallMessage"),
             voiceAvailable:
               voiceRepliesLoaded &&
               Boolean(voiceRepliesVoiceId) &&
@@ -4674,7 +4665,7 @@ export function RetroOffice3D({
         setFollowAgentId(null);
         setActiveKanbanUid(null);
         setActiveAtmUid(null);
-        setActiveQaTerminalUid(null);
+        setActiveCoffeeTableUid(null);
         onMonitorSelect?.(null);
         setActiveGithubTerminalUid(uid);
         return;
@@ -4683,23 +4674,23 @@ export function RetroOffice3D({
         setFollowAgentId(null);
         setActiveKanbanUid(null);
         setActiveAtmUid(null);
-        setActiveQaTerminalUid(null);
+        setActiveCoffeeTableUid(null);
         onMonitorSelect?.(null);
         setActiveGithubTerminalUid(serverTerminal?._uid ?? uid);
         return;
       }
       if (
-        item.type === "qa_terminal" ||
-        item.type === "device_rack" ||
-        item.type === "test_bench"
+        item.type === "coffee_table" ||
+        item.type === "sedir" ||
+        item.type === "backgammon_table"
       ) {
         setFollowAgentId(null);
         setActiveKanbanUid(null);
         setActiveAtmUid(null);
         setActiveGithubTerminalUid(null);
         onMonitorSelect?.(null);
-        setActiveQaTerminalUid(
-          item.type === "qa_terminal" ? uid : (qaTerminal?._uid ?? uid),
+        setActiveCoffeeTableUid(
+          item.type === "coffee_table" ? uid : (coffeeTableFurniture?._uid ?? uid),
         );
         return;
       }
@@ -4721,7 +4712,7 @@ export function RetroOffice3D({
         const agentId = resolveAgentIdForDeskItem(uid);
         if (!agentId) return;
         setActiveGithubTerminalUid(null);
-        setActiveQaTerminalUid(null);
+        setActiveCoffeeTableUid(null);
         setActiveAtmUid(null);
         onMonitorSelect?.(agentId);
         return;
@@ -4741,7 +4732,7 @@ export function RetroOffice3D({
       openKanbanBoard,
       onMonitorSelect,
       onStandupStartRequested,
-      qaTerminal,
+      coffeeTableFurniture,
       resolveAgentIdForDeskItem,
       planPath,
       renderAgentsRef,
@@ -4775,7 +4766,7 @@ export function RetroOffice3D({
     if (!selectedDeskActionItem) return;
     setActiveKanbanUid(null);
     setActiveGithubTerminalUid(null);
-    setActiveQaTerminalUid(null);
+    setActiveCoffeeTableUid(null);
     setActiveAtmUid(null);
     sendAssignedAgentToDesk(selectedDeskActionItem);
     setDeskActionUid(null);
@@ -4794,14 +4785,14 @@ export function RetroOffice3D({
       !monitorAgentId &&
       !activeAtmUid &&
       !activeGithubTerminalUid &&
-      !activeQaTerminalUid
+      !activeCoffeeTableUid
     ) {
       cameraPresetRef.current = overviewPreset;
     }
   }, [
     activeAtmUid,
     activeGithubTerminalUid,
-    activeQaTerminalUid,
+    activeCoffeeTableUid,
     followAgentId,
     monitorAgentId,
     overviewPreset,
@@ -4823,9 +4814,9 @@ export function RetroOffice3D({
       hoveredItem?.type === "sms_booth" ||
       hoveredItem?.type === "phone_booth" ||
       hoveredItem?.type === "server_rack" ||
-      hoveredItem?.type === "qa_terminal" ||
-      hoveredItem?.type === "device_rack" ||
-      hoveredItem?.type === "test_bench" ||
+      hoveredItem?.type === "coffee_table" ||
+      hoveredItem?.type === "sedir" ||
+      hoveredItem?.type === "backgammon_table" ||
       hoveredItem?.type === "server_terminal" ||
       hoveredItem?.type === "kanban_board" ||
       hoveredMeetingTable
@@ -4978,7 +4969,7 @@ export function RetroOffice3D({
   }, [onDeskAssignmentChange, selectedItem, selectedUid]);
 
   const handleReset = () => {
-    if (!window.confirm("Reset the office to the default layout?")) return;
+    if (!window.confirm(t("office.resetConfirm"))) return;
     onDeskAssignmentsReset?.(
       furniture
         .filter((item) => item.type === "desk_cubicle")
@@ -5023,10 +5014,10 @@ export function RetroOffice3D({
         }
         if (qaImmersive) {
           e.preventDefault();
-          if (activeQaTerminalUid) {
-            setActiveQaTerminalUid(null);
+          if (activeCoffeeTableUid) {
+            setActiveCoffeeTableUid(null);
           } else {
-            onQaLabDismiss?.();
+            onKahvehaneDismiss?.();
           }
           return;
         }
@@ -5095,7 +5086,7 @@ export function RetroOffice3D({
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [
-    activeQaTerminalUid,
+    activeCoffeeTableUid,
     activeGithubTerminalUid,
     atmImmersive,
     editMode,
@@ -5106,7 +5097,7 @@ export function RetroOffice3D({
     moveSelectedItem,
     onGithubReviewDismiss,
     onMonitorSelect,
-    onQaLabDismiss,
+    onKahvehaneDismiss,
     qaImmersive,
     rotateSelectedItem,
     selectedUid,
@@ -5592,8 +5583,8 @@ export function RetroOffice3D({
                     onPointerOut={handleFurniturePointerOut}
                     onClick={handleDeskClick}
                   />
-                ) : item.type === "qa_terminal" ? (
-                  <InteractiveQaTerminalModel
+                ) : item.type === "coffee_table" ? (
+                  <InteractiveCoffeeTableModel
                     key={item._uid}
                     item={item}
                     isSelected={item._uid === selectedUid}
@@ -5604,8 +5595,8 @@ export function RetroOffice3D({
                     onPointerOut={handleFurniturePointerOut}
                     onClick={handleDeskClick}
                   />
-                ) : item.type === "device_rack" ? (
-                  <InteractiveDeviceRackModel
+                ) : item.type === "sedir" ? (
+                  <InteractiveSedirModel
                     key={item._uid}
                     item={item}
                     isSelected={item._uid === selectedUid}
@@ -5616,8 +5607,8 @@ export function RetroOffice3D({
                     onPointerOut={handleFurniturePointerOut}
                     onClick={handleDeskClick}
                   />
-                ) : item.type === "test_bench" ? (
-                  <InteractiveTestBenchModel
+                ) : item.type === "backgammon_table" ? (
+                  <InteractiveBackgammonTableModel
                     key={item._uid}
                     item={item}
                     isSelected={item._uid === selectedUid}
@@ -5628,8 +5619,8 @@ export function RetroOffice3D({
                     onPointerOut={handleFurniturePointerOut}
                     onClick={handleDeskClick}
                   />
-                ) : item.type === "treadmill" ? (
-                  <InteractiveTreadmillModel
+                ) : item.type === "spice_stall" ? (
+                  <InteractiveSpiceStallModel
                     key={item._uid}
                     item={item}
                     isSelected={item._uid === selectedUid}
@@ -5640,8 +5631,8 @@ export function RetroOffice3D({
                     onPointerOut={handleFurniturePointerOut}
                     onClick={handleDeskClick}
                   />
-                ) : item.type === "weight_bench" ? (
-                  <InteractiveWeightBenchModel
+                ) : item.type === "carpet_stand" ? (
+                  <InteractiveCarpetStandModel
                     key={item._uid}
                     item={item}
                     isSelected={item._uid === selectedUid}
@@ -5652,8 +5643,8 @@ export function RetroOffice3D({
                     onPointerOut={handleFurniturePointerOut}
                     onClick={handleDeskClick}
                   />
-                ) : item.type === "dumbbell_rack" ? (
-                  <InteractiveDumbbellRackModel
+                ) : item.type === "bazaar_counter" ? (
+                  <InteractiveBazaarCounterModel
                     key={item._uid}
                     item={item}
                     isSelected={item._uid === selectedUid}
@@ -5664,8 +5655,8 @@ export function RetroOffice3D({
                     onPointerOut={handleFurniturePointerOut}
                     onClick={handleDeskClick}
                   />
-                ) : item.type === "exercise_bike" ? (
-                  <InteractiveExerciseBikeModel
+                ) : item.type === "lantern_post" ? (
+                  <InteractiveLanternPostModel
                     key={item._uid}
                     item={item}
                     isSelected={item._uid === selectedUid}
@@ -5676,8 +5667,8 @@ export function RetroOffice3D({
                     onPointerOut={handleFurniturePointerOut}
                     onClick={handleDeskClick}
                   />
-                ) : item.type === "rowing_machine" ? (
-                  <InteractiveRowingMachineModel
+                ) : item.type === "pottery_shelf" ? (
+                  <InteractivePotteryShelfModel
                     key={item._uid}
                     item={item}
                     isSelected={item._uid === selectedUid}
@@ -5688,8 +5679,8 @@ export function RetroOffice3D({
                     onPointerOut={handleFurniturePointerOut}
                     onClick={handleDeskClick}
                   />
-                ) : item.type === "kettlebell_rack" ? (
-                  <InteractiveKettlebellRackModel
+                ) : item.type === "cezve_station" ? (
+                  <InteractiveCezveStationModel
                     key={item._uid}
                     item={item}
                     isSelected={item._uid === selectedUid}
@@ -5700,20 +5691,8 @@ export function RetroOffice3D({
                     onPointerOut={handleFurniturePointerOut}
                     onClick={handleDeskClick}
                   />
-                ) : item.type === "punching_bag" ? (
-                  <InteractivePunchingBagModel
-                    key={item._uid}
-                    item={item}
-                    isSelected={item._uid === selectedUid}
-                    isHovered={item._uid === hoverUid}
-                    editMode={editMode}
-                    onPointerDown={handleFurniturePointerDown}
-                    onPointerOver={handleFurniturePointerOver}
-                    onPointerOut={handleFurniturePointerOut}
-                    onClick={handleDeskClick}
-                  />
-                ) : item.type === "yoga_mat" ? (
-                  <InteractiveYogaMatModel
+                ) : item.type === "tulip_lamp" ? (
+                  <InteractiveTulipLampModel
                     key={item._uid}
                     item={item}
                     isSelected={item._uid === selectedUid}
@@ -6078,7 +6057,7 @@ export function RetroOffice3D({
                   type="button"
                   onClick={() => setAgentRosterOpen(false)}
                   className="rounded-full border border-amber-900/25 p-2 text-amber-200 transition-colors hover:border-amber-500/35 hover:text-white"
-                  aria-label="Close roster"
+                  aria-label={t("office.closeRoster")}
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -6156,10 +6135,10 @@ export function RetroOffice3D({
                         type="button"
                         title={
                           isRemoteAgent
-                            ? "Remote office is view only"
+                            ? t("office.remoteViewOnly")
                             : monitorAgentId === agent.id
-                              ? "Close desk monitor"
-                              : "Open desk monitor"
+                              ? t("office.closeDeskMonitor")
+                              : t("office.openDeskMonitor")
                         }
                         disabled={isRemoteAgent}
                         onClick={() => {
@@ -6182,7 +6161,7 @@ export function RetroOffice3D({
                       {onAgentDelete && !isRemoteAgent ? (
                         <button
                           type="button"
-                          title="Delete agent"
+                          title={t("office.deleteAgent")}
                           onClick={() => {
                             onAgentDelete(agent.id);
                             setAgentRosterOpen(false);
@@ -6393,7 +6372,7 @@ export function RetroOffice3D({
                   }}
                   className="w-full rounded-md border border-amber-800/25 bg-[#1c1610] px-2 py-2 text-[11px] text-amber-100 outline-none transition-colors focus:border-amber-500/50"
                 >
-                  <option value="">Unassigned desk.</option>
+                  <option value="">{t("office.unassignedDesk")}</option>
                   {agents.map((agent) => (
                     <option key={agent.id} value={agent.id}>
                       {agent.name}
@@ -6434,10 +6413,10 @@ export function RetroOffice3D({
         </div>
       ) : null}
 
-      {!immersiveOverlayActive && qaTestingAgentId && !qaCommandArrived ? (
+      {!immersiveOverlayActive && kahvehaneTestingAgentId && !qaCommandArrived ? (
         <div className="pointer-events-none absolute top-28 left-1/2 z-20 -translate-x-1/2">
           <div className="rounded-full border border-violet-300/20 bg-[#12091d]/88 px-4 py-2 text-[11px] uppercase tracking-[0.22em] text-violet-100/80 backdrop-blur-sm">
-            Agent walking to the QA Lab.
+            Agent walking to the Kahvehane.
           </div>
         </div>
       ) : null}
@@ -6544,7 +6523,7 @@ export function RetroOffice3D({
                   onGithubReviewDismiss?.();
                 }
               }}
-              aria-label="Close GitHub view"
+              aria-label={t("office.closeGithubView")}
               className="flex h-10 w-10 items-center justify-center rounded-full border border-cyan-300/20 bg-[#05111f]/82 text-[18px] leading-none text-cyan-100/78 backdrop-blur-sm transition-colors hover:border-cyan-200/40 hover:text-white"
             >
               X
@@ -6570,34 +6549,34 @@ export function RetroOffice3D({
               <div className="sticky top-0 z-10 flex items-center justify-between border-b border-violet-300/10 bg-[#0d0718]/95 px-8 py-5 backdrop-blur-sm">
                 <div>
                   <div className="text-[11px] font-semibold uppercase tracking-[0.28em] text-violet-200/72">
-                    QA Lab
+                    Kahvehane
                   </div>
                   <div className="mt-2 text-2xl font-semibold text-white/94">
-                    Testing Console
+                    Türk Kahvehanesi
                   </div>
                 </div>
                 <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-200/88">
-                  Verifying Build
+                  Hazir
                 </div>
               </div>
               <div className="grid flex-1 grid-cols-[1.4fr_1fr] gap-6 px-8 py-6">
                 <div className="rounded-[22px] border border-violet-300/12 bg-black/26 p-5">
                   <div className="mb-4 flex items-center justify-between">
                     <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-violet-200/70">
-                      Active Workflow
+                      Günün Programı
                     </div>
                     <div className="text-[11px] uppercase tracking-[0.22em] text-cyan-200/70">
-                      QA Ready
+                      Açık
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     {[
-                      "Write tests",
-                      "Run tests",
-                      "Verify behavior",
-                      "Reproduce bugs",
-                      "Check if this works",
-                      "Regression scan",
+                      "Kahve demleniyor",
+                      "Tavla oynanıyor",
+                      "Sohbet ediliyor",
+                      "Gazete okunuyor",
+                      "Çay servisi",
+                      "Nargile molası",
                     ].map((step) => (
                       <div
                         key={step}
@@ -6610,26 +6589,26 @@ export function RetroOffice3D({
                   <div className="mt-5 rounded-[20px] border border-violet-300/12 bg-[#120d22]/88 p-4">
                     <div className="flex items-center justify-between">
                       <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-violet-200/70">
-                        Pipeline Health
+                        Kahvehane Durumu
                       </div>
                       <div className="text-[11px] uppercase tracking-[0.22em] text-emerald-200/82">
-                        Stable
+                        Huzurlu
                       </div>
                     </div>
                     <div className="mt-4 space-y-3">
                       {[
                         {
-                          label: "Unit suite",
+                          label: "Kahve kalitesi",
                           width: "92%",
                           tone: "from-emerald-400 to-cyan-400",
                         },
                         {
-                          label: "Regression pass",
+                          label: "Müşteri memnuniyeti",
                           width: "78%",
                           tone: "from-cyan-400 to-violet-400",
                         },
                         {
-                          label: "Device verification",
+                          label: "Tavla heyecanı",
                           width: "66%",
                           tone: "from-violet-400 to-fuchsia-400",
                         },
@@ -6651,31 +6630,31 @@ export function RetroOffice3D({
                   </div>
                   <div className="mt-5 rounded-[20px] border border-cyan-300/12 bg-[#07111d]/86 p-4">
                     <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-200/72">
-                      Assigned Agent
+                      Ziyaretçi
                     </div>
                     <div className="mt-2 text-lg font-semibold text-cyan-50">
-                      {qaTestingAgentId
-                        ? (agents.find((agent) => agent.id === qaTestingAgentId)
-                            ?.name ?? "Agent")
-                        : "QA Operator"}
+                      {kahvehaneTestingAgentId
+                        ? (agents.find((agent) => agent.id === kahvehaneTestingAgentId)
+                            ?.name ?? "Misafir")
+                        : "Kahvehane Misafiri"}
                     </div>
                     <div className="mt-2 text-sm leading-6 text-cyan-50/72">
-                      Running validation passes across the lab monitors and
-                      connected test devices.
+                      Kahvehane köşesinde dinleniyor, sohbet ediyor ve Türk
+                      kahvesinin keyfini çıkarıyor.
                     </div>
                   </div>
                 </div>
                 <div className="flex flex-col gap-4">
                   <div className="rounded-[22px] border border-violet-300/12 bg-black/26 p-5">
                     <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-violet-200/70">
-                      Device Wall
+                      Masalar
                     </div>
                     <div className="mt-4 space-y-3">
                       {[
-                        { label: "Web smoke tests", state: "online" },
-                        { label: "Mobile repro pass", state: "online" },
-                        { label: "Console verification", state: "online" },
-                        { label: "Cross-device check", state: "queued" },
+                        { label: "Sedir köşesi", state: "dolu" },
+                        { label: "Tavla masası", state: "dolu" },
+                        { label: "Cezve istasyonu", state: "dolu" },
+                        { label: "Kahve köşesi", state: "boşta" },
                       ].map(({ label, state }, index) => (
                         <div
                           key={label}
@@ -6700,13 +6679,13 @@ export function RetroOffice3D({
                   </div>
                   <div className="rounded-[22px] border border-cyan-300/12 bg-[#07111d]/88 p-5">
                     <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-200/72">
-                      Live Findings
+                      Günün Sohbetleri
                     </div>
                     <div className="mt-4 space-y-3 text-sm">
                       {[
-                        "Input validation mismatch on mobile settings view.",
-                        "Repro path captured for flaky workspace sync issue.",
-                        "Visual diff queued for monitor overlay transition.",
+                        "Bugün hava çok güzel, kahve içmek için ideal.",
+                        "Tavla maçı çok heyecanlı geçti, remis bitti.",
+                        "Yeni cezve geldi, kahve tadı mükemmel.",
                       ].map((finding) => (
                         <div
                           key={finding}
@@ -6719,14 +6698,14 @@ export function RetroOffice3D({
                   </div>
                   <div className="rounded-[22px] border border-amber-300/12 bg-[#161007]/88 p-5">
                     <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-amber-200/72">
-                      Suggested Prompts
+                      Kahvehane Komutları
                     </div>
                     <div className="mt-4 space-y-2 text-sm text-amber-50/78">
-                      <div>`write tests`</div>
-                      <div>`run tests`</div>
-                      <div>`verify`</div>
-                      <div>`reproduce`</div>
-                      <div>`check if this works`</div>
+                      <div>`kahve ısmarla`</div>
+                      <div>`tavla oyna`</div>
+                      <div>`dinlen`</div>
+                      <div>`sohbet et`</div>
+                      <div>`çay getir`</div>
                     </div>
                   </div>
                 </div>
@@ -6738,13 +6717,13 @@ export function RetroOffice3D({
             <button
               type="button"
               onClick={() => {
-                if (activeQaTerminalUid) {
-                  setActiveQaTerminalUid(null);
+                if (activeCoffeeTableUid) {
+                  setActiveCoffeeTableUid(null);
                 } else {
-                  onQaLabDismiss?.();
+                  onKahvehaneDismiss?.();
                 }
               }}
-              aria-label="Close QA lab view"
+              aria-label={t("office.closeKahvehaneView")}
               className="flex h-10 w-10 items-center justify-center rounded-full border border-violet-300/20 bg-[#12091d]/82 text-[18px] leading-none text-violet-100/78 backdrop-blur-sm transition-colors hover:border-violet-200/40 hover:text-white"
             >
               X
@@ -6786,7 +6765,7 @@ export function RetroOffice3D({
                 }
                 closeManualSmsBoothView();
               }}
-              aria-label="Close messaging booth view"
+              aria-label={t("office.closeMessagingBoothView")}
               className="flex h-10 w-10 items-center justify-center rounded-full border border-sky-200/20 bg-[#03111f]/82 text-[18px] leading-none text-sky-50/78 backdrop-blur-sm transition-colors hover:border-sky-200/40 hover:text-white"
             >
               X
@@ -6825,7 +6804,7 @@ export function RetroOffice3D({
                 }
                 closeManualPhoneBoothView();
               }}
-              aria-label="Close phone booth view"
+              aria-label={t("office.closePhoneBoothView")}
               className="flex h-10 w-10 items-center justify-center rounded-full border border-sky-200/20 bg-[#03111f]/82 text-[18px] leading-none text-sky-50/78 backdrop-blur-sm transition-colors hover:border-sky-200/40 hover:text-white"
             >
               X
@@ -6853,7 +6832,7 @@ export function RetroOffice3D({
             <button
               type="button"
               onClick={() => setActiveAtmUid(null)}
-              aria-label="Close ATM view"
+              aria-label={t("office.closeAtmView")}
               className="flex h-10 w-10 items-center justify-center rounded-full border border-[#8efff2]/20 bg-[#031214]/82 text-[18px] leading-none text-[#d7fff9]/78 backdrop-blur-sm transition-colors hover:border-[#8efff2]/40 hover:text-white"
             >
               X
@@ -6888,7 +6867,7 @@ export function RetroOffice3D({
             </div>
             <button
               onClick={closeSelectedEditor}
-              title="Close object editor"
+              title={t("office.closeObjectEditor")}
               className="flex h-7 w-7 items-center justify-center rounded-md border border-amber-800/25 bg-[#1c1610] text-amber-300/80 transition-colors hover:bg-[#261e16] hover:text-amber-200"
             >
               <X size={12} />
@@ -6982,7 +6961,7 @@ export function RetroOffice3D({
                 }}
                 className="w-full rounded-md border border-amber-800/25 bg-[#1c1610] px-2 py-2 text-[11px] text-amber-100 outline-none transition-colors focus:border-amber-500/50"
               >
-                <option value="">Unassigned desk.</option>
+                <option value="">{t("office.unassignedDesk")}</option>
                 {agents.map((agent) => (
                   <option key={agent.id} value={agent.id}>
                     {agent.name}
@@ -7044,11 +7023,11 @@ export function RetroOffice3D({
           {onAddAgent ? (
             <button
               onClick={onAddAgent}
-              title="Add agent"
+              title={t("office.addAgent")}
               className="flex h-7 items-center justify-center gap-1 rounded-md border border-cyan-500/35 bg-[#071018]/92 px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-cyan-200 transition-all backdrop-blur-sm hover:border-cyan-400/55 hover:text-white"
             >
               <UserPlus size={12} />
-              <span>Add</span>
+              <span>{t("office.addBtn")}</span>
             </button>
           ) : null}
           <div
@@ -7066,14 +7045,14 @@ export function RetroOffice3D({
           {/* New Idea 7: Heatmap toggle. */}
           <button
             onClick={() => setHeatmapMode((p) => !p)}
-            title="Toggle heatmap"
+            title={t("office.toggleHeatmap")}
             className={`w-7 h-7 flex items-center justify-center rounded-md transition-all backdrop-blur-sm border ${heatmapMode ? "bg-amber-500/30 text-amber-300 border-amber-500/50" : "bg-[#1c1610]/80 text-amber-500/40 border-amber-900/20 hover:text-amber-400"}`}
           >
             <MapIcon size={12} />
           </button>
           <button
             onClick={() => setTrailMode((p) => !p)}
-            title="Toggle trails"
+            title={t("office.toggleTrails")}
             className={`w-7 h-7 flex items-center justify-center rounded-md transition-all backdrop-blur-sm border ${trailMode ? "bg-amber-500/30 text-amber-300 border-amber-500/50" : "bg-[#1c1610]/80 text-amber-500/40 border-amber-900/20 hover:text-amber-400"}`}
           >
             <Maximize size={12} />
@@ -7092,7 +7071,7 @@ export function RetroOffice3D({
           </button>
           <button
             onClick={() => setSettingsModalOpen(true)}
-            title="Voice reply settings"
+            title={t("office.voiceReplySettings")}
             className={`w-7 h-7 flex items-center justify-center rounded-md transition-all backdrop-blur-sm border ${settingsModalOpen ? "bg-amber-500/30 text-amber-300 border-amber-500/50" : "bg-[#1c1610]/80 text-amber-500/40 border-amber-900/20 hover:text-amber-400"}`}
           >
             <Settings2 size={12} />
@@ -7103,30 +7082,30 @@ export function RetroOffice3D({
                 <span className="text-[10px] text-amber-400/70">
                   {drag.itemType === "wall"
                     ? wallDrawStart
-                      ? "Click the end point to finish the wall."
-                      : "Click a start point, then click again to finish the wall."
-                    : "Click floor to place. Esc cancels."}
+                      ? t("office.wallClickEnd")
+                      : t("office.wallClickStart")
+                    : t("office.clickFloorToPlace")}
                 </span>
               )}
               <button
                 onClick={handleReset}
                 className="px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider bg-[#2a1e14]/90 text-amber-400/60 border border-amber-800/20 hover:bg-[#3a2a1a] backdrop-blur-sm"
               >
-                Reset
+                {t("office.resetBtn")}
               </button>
               {selectedUid && (
                 <button
                   onClick={handleDelete}
                   className="px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider bg-red-900/40 text-red-400 border border-red-800/30 hover:bg-red-900/60 backdrop-blur-sm"
                 >
-                  Delete
+                  {t("office.deleteBtn")}
                 </button>
               )}
               <button
                 onClick={() => setDrawerOpen((p) => !p)}
                 className="px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider bg-[#2a1e14]/90 text-amber-400 border border-amber-800/30 hover:bg-[#3a2a1a] backdrop-blur-sm"
               >
-                {drawerOpen ? "Hide Objects" : "Show Objects"}
+                {drawerOpen ? t("office.hideObjects") : t("office.showObjects")}
               </button>
             </>
           )}
@@ -7138,17 +7117,17 @@ export function RetroOffice3D({
             <div className="flex items-start justify-between border-b border-cyan-500/10 px-4 py-3">
               <div>
                 <div className="font-mono text-[10px] font-semibold tracking-[0.28em] text-cyan-300/75">
-                  STUDIO SETTINGS
+                  {t("office.studioSettings")}
                 </div>
                 <div className="mt-1 text-[11px] text-white/45">
-                  Customize the office banner and spoken replies across the app.
+                  {t("office.studioSettingsDesc")}
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setSettingsModalOpen(false)}
                 className="flex h-7 w-7 items-center justify-center rounded-md border border-cyan-500/10 bg-black/20 text-cyan-100/70 transition-colors hover:border-cyan-400/30 hover:text-cyan-100"
-                aria-label="Close studio settings"
+                aria-label={t("office.closeStudioSettings")}
               >
                 <X size={12} />
               </button>
@@ -7219,6 +7198,7 @@ export function RetroOffice3D({
                 onVoiceRepliesPreview={(voiceId, voiceName) =>
                   onVoiceRepliesPreview?.(voiceId, voiceName)
                 }
+                callGateway={callGateway}
               />
             </div>
           </div>

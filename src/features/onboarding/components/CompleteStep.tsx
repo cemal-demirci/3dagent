@@ -6,6 +6,7 @@
 import { useEffect, useRef } from "react";
 import confetti from "canvas-confetti";
 import { Building2, Rocket } from "lucide-react";
+import { t, tReplace } from "@/lib/i18n";
 
 export const CompleteStep = ({
   companyCreated = false,
@@ -48,6 +49,8 @@ export const CompleteStep = ({
     }, 180);
   }, [companyCreated]);
 
+  const displayName = companyName?.trim() || "";
+
   return (
     <div className="relative flex flex-col items-center justify-center gap-5 py-4">
       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-400/15">
@@ -57,13 +60,17 @@ export const CompleteStep = ({
       <div className="space-y-2 text-center">
         <p className="text-base font-semibold text-white">
           {companyCreated
-            ? `${companyName?.trim() || "Your company"} created successfully`
-            : "Welcome to your AI office"}
+            ? displayName
+              ? tReplace("onboarding.complete.companyCreated", { name: displayName })
+              : t("onboarding.complete.companyCreatedFallback")
+            : t("onboarding.complete.welcomeTitle")}
         </p>
         <p className="max-w-sm text-sm text-white/60">
           {companyCreated
-            ? `${companyName?.trim() || "Your company"} is ready. Your new team has been created in the connected runtime and placed into the office.`
-            : "Your gateway is connected and your agents are ready. Step inside and explore the 3D workspace where your AI team operates."}
+            ? displayName
+              ? tReplace("onboarding.complete.companyReadyDesc", { name: displayName })
+              : t("onboarding.complete.companyReadyFallbackDesc")
+            : t("onboarding.complete.welcomeDesc")}
         </p>
       </div>
 
@@ -72,19 +79,22 @@ export const CompleteStep = ({
           <Building2 className="h-4 w-4 shrink-0 text-amber-300" />
           <div>
             <p className="text-xs font-medium text-white">
-              {companyCreated ? "Meet Your New Team" : "Explore the Office"}
+              {companyCreated ? t("onboarding.complete.meetTeam") : t("onboarding.complete.exploreOffice")}
             </p>
             <p className="text-[10px] text-white/45">
               {companyCreated
-                ? "Walk the office, inspect the new roles, and start delegating work."
-                : "Navigate rooms, watch agents, and interact"}
+                ? t("onboarding.complete.meetTeamHint")
+                : t("onboarding.complete.exploreOfficeHint")}
             </p>
           </div>
         </div>
       </div>
 
       <p className="text-[11px] text-white/35">
-        You can always re-run onboarding from Studio settings.
+        {t("onboarding.complete.rerunHint")}
+      </p>
+      <p className="text-[10px] text-white/25 mt-4">
+        {t("branding.poweredBy")}
       </p>
     </div>
   );

@@ -76,6 +76,10 @@ async function main() {
     });
   }
 
+  // Start embedded demo gateway before Next.js (EADDRINUSE is handled gracefully)
+  const { startAdapter } = require("./demo-gateway-adapter");
+  await startAdapter({ silent: false });
+
   const app = next({
     dev,
     hostname,

@@ -6,8 +6,8 @@ import { stripUiMetadata } from "@/lib/text/message-extract";
 // regex checks across chat, office, or scene code.
 export type OfficeDeskDirective = "desk" | "release";
 export type OfficeGithubDirective = "github" | "release";
-export type OfficeGymDirective = "gym" | "release";
-export type OfficeQaDirective = "qa_lab" | "release";
+export type OfficeBazaarDirective = "bazaar" | "release";
+export type OfficeKahvehaneDirective = "kahvehane" | "release";
 export type OfficeStandupDirective = "standup";
 export type OfficeCallPhase = "needs_message" | "ready_to_call";
 export type OfficeTextPhase = "needs_message" | "ready_to_send";
@@ -25,13 +25,13 @@ export type OfficeIntentSnapshot = {
   normalized: string;
   desk: OfficeDeskDirective | null;
   github: OfficeGithubDirective | null;
-  gym:
+  bazaar:
     | {
-        directive: OfficeGymDirective;
+        directive: OfficeBazaarDirective;
         source: "manual" | "skill";
       }
     | null;
-  qa: OfficeQaDirective | null;
+  kahvehane: OfficeKahvehaneDirective | null;
   art: null;
   standup: OfficeStandupDirective | null;
   call: OfficeCallDirective | null;
@@ -153,17 +153,17 @@ const resolveOfficeInteractionDirectiveFromNormalized = (
   return null;
 };
 
-const resolveOfficeGymSkillDirectiveFromNormalized = (
+const resolveOfficeBazaarSkillDirectiveFromNormalized = (
   normalized: string,
-): OfficeGymDirective | null => {
-  const gymSkillReleasePatterns = [
-    /\bleave\s+(?:the\s+)?gym\b/,
-    /\bexit\s+(?:the\s+)?gym\b/,
-    /\bdone\s+(?:with\s+(?:the\s+)?)?(?:gym|skill(?:\s+building)?)\b/,
+): OfficeBazaarDirective | null => {
+  const bazaarSkillReleasePatterns = [
+    /\bleave\s+(?:the\s+)?(?:bazaar|carsi|kapalicarsi)\b/,
+    /\bexit\s+(?:the\s+)?(?:bazaar|carsi|kapalicarsi)\b/,
+    /\bdone\s+(?:with\s+(?:the\s+)?)?(?:bazaar|carsi|skill(?:\s+building)?)\b/,
     /\bstop\s+(?:working\s+on\s+)?skills?\b/,
     /\bleave\s+the\s+skill(?:\s+building)?(?:\s+room)?\b/,
   ];
-  if (gymSkillReleasePatterns.some((pattern) => pattern.test(normalized))) {
+  if (bazaarSkillReleasePatterns.some((pattern) => pattern.test(normalized))) {
     return "release";
   }
   const skillIntentPatterns = [
@@ -180,42 +180,42 @@ const resolveOfficeGymSkillDirectiveFromNormalized = (
     /\bskill\s+for\s+openclaw\b/,
   ];
   return skillIntentPatterns.some((pattern) => pattern.test(normalized))
-    ? "gym"
+    ? "bazaar"
     : null;
 };
 
-const resolveOfficeGymCommandDirectiveFromNormalized = (
+const resolveOfficeBazaarCommandDirectiveFromNormalized = (
   normalized: string,
-): OfficeGymDirective | null => {
-  const gymCommandReleasePatterns = [
-    /\bleave\s+(?:the\s+)?gym\b/,
-    /\bexit\s+(?:the\s+)?gym\b/,
-    /\bdone\s+(?:with\s+(?:the\s+)?)?gym\b/,
-    /\bstop\s+gym(?:ning)?\b/,
+): OfficeBazaarDirective | null => {
+  const bazaarCommandReleasePatterns = [
+    /\bleave\s+(?:the\s+)?(?:bazaar|carsi|kapalicarsi)\b/,
+    /\bexit\s+(?:the\s+)?(?:bazaar|carsi|kapalicarsi)\b/,
+    /\bdone\s+(?:with\s+(?:the\s+)?)?(?:bazaar|carsi)\b/,
+    /\bstop\s+(?:browsing|shopping)\b/,
     /\bleave\s+skill(?:\s+building)?(?:\s+room)?\b/,
   ];
-  if (gymCommandReleasePatterns.some((pattern) => pattern.test(normalized))) {
+  if (bazaarCommandReleasePatterns.some((pattern) => pattern.test(normalized))) {
     return "release";
   }
-  const gymCommandPatterns = [
-    /\b(?:lets|let's)\s+go\s+to\s+the\s+gym\b/,
-    /\b(?:lets|let's)\s+go\s+to\s+gym\b/,
-    /\bgo\s+to\s+the\s+gym\b/,
-    /\bgo\s+to\s+gym\b/,
-    /\bhead\s+to\s+the\s+gym\b/,
-    /\bhead\s+to\s+gym\b/,
-    /\bgo\s+work\s+out\b/,
-    /\bgo\s+workout\b/,
+  const bazaarCommandPatterns = [
+    /\b(?:lets|let's)\s+go\s+to\s+the\s+(?:bazaar|carsi|kapalicarsi)\b/,
+    /\b(?:lets|let's)\s+go\s+to\s+(?:bazaar|carsi|kapalicarsi)\b/,
+    /\bgo\s+to\s+the\s+(?:bazaar|carsi|kapalicarsi)\b/,
+    /\bgo\s+to\s+(?:bazaar|carsi|kapalicarsi)\b/,
+    /\bhead\s+to\s+the\s+(?:bazaar|carsi|kapalicarsi)\b/,
+    /\bhead\s+to\s+(?:bazaar|carsi|kapalicarsi)\b/,
+    /\bgo\s+shopping\b/,
+    /\bbrowse\s+(?:the\s+)?(?:bazaar|carsi|market)\b/,
   ];
-  return gymCommandPatterns.some((pattern) => pattern.test(normalized))
-    ? "gym"
+  return bazaarCommandPatterns.some((pattern) => pattern.test(normalized))
+    ? "bazaar"
     : null;
 };
 
-const resolveOfficeQaDirectiveFromNormalized = (
+const resolveOfficeKahvehaneDirectiveFromNormalized = (
   normalized: string,
-): OfficeQaDirective | null => {
-  const qaIntentPatterns = [
+): OfficeKahvehaneDirective | null => {
+  const kahvehaneIntentPatterns = [
     /\bwrite\s+tests?\b/,
     /\brun\s+tests?\b/,
     /\b(?:verify|verification)\b/,
@@ -226,21 +226,23 @@ const resolveOfficeQaDirectiveFromNormalized = (
     /\bqa\s+(?:room|lab)\b/,
     /\bquality\s+assurance\b/,
     /\bdebug\s+this\b/,
+    /\bkahvehane\b/,
+    /\bcoffee\s+house\b/,
   ];
-  const qaReleasePatterns = [
-    /\bleave\s+(?:the\s+)?(?:qa\s+(?:room|lab)|testing\s+lab)\b/,
-    /\bexit\s+(?:the\s+)?(?:qa\s+(?:room|lab)|testing\s+lab)\b/,
-    /\bclose\s+(?:the\s+)?qa\s+(?:room|lab)\b/,
+  const kahvehaneReleasePatterns = [
+    /\bleave\s+(?:the\s+)?(?:qa\s+(?:room|lab)|testing\s+lab|kahvehane)\b/,
+    /\bexit\s+(?:the\s+)?(?:qa\s+(?:room|lab)|testing\s+lab|kahvehane)\b/,
+    /\bclose\s+(?:the\s+)?(?:qa\s+(?:room|lab)|kahvehane)\b/,
     /\bdone\s+(?:testing|verifying|reproducing)\b/,
     /\bstop\s+(?:testing|verifying|reproducing)\b/,
   ];
 
-  if (qaReleasePatterns.some((pattern) => pattern.test(normalized))) {
+  if (kahvehaneReleasePatterns.some((pattern) => pattern.test(normalized))) {
     return "release";
   }
 
-  return qaIntentPatterns.some((pattern) => pattern.test(normalized))
-    ? "qa_lab"
+  return kahvehaneIntentPatterns.some((pattern) => pattern.test(normalized))
+    ? "kahvehane"
     : null;
 };
 
@@ -416,8 +418,8 @@ export const resolveOfficeIntentSnapshot = (
       normalized: "",
       desk: null,
       github: null,
-      gym: null,
-      qa: null,
+      bazaar: null,
+      kahvehane: null,
       art: null,
       standup: null,
       call: null,
@@ -431,22 +433,22 @@ export const resolveOfficeIntentSnapshot = (
   const interactionDirective = resolveOfficeInteractionDirectiveFromNormalized(
     normalized,
   );
-  const gymManualDirective = resolveOfficeGymCommandDirectiveFromNormalized(
+  const bazaarManualDirective = resolveOfficeBazaarCommandDirectiveFromNormalized(
     normalized,
   );
-  const qaDirective = resolveOfficeQaDirectiveFromNormalized(normalized);
-  const gymSkillDirective = resolveOfficeGymSkillDirectiveFromNormalized(normalized);
+  const kahvehaneDirective = resolveOfficeKahvehaneDirectiveFromNormalized(normalized);
+  const bazaarSkillDirective = resolveOfficeBazaarSkillDirectiveFromNormalized(normalized);
   const standupDirective = resolveOfficeStandupDirectiveFromNormalized(normalized);
   const callDirective = resolveOfficeCallDirectiveFromNormalized(normalized);
   const textDirective = resolveOfficeTextDirectiveFromNormalized(normalized);
-  const gymDirective = gymManualDirective
+  const bazaarDirective = bazaarManualDirective
     ? {
-        directive: gymManualDirective,
+        directive: bazaarManualDirective,
         source: "manual" as const,
       }
-    : gymSkillDirective
+    : bazaarSkillDirective
       ? {
-          directive: gymSkillDirective,
+          directive: bazaarSkillDirective,
           source: "skill" as const,
         }
       : null;
@@ -465,8 +467,8 @@ export const resolveOfficeIntentSnapshot = (
           ? "github"
           : "release"
         : null,
-    gym: gymDirective,
-    qa: qaDirective,
+    bazaar: bazaarDirective,
+    kahvehane: kahvehaneDirective,
     art: null,
     standup: standupDirective,
     call: callDirective,
@@ -482,23 +484,23 @@ export const resolveOfficeGithubDirective = (
   value: string | null | undefined,
 ): OfficeGithubDirective | null => resolveOfficeIntentSnapshot(value).github;
 
-export const resolveOfficeGymDirective = (
+export const resolveOfficeBazaarDirective = (
   value: string | null | undefined,
-): OfficeGymDirective | null => {
-  const gymIntent = resolveOfficeIntentSnapshot(value).gym;
-  return gymIntent?.source === "skill" ? gymIntent.directive : null;
+): OfficeBazaarDirective | null => {
+  const bazaarIntent = resolveOfficeIntentSnapshot(value).bazaar;
+  return bazaarIntent?.source === "skill" ? bazaarIntent.directive : null;
 };
 
-export const resolveOfficeGymCommandDirective = (
+export const resolveOfficeBazaarCommandDirective = (
   value: string | null | undefined,
-): OfficeGymDirective | null => {
-  const gymIntent = resolveOfficeIntentSnapshot(value).gym;
-  return gymIntent?.source === "manual" ? gymIntent.directive : null;
+): OfficeBazaarDirective | null => {
+  const bazaarIntent = resolveOfficeIntentSnapshot(value).bazaar;
+  return bazaarIntent?.source === "manual" ? bazaarIntent.directive : null;
 };
 
-export const resolveOfficeQaDirective = (
+export const resolveOfficeKahvehaneDirective = (
   value: string | null | undefined,
-): OfficeQaDirective | null => resolveOfficeIntentSnapshot(value).qa;
+): OfficeKahvehaneDirective | null => resolveOfficeIntentSnapshot(value).kahvehane;
 
 export const resolveOfficeStandupDirective = (
   value: string | null | undefined,
@@ -516,8 +518,8 @@ const resolveTranscriptDirective = <
   TDirective extends
     | OfficeDeskDirective
     | OfficeGithubDirective
-    | OfficeGymDirective
-    | OfficeQaDirective
+    | OfficeBazaarDirective
+    | OfficeKahvehaneDirective
     | OfficeStandupDirective,
 >(
   entries: TranscriptEntry[] | undefined,
@@ -577,7 +579,7 @@ export const reduceOfficeGithubHoldState = (params: {
   return params.currentHeld;
 };
 
-export const reduceOfficeGymHoldState = (params: {
+export const reduceOfficeBazaarHoldState = (params: {
   currentHeld: boolean;
   isAgentRunning: boolean;
   lastUserMessage: string | null | undefined;
@@ -585,36 +587,36 @@ export const reduceOfficeGymHoldState = (params: {
 }): boolean => {
   if (!params.isAgentRunning) return false;
 
-  const latestMessageDirective = resolveOfficeGymDirective(
+  const latestMessageDirective = resolveOfficeBazaarDirective(
     params.lastUserMessage,
   );
-  if (latestMessageDirective === "gym") return true;
+  if (latestMessageDirective === "bazaar") return true;
 
   const transcriptDirective = resolveTranscriptDirective(
     params.transcriptEntries,
-    resolveOfficeGymDirective,
+    resolveOfficeBazaarDirective,
   );
-  if (transcriptDirective === "gym") return true;
+  if (transcriptDirective === "bazaar") return true;
 
   return params.currentHeld;
 };
 
-export const reduceOfficeQaHoldState = (params: {
+export const reduceOfficeKahvehaneHoldState = (params: {
   currentHeld: boolean;
   lastUserMessage: string | null | undefined;
   transcriptEntries: TranscriptEntry[] | undefined;
 }): boolean => {
-  const latestMessageDirective = resolveOfficeQaDirective(
+  const latestMessageDirective = resolveOfficeKahvehaneDirective(
     params.lastUserMessage,
   );
-  if (latestMessageDirective === "qa_lab") return true;
+  if (latestMessageDirective === "kahvehane") return true;
   if (latestMessageDirective === "release") return false;
 
   const transcriptDirective = resolveTranscriptDirective(
     params.transcriptEntries,
-    resolveOfficeQaDirective,
+    resolveOfficeKahvehaneDirective,
   );
-  if (transcriptDirective === "qa_lab") return true;
+  if (transcriptDirective === "kahvehane") return true;
   if (transcriptDirective === "release") return false;
 
   return params.currentHeld;

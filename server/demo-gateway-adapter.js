@@ -2,6 +2,7 @@
 
 const http = require("http");
 const { randomUUID } = require("crypto");
+const { execSync, spawn } = require("child_process");
 const { WebSocketServer } = require("ws");
 
 const ADAPTER_PORT = parseInt(process.env.DEMO_ADAPTER_PORT || "18789", 10);
@@ -16,6 +17,39 @@ let openaiClient = null;
 
 /** Keys stored in memory (set via ai.keys.set from UI) */
 const aiKeys = { anthropic: "", gemini: "", openai: "" };
+
+// ---------------------------------------------------------------------------
+// CLI / Agent SDK availability detection (cached)
+// ---------------------------------------------------------------------------
+let claudeAgentSDKAvailable = null;
+let claudeAgentQuery = null; // Lazy-loaded ESM import
+let geminiCLIAvailable = null;
+
+async function loadClaudeAgentSDK() {
+  if (claudeAgentSDKAvailable !== null) return claudeAgentSDKAvailable;
+  try {
+    const mod = await import("@anthropic-ai/claude-agent-sdk");
+    claudeAgentQuery = mod.query;
+    claudeAgentSDKAvailable = true;
+    console.log("[demo-gateway] Claude Agent SDK yüklendi (OAuth — API key gerekmez).");
+  } catch {
+    claudeAgentSDKAvailable = false;
+  }
+  return claudeAgentSDKAvailable;
+}
+
+function isClaudeAgentSDKAvailable() {
+  return claudeAgentSDKAvailable === true;
+}
+
+function isGeminiCLIAvailable() {
+  if (geminiCLIAvailable !== null) return geminiCLIAvailable;
+  try {
+    execSync("npx @google/gemini-cli --version", { stdio: "pipe", timeout: 10000 });
+    geminiCLIAvailable = true;
+  } catch { geminiCLIAvailable = false; }
+  return geminiCLIAvailable;
+}
 
 function initAnthropicClient(apiKey) {
   try {
@@ -299,15 +333,24 @@ function agentListPayload() {
 // ---------------------------------------------------------------------------
 function buildModelsList() {
   const models = [];
+  // SDK models
   if (anthropicClient) {
-    models.push({ id: "anthropic/claude-sonnet-4", name: "Claude Sonnet 4", provider: "anthropic", reasoning: true });
+    models.push({ id: "anthropic/claude-sonnet-4", name: "Claude Sonnet 4 (API)", provider: "anthropic", reasoning: true });
   }
   if (geminiClient) {
-    models.push({ id: "google/gemini-2.0-flash", name: "Gemini 2.0 Flash", provider: "google" });
+    models.push({ id: "google/gemini-2.0-flash", name: "Gemini 2.0 Flash (API)", provider: "google" });
   }
   if (openaiClient) {
-    models.push({ id: "openai/gpt-4o", name: "GPT-4o", provider: "openai" });
+    models.push({ id: "openai/gpt-4o", name: "GPT-4o (API)", provider: "openai" });
   }
+  // Agent SDK / CLI models (only if API SDK not available for that provider)
+  if (!anthropicClient && isClaudeAgentSDKAvailable()) {
+    models.push({ id: "anthropic/claude-sonnet-4", name: "Claude Sonnet 4 (OAuth)", provider: "anthropic", reasoning: true });
+  }
+  if (!geminiClient && isGeminiCLIAvailable()) {
+    models.push({ id: "google/gemini-2.0-flash", name: "Gemini 2.0 Flash (CLI)", provider: "google" });
+  }
+  // Mock always available
   models.push({ id: "demo/mock-office", name: "Mock (Yedek)", provider: "demo" });
   return models;
 }
@@ -393,18 +436,154 @@ async function streamOpenAIReply(agent, history, userMessage, abortSignal, emitD
 }
 
 // ---------------------------------------------------------------------------
+// Agent SDK / CLI-based streaming (no API key needed — uses OAuth/Google auth)
+// ---------------------------------------------------------------------------
+
+async function streamClaudeAgentReply(agent, history, userMessage, abortSignal, emitDelta) {
+  const systemPrompt = AGENT_SYSTEM_PROMPTS[agent.role] || `Sen ${agent.name} adında bir asistansın. Türkçe yanıt ver.`;
+
+  // Build context from history
+  let contextPrompt = "";
+  if (history.length > 0) {
+    contextPrompt = "Önceki konuşma:\n";
+    for (const m of history) {
+      contextPrompt += `${m.role === "user" ? "User" : "Assistant"}: ${m.content}\n\n`;
+    }
+    contextPrompt += "---\n\n";
+  }
+
+  const abortController = new AbortController();
+  if (abortSignal.aborted) abortController.abort();
+  // Sync external abort signal
+  const checkAbort = setInterval(() => {
+    if (abortSignal.aborted && !abortController.signal.aborted) {
+      abortController.abort();
+    }
+  }, 100);
+
+  let fullText = "";
+
+  try {
+    const response = claudeAgentQuery({
+      prompt: contextPrompt + userMessage,
+      options: {
+        systemPrompt,
+        model: "claude-sonnet-4-20250514",
+        maxTurns: 1,
+        abortController,
+        allowedTools: [],
+      },
+    });
+
+    for await (const message of response) {
+      if (abortSignal.aborted) break;
+
+      if (message.type === "assistant") {
+        // Extract text from content blocks
+        const content = message.message?.content;
+        if (Array.isArray(content)) {
+          const textParts = content
+            .filter((b) => b.type === "text")
+            .map((b) => b.text);
+          if (textParts.length > 0) {
+            fullText = textParts.join("");
+            emitDelta(fullText);
+          }
+        } else if (typeof content === "string") {
+          fullText = content;
+          emitDelta(fullText);
+        }
+      } else if (message.type === "result") {
+        // Final result
+        if (message.result && typeof message.result === "string" && message.result.length > fullText.length) {
+          fullText = message.result;
+          emitDelta(fullText);
+        }
+      }
+    }
+  } finally {
+    clearInterval(checkAbort);
+  }
+
+  return fullText;
+}
+
+async function streamGeminiCLIReply(agent, history, userMessage, abortSignal, emitDelta) {
+  const systemPrompt = AGENT_SYSTEM_PROMPTS[agent.role] || `Sen ${agent.name} adında bir asistansın. Türkçe yanıt ver.`;
+
+  let fullPrompt = `System: ${systemPrompt}\n\n`;
+  for (const m of history) {
+    fullPrompt += `${m.role === "user" ? "User" : "Assistant"}: ${m.content}\n\n`;
+  }
+  fullPrompt += `User: ${userMessage}`;
+
+  return new Promise((resolve, reject) => {
+    const child = spawn("npx", [
+      "@google/gemini-cli",
+      "-p", fullPrompt,
+      "-o", "stream-json",
+    ], {
+      stdio: ["pipe", "pipe", "pipe"],
+    });
+
+    let fullText = "";
+    let buffer = "";
+
+    child.stdout.on("data", (chunk) => {
+      if (abortSignal.aborted) { child.kill(); return; }
+      buffer += chunk.toString();
+      const lines = buffer.split("\n");
+      buffer = lines.pop();
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        try {
+          const event = JSON.parse(line);
+          if (event.type === "result" && event.result) {
+            fullText = event.result;
+            emitDelta(fullText);
+          } else if (event.message?.content) {
+            fullText = event.message.content;
+            emitDelta(fullText);
+          } else if (typeof event.text === "string") {
+            fullText += event.text;
+            emitDelta(fullText);
+          }
+        } catch {}
+      }
+    });
+
+    child.stderr.on("data", () => {});
+
+    child.on("close", (code) => {
+      if (abortSignal.aborted) resolve(fullText);
+      else if (code !== 0 && !fullText) reject(new Error(`Gemini CLI exited with code ${code}`));
+      else resolve(fullText);
+    });
+
+    child.on("error", reject);
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Provider selection: agent's preferred provider -> any available -> null (mock)
 // ---------------------------------------------------------------------------
 function selectStreamFunction(agent) {
-  // Try the agent's assigned provider first
+  // 1. Agent's assigned provider (API SDK)
   if (agent.provider === "anthropic" && anthropicClient) return streamAnthropicReply;
   if (agent.provider === "gemini" && geminiClient) return streamGeminiReply;
   if (agent.provider === "openai" && openaiClient) return streamOpenAIReply;
-  // Fallback: try any available provider
+  // 2. Agent's assigned provider (Agent SDK / CLI)
+  if (agent.provider === "anthropic" && isClaudeAgentSDKAvailable()) return streamClaudeAgentReply;
+  if (agent.provider === "gemini" && isGeminiCLIAvailable()) return streamGeminiCLIReply;
+  // 3. Any available API SDK provider
   if (anthropicClient) return streamAnthropicReply;
   if (geminiClient) return streamGeminiReply;
   if (openaiClient) return streamOpenAIReply;
-  return null; // No keys configured -> mock
+  // 4. Any available Agent SDK / CLI provider
+  if (isClaudeAgentSDKAvailable()) return streamClaudeAgentReply;
+  if (isGeminiCLIAvailable()) return streamGeminiCLIReply;
+  // 5. Mock fallback
+  return null;
 }
 
 // ---------------------------------------------------------------------------
@@ -594,15 +773,17 @@ async function handleMethod(method, params, id, sendEvent) {
     // Setup status — for onboarding wizard AI configuration
     // -----------------------------------------------------------------------
     case "setup.status": {
+      const claudeSDK = isClaudeAgentSDKAvailable();
+      const geminiCLI = isGeminiCLIAvailable();
       return resOk(id, {
         providers: {
-          anthropic: { configured: Boolean(aiKeys.anthropic), active: Boolean(anthropicClient) },
-          gemini: { configured: Boolean(aiKeys.gemini), active: Boolean(geminiClient) },
+          anthropic: { configured: Boolean(aiKeys.anthropic), active: Boolean(anthropicClient), agentSdk: claudeSDK },
+          gemini: { configured: Boolean(aiKeys.gemini), active: Boolean(geminiClient), cli: geminiCLI },
           openai: { configured: Boolean(aiKeys.openai), active: Boolean(openaiClient) },
         },
         skills: ["task-manager", "soundclaw"],
         features: { kanban: true, jukebox: true, cron: true },
-        needsSetup: !aiKeys.anthropic && !aiKeys.gemini && !aiKeys.openai,
+        needsSetup: !aiKeys.anthropic && !aiKeys.gemini && !aiKeys.openai && !claudeSDK && !geminiCLI,
       });
     }
 
@@ -942,6 +1123,14 @@ function startAdapter(options = {}) {
 
   // Auto-load AI keys from environment variables on startup
   autoLoadKeysFromEnv();
+
+  // Agent SDK / CLI detection (async for ESM import)
+  loadClaudeAgentSDK().then(() => {
+    if (isGeminiCLIAvailable()) console.log("[demo-gateway] Gemini CLI tespit edildi (Google auth — API key gerekmez).");
+    if (!anthropicClient && !geminiClient && !openaiClient && !isClaudeAgentSDKAvailable() && !isGeminiCLIAvailable()) {
+      console.log("[demo-gateway] AI sağlayıcı bulunamadı. Mock yanıtlar kullanılacak.");
+    }
+  });
 
   const httpServer = http.createServer((req, res) => {
     res.writeHead(200, { "Content-Type": "text/plain" });

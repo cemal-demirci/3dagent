@@ -13,6 +13,8 @@
     "lint": "eslint .",
     "cleanup:ux-artifacts": "node scripts/cleanup-ux-artifacts.mjs",
     "sync:gateway-client": "node scripts/sync-openclaw-gateway-client.ts",
+    "setup": "node scripts/setup.js",
+    "postinstall": "node scripts/postinstall-hint.js",
     "studio:setup": "node scripts/studio-setup.js",
     "smoke:dev-server": "node scripts/smoke-dev-server.mjs",
     "typecheck": "tsc --noEmit",
@@ -20,6 +22,9 @@
     "e2e": "playwright test"
   },
   "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.2.92",
+    "@anthropic-ai/sdk": "^0.82.0",
+    "@google/generative-ai": "^0.24.1",
     "@noble/ed25519": "^3.0.0",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
@@ -29,6 +34,7 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.563.0",
     "next": "16.1.7",
+    "openai": "^6.33.0",
     "phaser": "^3.90.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",

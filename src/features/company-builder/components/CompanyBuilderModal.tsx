@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { GitBranch, Plus, Sparkles, Trash2, Wand2, X } from "lucide-react";
+import { t, tReplace } from "@/lib/i18n";
 import { AgentAvatarPreview3D } from "@/features/agents/components/AgentAvatarPreview3D";
 import { RunningAvatarLoader } from "@/features/agents/components/RunningAvatarLoader";
 import { createDefaultAgentAvatarProfile } from "@/lib/avatars/profile";
@@ -190,12 +191,11 @@ export function CompanyBuilderModal({
           <div>
             <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-cyan-200/70">
               <Sparkles className="h-4 w-4" />
-              Company Builder
+              {t("company.companyBuilder")}
             </div>
-            <h2 className="mt-1 text-lg font-semibold">Design an AI company from one prompt</h2>
+            <h2 className="mt-1 text-lg font-semibold">{t("company.designFromPrompt")}</h2>
             <p className="mt-1 text-sm text-white/55">
-              Uses your connected runtime
-              {plannerAgentName ? ` via ${plannerAgentName}.` : "."}
+              {plannerAgentName ? tReplace("company.usesRuntimeVia", { name: plannerAgentName }) : t("company.usesRuntime")}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -212,7 +212,7 @@ export function CompanyBuilderModal({
               }}
               disabled={!canClear}
             >
-              Clear
+              {t("company.clear")}
             </button>
             <button
               type="button"
@@ -227,7 +227,7 @@ export function CompanyBuilderModal({
               disabled={!canGenerate}
             >
               <Sparkles className="h-3.5 w-3.5" />
-              Generate
+              {t("company.generate")}
             </button>
             <button
               type="button"
@@ -238,7 +238,7 @@ export function CompanyBuilderModal({
               disabled={!canPreviewChart}
             >
               <GitBranch className="h-3.5 w-3.5" />
-              Org Chart
+              {t("company.orgChart")}
             </button>
             <button
               type="button"
@@ -254,14 +254,14 @@ export function CompanyBuilderModal({
               disabled={!canCreate}
             >
               <Wand2 className="h-3.5 w-3.5" />
-              Create Company
+              {t("company.createCompany")}
             </button>
             <button
               type="button"
               className="rounded-md border border-white/10 p-2 text-white/60 transition hover:bg-white/5 hover:text-white"
               onClick={onClose}
               disabled={busy}
-              aria-label="Close company builder"
+              aria-label={t("company.closeBuilder")}
             >
               <X className="h-4 w-4" />
             </button>
@@ -275,7 +275,7 @@ export function CompanyBuilderModal({
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/60">
-                      Source prompt
+                      {t("company.sourcePrompt")}
                     </p>
                     <button
                       type="button"
@@ -287,13 +287,13 @@ export function CompanyBuilderModal({
                       disabled={busy}
                     >
                       <Wand2 className="h-3 w-3" />
-                      {input.businessDescription.trim() ? "Edit prompt" : "Describe company"}
+                      {input.businessDescription.trim() ? t("company.editPrompt") : t("company.describeCompany")}
                     </button>
                   </div>
                   <div className="text-sm leading-6 text-white/70">
                     {input.businessDescription.trim()
                       ? input.businessDescription
-                      : "Describe what the company should do and Claw3D will immediately turn it into an improved brief."}
+                      : t("company.describeHint")}
                   </div>
                 </div>
               </div>
@@ -302,16 +302,16 @@ export function CompanyBuilderModal({
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/60">
-                      Improved Brief
+                      {t("company.improvedBrief")}
                     </p>
                     <p className="mt-1 text-[11px] text-white/45">
-                      This is the text used for company generation.
+                      {t("company.briefUsedForGen")}
                     </p>
                   </div>
                 </div>
                 <textarea
                   className={`${textareaClassName} mt-3 min-h-[340px]`}
-                  placeholder="AI will rewrite the brief here."
+                  placeholder={t("company.briefPlaceholder")}
                   value={input.improvedBrief}
                   onChange={(event) =>
                     setInput((current) => ({
@@ -326,10 +326,10 @@ export function CompanyBuilderModal({
               <div className="space-y-3 rounded-xl border border-white/10 bg-white/[0.03] p-4">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/60">
-                    Company Actions
+                    {t("company.companyActions")}
                   </p>
                   <p className="mt-1 text-[11px] text-white/45">
-                    Generate the org, then create it in your connected runtime.
+                    {t("company.generateThenCreate")}
                   </p>
                 </div>
                 {replacesExistingAgents ? (
@@ -341,8 +341,7 @@ export function CompanyBuilderModal({
                 ) : null}
                 {!canUseAi ? (
                   <p className="text-xs text-amber-200/80">
-                    Connect to a runtime and keep at least one available planning agent in the fleet
-                    to use AI suggestions.
+                    {t("company.connectHint")}
                   </p>
                 ) : null}
                 {statusLine ? <p className="text-xs text-cyan-100/75">{statusLine}</p> : null}
@@ -356,7 +355,7 @@ export function CompanyBuilderModal({
               <div className="space-y-5">
                 <div className="grid gap-4 md:grid-cols-2">
                   <label className="flex flex-col gap-2 text-xs text-white/60">
-                    Company name
+                    {t("company.companyName")}
                     <input
                       className={inputClassName}
                       value={plan.companyName}
@@ -374,7 +373,7 @@ export function CompanyBuilderModal({
                     />
                   </label>
                   <label className="flex flex-col gap-2 text-xs text-white/60">
-                    Shared rules
+                    {t("company.sharedRules")}
                     <input
                       className={inputClassName}
                       value={joinCommaList(plan.sharedRules)}
@@ -394,7 +393,7 @@ export function CompanyBuilderModal({
                 </div>
 
                 <label className="flex flex-col gap-2 text-xs text-white/60">
-                  Company summary
+                  {t("company.companySummary")}
                   <textarea
                     className={`${textareaClassName} min-h-[110px]`}
                     value={plan.summary}
@@ -414,9 +413,9 @@ export function CompanyBuilderModal({
 
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-sm font-semibold text-white">Org structure</p>
+                    <p className="text-sm font-semibold text-white">{t("company.orgStructure")}</p>
                     <p className="text-xs text-white/55">
-                      Edit the team before creating agents in your connected runtime.
+                      {t("company.editTeamHint")}
                     </p>
                   </div>
                   <button
@@ -436,7 +435,7 @@ export function CompanyBuilderModal({
                     disabled={busy}
                   >
                     <Plus className="h-3.5 w-3.5" />
-                    Add role
+                    {t("company.addRole")}
                   </button>
                 </div>
 
@@ -684,11 +683,9 @@ export function CompanyBuilderModal({
               <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-8 text-center">
                 <div className="max-w-md space-y-3">
                   <Sparkles className="mx-auto h-8 w-8 text-cyan-300/70" />
-                  <p className="text-lg font-semibold text-white">No company generated yet</p>
+                  <p className="text-lg font-semibold text-white">{t("company.noCompanyYet")}</p>
                   <p className="text-sm text-white/55">
-                    Start by describing the company. Claw3D will create the improved brief
-                    automatically, then you can generate and edit the org structure before anything
-                    is created.
+                    {t("company.startByDescribing")}
                   </p>
                 </div>
               </div>
@@ -701,10 +698,10 @@ export function CompanyBuilderModal({
           <div className="w-full max-w-md rounded-2xl border border-cyan-500/20 bg-[#08111a] px-6 py-6 text-center shadow-2xl">
             <RunningAvatarLoader size={40} trackWidth={104} />
             <p className="mt-4 text-sm font-semibold text-white">
-              {statusLine?.trim() || "Working on your company."}
+              {statusLine?.trim() || t("company.workingOnCompany")}
             </p>
             <p className="mt-2 text-xs leading-5 text-white/55">
-              Claw3D is using your connected runtime right now. Please wait until this finishes.
+              {t("company.pleaseWait")}
             </p>
             <div className="mt-5 flex gap-2">
               {Array.from({ length: 4 }, (_, index) => (
@@ -722,7 +719,7 @@ export function CompanyBuilderModal({
         <div className="fixed inset-0 z-[100115] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
           <div className="w-full max-w-lg rounded-2xl border border-white/10 bg-[#0b1119] p-6 shadow-2xl">
             <div className="space-y-2">
-              <p className="text-sm font-semibold text-white">Replace current agents?</p>
+              <p className="text-sm font-semibold text-white">{t("company.replaceAgentsTitle")}</p>
               <p className="text-sm leading-6 text-white/65">
                 Your current {agentCount === 1 ? "agent will" : `${agentCount} agents will`} be
                 deleted and replaced by this new company. This action is irreversible and will
@@ -738,7 +735,7 @@ export function CompanyBuilderModal({
                 }}
                 disabled={busy}
               >
-                Cancel
+                {t("company.cancelBtn")}
               </button>
               <button
                 type="button"
@@ -749,7 +746,7 @@ export function CompanyBuilderModal({
                 }}
                 disabled={busy}
               >
-                Create Company
+                {t("company.createCompany")}
               </button>
             </div>
           </div>
@@ -761,10 +758,10 @@ export function CompanyBuilderModal({
             <div className="flex items-center justify-between border-b border-white/10 px-6 py-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.14em] text-cyan-200/70">
-                  Org Chart Preview
+                  {t("company.orgChartPreview")}
                 </p>
                 <p className="mt-2 text-sm text-white/60">
-                  Hover any avatar to inspect the role brief, responsibilities, and collaborators.
+                  {t("company.orgChartHoverHint")}
                 </p>
               </div>
               <button
@@ -774,7 +771,7 @@ export function CompanyBuilderModal({
                   setOrgChartOpen(false);
                 }}
                 disabled={busy}
-                aria-label="Close org chart preview"
+                aria-label={t("company.closeOrgChart")}
               >
                 <X className="h-4 w-4" />
               </button>
@@ -894,11 +891,10 @@ export function CompanyBuilderModal({
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.14em] text-cyan-200/70">
-                  What should the company do?
+                  {t("company.whatShouldCompanyDo")}
                 </p>
                 <p className="mt-2 text-sm text-white/55">
-                  As soon as you submit this, Claw3D will improve the brief using your connected
-                  runtime.
+                  {t("company.submitHint")}
                 </p>
               </div>
               <button
@@ -909,14 +905,14 @@ export function CompanyBuilderModal({
                   setPromptModalOpen(false);
                 }}
                 disabled={busy}
-                aria-label="Close prompt modal"
+                aria-label={t("company.closePromptModal")}
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
             <textarea
               className={`${textareaClassName} mt-5 min-h-[220px]`}
-              placeholder="I run a web design company that builds websites, web apps, mobile apps, SEO campaigns, and social media services..."
+              placeholder={t("company.companyPromptPlaceholder")}
               value={promptDraft}
               onChange={(event) => {
                 setPromptDraft(event.target.value);
@@ -926,7 +922,7 @@ export function CompanyBuilderModal({
             <div className="mt-5 flex items-center justify-between gap-3">
               <div>
                 <p className="text-xs text-white/45">
-                  The improved brief becomes the main editable input for generation.
+                  {t("company.briefBecomesInput")}
                 </p>
                 {error ? <p className="mt-2 text-xs text-red-200">{error}</p> : null}
               </div>
@@ -951,7 +947,7 @@ export function CompanyBuilderModal({
                 disabled={!canUseAi || promptDraft.trim().length === 0 || busy}
               >
                 <Sparkles className="h-4 w-4" />
-                Generate Company
+                {t("company.generateCompany")}
               </button>
             </div>
           </div>

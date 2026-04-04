@@ -6,6 +6,8 @@
  * step registry.
  */
 
+import { t } from "@/lib/i18n";
+
 export type OnboardingStepId =
   | "welcome"
   | "prerequisites"
@@ -36,38 +38,38 @@ export type OnboardingState = {
 export const ONBOARDING_STEPS: OnboardingStep[] = [
   {
     id: "welcome",
-    title: "Welcome to Claw3D",
-    description: "Your AI office in 3D",
+    title: t("onboarding.step.welcome.title"),
+    description: t("onboarding.step.welcome.description"),
     skippable: false,
   },
   {
     id: "prerequisites",
-    title: "Before You Start",
-    description: "What you'll need",
+    title: t("onboarding.step.prerequisites.title"),
+    description: t("onboarding.step.prerequisites.description"),
     skippable: true,
   },
   {
     id: "connect",
-    title: "Connect Your Gateway",
-    description: "Link to your runtime instance",
+    title: t("onboarding.step.connect.title"),
+    description: t("onboarding.step.connect.description"),
     skippable: false,
   },
   {
     id: "agents",
-    title: "Your Agents",
-    description: "Meet your AI team",
+    title: t("onboarding.step.agents.title"),
+    description: t("onboarding.step.agents.description"),
     skippable: true,
   },
   {
     id: "company",
-    title: "Build Your Company",
-    description: "Generate your org structure",
+    title: t("onboarding.step.company.title"),
+    description: t("onboarding.step.company.description"),
     skippable: true,
   },
   {
     id: "complete",
-    title: "You're All Set",
-    description: "Start exploring",
+    title: t("onboarding.step.complete.title"),
+    description: t("onboarding.step.complete.description"),
     skippable: false,
   },
 ];

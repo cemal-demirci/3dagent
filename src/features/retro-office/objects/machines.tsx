@@ -1865,6 +1865,625 @@ export function YogaMatModel({
   );
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+ *  BAZAAR (Kapalıçarşı) MODELS
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+export function SpiceStallModel({
+  item,
+  isSelected,
+  isHovered,
+  editMode,
+  onPointerDown,
+  onPointerOver,
+  onPointerOut,
+  onClick,
+}: InteractiveFurnitureModelProps) {
+  const [wx, , wz] = toWorld(item.x, item.y);
+  const { width, height } = getItemBaseSize(item);
+  const widthWorld = width * SCALE;
+  const depthWorld = height * SCALE;
+  const rotY = getItemRotationRadians(item);
+  const highlightColor = isSelected ? "#fbbf24" : isHovered && editMode ? "#d97706" : "#000000";
+  const highlightIntensity = isSelected ? 0.34 : isHovered && editMode ? 0.22 : 0;
+
+  return (
+    <group
+      position={[wx, 0, wz]}
+      onPointerDown={(event) => { event.stopPropagation(); onPointerDown(item._uid); }}
+      onPointerOver={(event) => { event.stopPropagation(); onPointerOver(item._uid); }}
+      onPointerOut={(event) => { event.stopPropagation(); onPointerOut(); }}
+      onClick={(event) => { event.stopPropagation(); onClick?.(item._uid); }}
+    >
+      <group position={[widthWorld / 2, 0, depthWorld / 2]} rotation={[0, rotY, 0]}>
+        {/* Wooden counter */}
+        <mesh position={[0, 0.38, 0]} castShadow receiveShadow>
+          <boxGeometry args={[widthWorld, 0.06, depthWorld * 0.9]} />
+          <meshStandardMaterial color="#78350f" roughness={0.72} metalness={0.08} emissive={highlightColor} emissiveIntensity={highlightIntensity} />
+        </mesh>
+        {/* Legs */}
+        {[-widthWorld * 0.38, widthWorld * 0.38].map((x) =>
+          [-depthWorld * 0.34, depthWorld * 0.34].map((z) => (
+            <mesh key={`${x}:${z}`} position={[x, 0.19, z]} castShadow>
+              <boxGeometry args={[0.04, 0.38, 0.04]} />
+              <meshStandardMaterial color="#92400e" roughness={0.65} metalness={0.1} />
+            </mesh>
+          )),
+        )}
+        {/* Spice boxes */}
+        {[
+          { x: -widthWorld * 0.22, color: "#dc2626" },
+          { x: -widthWorld * 0.07, color: "#eab308" },
+          { x: widthWorld * 0.07, color: "#16a34a" },
+          { x: widthWorld * 0.22, color: "#ea580c" },
+        ].map((spice) => (
+          <mesh key={spice.x} position={[spice.x, 0.46, 0]}>
+            <boxGeometry args={[widthWorld * 0.12, 0.1, depthWorld * 0.3]} />
+            <meshStandardMaterial color={spice.color} roughness={0.82} metalness={0.04} />
+          </mesh>
+        ))}
+        {/* Back panel */}
+        <mesh position={[0, 0.55, -depthWorld * 0.42]} castShadow>
+          <boxGeometry args={[widthWorld * 0.96, 0.42, 0.04]} />
+          <meshStandardMaterial color="#92400e" roughness={0.7} metalness={0.08} />
+        </mesh>
+        <Text position={[0, 0.72, -depthWorld * 0.38]} fontSize={0.03} color="#fef3c7" anchorX="center" anchorY="middle">
+          BAHARAT
+        </Text>
+      </group>
+    </group>
+  );
+}
+
+export function CarpetStandModel({
+  item,
+  isSelected,
+  isHovered,
+  editMode,
+  onPointerDown,
+  onPointerOver,
+  onPointerOut,
+  onClick,
+}: InteractiveFurnitureModelProps) {
+  const [wx, , wz] = toWorld(item.x, item.y);
+  const { width, height } = getItemBaseSize(item);
+  const widthWorld = width * SCALE;
+  const depthWorld = height * SCALE;
+  const rotY = getItemRotationRadians(item);
+  const highlightColor = isSelected ? "#fbbf24" : isHovered && editMode ? "#d97706" : "#000000";
+  const highlightIntensity = isSelected ? 0.34 : isHovered && editMode ? 0.22 : 0;
+
+  return (
+    <group
+      position={[wx, 0, wz]}
+      onPointerDown={(event) => { event.stopPropagation(); onPointerDown(item._uid); }}
+      onPointerOver={(event) => { event.stopPropagation(); onPointerOver(item._uid); }}
+      onPointerOut={(event) => { event.stopPropagation(); onPointerOut(); }}
+      onClick={(event) => { event.stopPropagation(); onClick?.(item._uid); }}
+    >
+      <group position={[widthWorld / 2, 0, depthWorld / 2]} rotation={[0, rotY, 0]}>
+        {/* Vertical stand poles */}
+        {[-widthWorld * 0.36, widthWorld * 0.36].map((x) => (
+          <mesh key={x} position={[x, 0.6, 0]} castShadow>
+            <boxGeometry args={[0.04, 1.2, 0.04]} />
+            <meshStandardMaterial color="#78350f" roughness={0.7} metalness={0.1} />
+          </mesh>
+        ))}
+        {/* Top bar */}
+        <mesh position={[0, 1.18, 0]}>
+          <boxGeometry args={[widthWorld * 0.76, 0.04, 0.04]} />
+          <meshStandardMaterial color="#92400e" roughness={0.65} metalness={0.1} />
+        </mesh>
+        {/* Hanging carpets */}
+        {[
+          { y: 0.95, color: "#991b1b" },
+          { y: 0.65, color: "#1e3a5f" },
+          { y: 0.35, color: "#9a3412" },
+        ].map((carpet) => (
+          <mesh key={carpet.y} position={[0, carpet.y, 0.02]} castShadow receiveShadow>
+            <boxGeometry args={[widthWorld * 0.64, 0.22, 0.02]} />
+            <meshStandardMaterial
+              color={carpet.color}
+              roughness={0.92}
+              metalness={0.02}
+              emissive={highlightColor}
+              emissiveIntensity={highlightIntensity}
+            />
+          </mesh>
+        ))}
+      </group>
+    </group>
+  );
+}
+
+export function LanternPostModel({
+  item,
+  isSelected,
+  isHovered,
+  editMode,
+  onPointerDown,
+  onPointerOver,
+  onPointerOut,
+  onClick,
+}: InteractiveFurnitureModelProps) {
+  const [wx, , wz] = toWorld(item.x, item.y);
+  const { width } = getItemBaseSize(item);
+  const widthWorld = width * SCALE;
+  const rotY = getItemRotationRadians(item);
+  const highlightColor = isSelected ? "#fbbf24" : isHovered && editMode ? "#d97706" : "#000000";
+  const highlightIntensity = isSelected ? 0.34 : isHovered && editMode ? 0.22 : 0;
+
+  return (
+    <group
+      position={[wx, 0, wz]}
+      onPointerDown={(event) => { event.stopPropagation(); onPointerDown(item._uid); }}
+      onPointerOver={(event) => { event.stopPropagation(); onPointerOver(item._uid); }}
+      onPointerOut={(event) => { event.stopPropagation(); onPointerOut(); }}
+      onClick={(event) => { event.stopPropagation(); onClick?.(item._uid); }}
+    >
+      <group position={[widthWorld / 2, 0, widthWorld / 2]} rotation={[0, rotY, 0]}>
+        {/* Post */}
+        <mesh position={[0, 0.6, 0]} castShadow>
+          <cylinderGeometry args={[0.025, 0.035, 1.2, 12]} />
+          <meshStandardMaterial color="#78350f" roughness={0.6} metalness={0.15} emissive={highlightColor} emissiveIntensity={highlightIntensity} />
+        </mesh>
+        {/* Lanterns */}
+        {[
+          { y: 1.1, color: "#dc2626", emissive: "#dc2626" },
+          { y: 0.85, color: "#2563eb", emissive: "#2563eb" },
+          { y: 0.6, color: "#eab308", emissive: "#eab308" },
+        ].map((lantern) => (
+          <group key={lantern.y} position={[0.08, lantern.y, 0]}>
+            <mesh>
+              <cylinderGeometry args={[0.04, 0.03, 0.12, 8]} />
+              <meshStandardMaterial
+                color={lantern.color}
+                emissive={lantern.emissive}
+                emissiveIntensity={0.6}
+                roughness={0.3}
+                metalness={0.1}
+                transparent
+                opacity={0.85}
+              />
+            </mesh>
+            {/* Metal cap */}
+            <mesh position={[0, 0.07, 0]}>
+              <cylinderGeometry args={[0.015, 0.045, 0.02, 8]} />
+              <meshStandardMaterial color="#b87333" roughness={0.3} metalness={0.7} />
+            </mesh>
+          </group>
+        ))}
+        {/* Base */}
+        <mesh position={[0, 0.02, 0]}>
+          <cylinderGeometry args={[0.06, 0.07, 0.04, 12]} />
+          <meshStandardMaterial color="#78350f" roughness={0.65} metalness={0.15} />
+        </mesh>
+      </group>
+    </group>
+  );
+}
+
+export function BazaarCounterModel({
+  item,
+  isSelected,
+  isHovered,
+  editMode,
+  onPointerDown,
+  onPointerOver,
+  onPointerOut,
+  onClick,
+}: InteractiveFurnitureModelProps) {
+  const [wx, , wz] = toWorld(item.x, item.y);
+  const { width, height } = getItemBaseSize(item);
+  const widthWorld = width * SCALE;
+  const depthWorld = height * SCALE;
+  const rotY = getItemRotationRadians(item);
+  const highlightColor = isSelected ? "#fbbf24" : isHovered && editMode ? "#d97706" : "#000000";
+  const highlightIntensity = isSelected ? 0.34 : isHovered && editMode ? 0.22 : 0;
+
+  return (
+    <group
+      position={[wx, 0, wz]}
+      onPointerDown={(event) => { event.stopPropagation(); onPointerDown(item._uid); }}
+      onPointerOver={(event) => { event.stopPropagation(); onPointerOver(item._uid); }}
+      onPointerOut={(event) => { event.stopPropagation(); onPointerOut(); }}
+      onClick={(event) => { event.stopPropagation(); onClick?.(item._uid); }}
+    >
+      <group position={[widthWorld / 2, 0, depthWorld / 2]} rotation={[0, rotY, 0]}>
+        {/* Counter body */}
+        <mesh position={[0, 0.32, 0]} castShadow receiveShadow>
+          <boxGeometry args={[widthWorld, 0.64, depthWorld * 0.88]} />
+          <meshStandardMaterial color="#78350f" roughness={0.7} metalness={0.08} emissive={highlightColor} emissiveIntensity={highlightIntensity} />
+        </mesh>
+        {/* Counter top */}
+        <mesh position={[0, 0.66, 0]} castShadow>
+          <boxGeometry args={[widthWorld * 1.04, 0.04, depthWorld * 0.96]} />
+          <meshStandardMaterial color="#92400e" roughness={0.6} metalness={0.12} />
+        </mesh>
+        {/* Copper plates on counter */}
+        {[-widthWorld * 0.2, widthWorld * 0.2].map((x) => (
+          <mesh key={x} position={[x, 0.7, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.06, 0.06, 0.01, 16]} />
+            <meshStandardMaterial color="#b87333" roughness={0.3} metalness={0.7} />
+          </mesh>
+        ))}
+        {/* Awning */}
+        <mesh position={[0, 0.92, depthWorld * 0.2]} rotation={[0.3, 0, 0]} castShadow>
+          <boxGeometry args={[widthWorld * 1.1, 0.03, depthWorld * 0.6]} />
+          <meshStandardMaterial color="#9a3412" roughness={0.85} metalness={0.03} />
+        </mesh>
+        {/* Awning stripes */}
+        <mesh position={[0, 0.93, depthWorld * 0.2]} rotation={[0.3, 0, 0]}>
+          <boxGeometry args={[widthWorld * 1.08, 0.01, depthWorld * 0.15]} />
+          <meshStandardMaterial color="#fef3c7" roughness={0.85} metalness={0.03} />
+        </mesh>
+      </group>
+    </group>
+  );
+}
+
+export function PotteryShelfModel({
+  item,
+  isSelected,
+  isHovered,
+  editMode,
+  onPointerDown,
+  onPointerOver,
+  onPointerOut,
+  onClick,
+}: InteractiveFurnitureModelProps) {
+  const [wx, , wz] = toWorld(item.x, item.y);
+  const { width, height } = getItemBaseSize(item);
+  const widthWorld = width * SCALE;
+  const depthWorld = height * SCALE;
+  const rotY = getItemRotationRadians(item);
+  const highlightColor = isSelected ? "#fbbf24" : isHovered && editMode ? "#d97706" : "#000000";
+  const highlightIntensity = isSelected ? 0.34 : isHovered && editMode ? 0.22 : 0;
+
+  return (
+    <group
+      position={[wx, 0, wz]}
+      onPointerDown={(event) => { event.stopPropagation(); onPointerDown(item._uid); }}
+      onPointerOver={(event) => { event.stopPropagation(); onPointerOver(item._uid); }}
+      onPointerOut={(event) => { event.stopPropagation(); onPointerOut(); }}
+      onClick={(event) => { event.stopPropagation(); onClick?.(item._uid); }}
+    >
+      <group position={[widthWorld / 2, 0, depthWorld / 2]} rotation={[0, rotY, 0]}>
+        {/* Shelf frame */}
+        <mesh position={[0, 0.4, 0]} castShadow receiveShadow>
+          <boxGeometry args={[widthWorld, 0.8, depthWorld * 0.6]} />
+          <meshStandardMaterial color="#78350f" roughness={0.72} metalness={0.08} emissive={highlightColor} emissiveIntensity={highlightIntensity} />
+        </mesh>
+        {/* Shelves */}
+        {[0.25, 0.5, 0.75].map((y) => (
+          <mesh key={y} position={[0, y, 0]}>
+            <boxGeometry args={[widthWorld * 0.92, 0.03, depthWorld * 0.55]} />
+            <meshStandardMaterial color="#92400e" roughness={0.65} metalness={0.1} />
+          </mesh>
+        ))}
+        {/* Vases / pottery */}
+        {[
+          { x: -widthWorld * 0.2, y: 0.36, color: "#1e3a5f" },
+          { x: widthWorld * 0.15, y: 0.36, color: "#fef3c7" },
+          { x: -widthWorld * 0.1, y: 0.6, color: "#dc2626" },
+          { x: widthWorld * 0.2, y: 0.6, color: "#2563eb" },
+        ].map((vase, i) => (
+          <mesh key={i} position={[vase.x, vase.y, 0]}>
+            <cylinderGeometry args={[0.025, 0.035, 0.1, 12]} />
+            <meshStandardMaterial color={vase.color} roughness={0.5} metalness={0.15} />
+          </mesh>
+        ))}
+      </group>
+    </group>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ *  KAHVEHANE MODELS
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+export function CoffeeTableModel({
+  item,
+  isSelected,
+  isHovered,
+  onPointerDown,
+  onPointerOver,
+  onPointerOut,
+  onClick,
+}: InteractiveFurnitureModelProps) {
+  const [wx, , wz] = toWorld(item.x, item.y);
+  const { width, height } = getItemBaseSize(item);
+  const widthWorld = width * SCALE;
+  const depthWorld = height * SCALE;
+  const rotY = getItemRotationRadians(item);
+  const highlightColor = isSelected ? "#fbbf24" : isHovered ? "#b87333" : "#000000";
+  const highlightIntensity = isSelected ? 0.34 : isHovered ? 0.22 : 0;
+
+  return (
+    <group
+      position={[wx, 0, wz]}
+      onPointerDown={(event) => { event.stopPropagation(); onPointerDown(item._uid); }}
+      onPointerOver={(event) => { event.stopPropagation(); onPointerOver(item._uid); }}
+      onPointerOut={(event) => { event.stopPropagation(); onPointerOut(); }}
+      onClick={(event) => { event.stopPropagation(); onClick?.(item._uid); }}
+    >
+      <group position={[widthWorld / 2, 0, depthWorld / 2]} rotation={[0, rotY, 0]}>
+        {/* Copper tray */}
+        <mesh position={[0, 0.32, 0]} castShadow receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[widthWorld * 0.44, widthWorld * 0.44, 0.02, 24]} />
+          <meshStandardMaterial color="#b87333" roughness={0.3} metalness={0.7} emissive={highlightColor} emissiveIntensity={highlightIntensity} />
+        </mesh>
+        {/* Stand */}
+        <mesh position={[0, 0.16, 0]} castShadow>
+          <cylinderGeometry args={[0.04, 0.06, 0.32, 12]} />
+          <meshStandardMaterial color="#78350f" roughness={0.65} metalness={0.1} />
+        </mesh>
+        {/* Coffee cups */}
+        {[-0.06, 0.06].map((x) => (
+          <mesh key={x} position={[x, 0.37, 0]}>
+            <cylinderGeometry args={[0.015, 0.012, 0.04, 10]} />
+            <meshStandardMaterial color="#fef3c7" roughness={0.4} metalness={0.15} />
+          </mesh>
+        ))}
+        <Text position={[0, 0.48, 0]} fontSize={0.028} color="#b87333" anchorX="center" anchorY="middle">
+          KAHVE
+        </Text>
+      </group>
+    </group>
+  );
+}
+
+export function SedirModel({
+  item,
+  isSelected,
+  isHovered,
+  onPointerDown,
+  onPointerOver,
+  onPointerOut,
+  onClick,
+}: InteractiveFurnitureModelProps) {
+  const [wx, , wz] = toWorld(item.x, item.y);
+  const { width, height } = getItemBaseSize(item);
+  const widthWorld = width * SCALE;
+  const depthWorld = height * SCALE;
+  const rotY = getItemRotationRadians(item);
+  const highlightColor = isSelected ? "#fbbf24" : isHovered ? "#7f1d1d" : "#000000";
+  const highlightIntensity = isSelected ? 0.34 : isHovered ? 0.18 : 0;
+
+  return (
+    <group
+      position={[wx, 0, wz]}
+      onPointerDown={(event) => { event.stopPropagation(); onPointerDown(item._uid); }}
+      onPointerOver={(event) => { event.stopPropagation(); onPointerOver(item._uid); }}
+      onPointerOut={(event) => { event.stopPropagation(); onPointerOut(); }}
+      onClick={(event) => { event.stopPropagation(); onClick?.(item._uid); }}
+    >
+      <group position={[widthWorld / 2, 0, depthWorld / 2]} rotation={[0, rotY, 0]}>
+        {/* Low divan base */}
+        <mesh position={[0, 0.14, 0]} castShadow receiveShadow>
+          <boxGeometry args={[widthWorld, 0.28, depthWorld]} />
+          <meshStandardMaterial color="#7f1d1d" roughness={0.82} metalness={0.04} emissive={highlightColor} emissiveIntensity={highlightIntensity} />
+        </mesh>
+        {/* Back rest */}
+        <mesh position={[0, 0.38, -depthWorld * 0.42]} castShadow>
+          <boxGeometry args={[widthWorld * 0.96, 0.22, 0.06]} />
+          <meshStandardMaterial color="#1e3a5f" roughness={0.85} metalness={0.03} />
+        </mesh>
+        {/* Cushions */}
+        {[-widthWorld * 0.22, widthWorld * 0.22].map((x, i) => (
+          <mesh key={x} position={[x, 0.32, 0]}>
+            <boxGeometry args={[widthWorld * 0.3, 0.08, depthWorld * 0.4]} />
+            <meshStandardMaterial color={i === 0 ? "#7f1d1d" : "#1e3a5f"} roughness={0.88} metalness={0.02} />
+          </mesh>
+        ))}
+      </group>
+    </group>
+  );
+}
+
+export function CezveStationModel({
+  item,
+  isSelected,
+  isHovered,
+  onPointerDown,
+  onPointerOver,
+  onPointerOut,
+  onClick,
+}: InteractiveFurnitureModelProps) {
+  const [wx, , wz] = toWorld(item.x, item.y);
+  const { width, height } = getItemBaseSize(item);
+  const widthWorld = width * SCALE;
+  const depthWorld = height * SCALE;
+  const rotY = getItemRotationRadians(item);
+  const highlightColor = isSelected ? "#fbbf24" : isHovered ? "#b87333" : "#000000";
+  const highlightIntensity = isSelected ? 0.34 : isHovered ? 0.22 : 0;
+
+  return (
+    <group
+      position={[wx, 0, wz]}
+      onPointerDown={(event) => { event.stopPropagation(); onPointerDown(item._uid); }}
+      onPointerOver={(event) => { event.stopPropagation(); onPointerOver(item._uid); }}
+      onPointerOut={(event) => { event.stopPropagation(); onPointerOut(); }}
+      onClick={(event) => { event.stopPropagation(); onClick?.(item._uid); }}
+    >
+      <group position={[widthWorld / 2, 0, depthWorld / 2]} rotation={[0, rotY, 0]}>
+        {/* Counter */}
+        <mesh position={[0, 0.44, 0]} castShadow receiveShadow>
+          <boxGeometry args={[widthWorld, 0.06, depthWorld * 0.88]} />
+          <meshStandardMaterial color="#78350f" roughness={0.68} metalness={0.1} emissive={highlightColor} emissiveIntensity={highlightIntensity} />
+        </mesh>
+        {/* Cabinet below */}
+        <mesh position={[0, 0.2, 0]} castShadow>
+          <boxGeometry args={[widthWorld * 0.94, 0.4, depthWorld * 0.82]} />
+          <meshStandardMaterial color="#92400e" roughness={0.72} metalness={0.08} />
+        </mesh>
+        {/* Cezve (copper pot) */}
+        <mesh position={[-widthWorld * 0.15, 0.54, 0]}>
+          <cylinderGeometry args={[0.02, 0.03, 0.12, 10]} />
+          <meshStandardMaterial color="#b87333" roughness={0.25} metalness={0.75} />
+        </mesh>
+        {/* Handle */}
+        <mesh position={[-widthWorld * 0.15, 0.58, 0.04]} rotation={[0.6, 0, 0]}>
+          <boxGeometry args={[0.01, 0.01, 0.1]} />
+          <meshStandardMaterial color="#78350f" roughness={0.7} metalness={0.1} />
+        </mesh>
+        {/* Sugar bowl */}
+        <mesh position={[widthWorld * 0.1, 0.5, 0]}>
+          <cylinderGeometry args={[0.025, 0.025, 0.05, 12]} />
+          <meshStandardMaterial color="#fef3c7" roughness={0.45} metalness={0.15} />
+        </mesh>
+        {/* Lokum plate */}
+        <mesh position={[widthWorld * 0.25, 0.49, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.04, 0.04, 0.01, 14]} />
+          <meshStandardMaterial color="#fef3c7" roughness={0.4} metalness={0.15} />
+        </mesh>
+        <Text position={[0, 0.66, 0]} fontSize={0.024} color="#b87333" anchorX="center" anchorY="middle">
+          CEZVE
+        </Text>
+      </group>
+    </group>
+  );
+}
+
+export function BackgammonTableModel({
+  item,
+  isSelected,
+  isHovered,
+  onPointerDown,
+  onPointerOver,
+  onPointerOut,
+  onClick,
+}: InteractiveFurnitureModelProps) {
+  const [wx, , wz] = toWorld(item.x, item.y);
+  const { width, height } = getItemBaseSize(item);
+  const widthWorld = width * SCALE;
+  const depthWorld = height * SCALE;
+  const rotY = getItemRotationRadians(item);
+  const highlightColor = isSelected ? "#fbbf24" : isHovered ? "#78350f" : "#000000";
+  const highlightIntensity = isSelected ? 0.34 : isHovered ? 0.18 : 0;
+
+  return (
+    <group
+      position={[wx, 0, wz]}
+      onPointerDown={(event) => { event.stopPropagation(); onPointerDown(item._uid); }}
+      onPointerOver={(event) => { event.stopPropagation(); onPointerOver(item._uid); }}
+      onPointerOut={(event) => { event.stopPropagation(); onPointerOut(); }}
+      onClick={(event) => { event.stopPropagation(); onClick?.(item._uid); }}
+    >
+      <group position={[widthWorld / 2, 0, depthWorld / 2]} rotation={[0, rotY, 0]}>
+        {/* Table top (board) */}
+        <mesh position={[0, 0.44, 0]} castShadow receiveShadow>
+          <boxGeometry args={[widthWorld, 0.06, depthWorld]} />
+          <meshStandardMaterial color="#78350f" roughness={0.65} metalness={0.1} emissive={highlightColor} emissiveIntensity={highlightIntensity} />
+        </mesh>
+        {/* Playing surface */}
+        <mesh position={[0, 0.48, 0]}>
+          <boxGeometry args={[widthWorld * 0.88, 0.01, depthWorld * 0.88]} />
+          <meshStandardMaterial color="#fef3c7" roughness={0.82} metalness={0.04} />
+        </mesh>
+        {/* Center divider */}
+        <mesh position={[0, 0.49, 0]}>
+          <boxGeometry args={[0.02, 0.02, depthWorld * 0.88]} />
+          <meshStandardMaterial color="#92400e" roughness={0.6} metalness={0.1} />
+        </mesh>
+        {/* Legs */}
+        {[-widthWorld * 0.36, widthWorld * 0.36].map((x) =>
+          [-depthWorld * 0.36, depthWorld * 0.36].map((z) => (
+            <mesh key={`${x}:${z}`} position={[x, 0.22, z]} castShadow>
+              <boxGeometry args={[0.04, 0.44, 0.04]} />
+              <meshStandardMaterial color="#78350f" roughness={0.68} metalness={0.1} />
+            </mesh>
+          )),
+        )}
+        {/* Pieces (checkers) */}
+        {[-widthWorld * 0.18, widthWorld * 0.18].map((x, i) => (
+          <group key={x}>
+            {[0, 1, 2].map((n) => (
+              <mesh key={n} position={[x, 0.5 + n * 0.015, -depthWorld * 0.2]}>
+                <cylinderGeometry args={[0.018, 0.018, 0.012, 14]} />
+                <meshStandardMaterial color={i === 0 ? "#0f172a" : "#fef3c7"} roughness={0.4} metalness={0.2} />
+              </mesh>
+            ))}
+          </group>
+        ))}
+        {/* Dice */}
+        <mesh position={[widthWorld * 0.05, 0.51, depthWorld * 0.15]} rotation={[0, 0.4, 0]}>
+          <boxGeometry args={[0.02, 0.02, 0.02]} />
+          <meshStandardMaterial color="#fef3c7" roughness={0.35} metalness={0.15} />
+        </mesh>
+        <Text position={[0, 0.62, 0]} fontSize={0.028} color="#78350f" anchorX="center" anchorY="middle">
+          TAVLA
+        </Text>
+      </group>
+    </group>
+  );
+}
+
+export function TulipLampModel({
+  item,
+  isSelected,
+  isHovered,
+  editMode,
+  onPointerDown,
+  onPointerOver,
+  onPointerOut,
+  onClick,
+}: InteractiveFurnitureModelProps) {
+  const [wx, , wz] = toWorld(item.x, item.y);
+  const { width } = getItemBaseSize(item);
+  const widthWorld = width * SCALE;
+  const rotY = getItemRotationRadians(item);
+  const highlightColor = isSelected ? "#fbbf24" : isHovered && editMode ? "#b87333" : "#000000";
+  const highlightIntensity = isSelected ? 0.34 : isHovered && editMode ? 0.22 : 0;
+
+  return (
+    <group
+      position={[wx, 0, wz]}
+      onPointerDown={(event) => { event.stopPropagation(); onPointerDown(item._uid); }}
+      onPointerOver={(event) => { event.stopPropagation(); onPointerOver(item._uid); }}
+      onPointerOut={(event) => { event.stopPropagation(); onPointerOut(); }}
+      onClick={(event) => { event.stopPropagation(); onClick?.(item._uid); }}
+    >
+      <group position={[widthWorld / 2, 0, widthWorld / 2]} rotation={[0, rotY, 0]}>
+        {/* Chain */}
+        <mesh position={[0, 1.3, 0]}>
+          <cylinderGeometry args={[0.005, 0.005, 0.3, 8]} />
+          <meshStandardMaterial color="#b87333" roughness={0.3} metalness={0.7} />
+        </mesh>
+        {/* Lamp shade (tulip shape) */}
+        <mesh position={[0, 1.08, 0]} castShadow>
+          <cylinderGeometry args={[0.06, 0.03, 0.16, 8]} />
+          <meshStandardMaterial
+            color="#dc2626"
+            emissive="#dc2626"
+            emissiveIntensity={0.5}
+            roughness={0.35}
+            metalness={0.12}
+            transparent
+            opacity={0.88}
+          />
+        </mesh>
+        {/* Top cap */}
+        <mesh position={[0, 1.17, 0]}>
+          <cylinderGeometry args={[0.015, 0.06, 0.02, 8]} />
+          <meshStandardMaterial
+            color="#b87333"
+            roughness={0.3}
+            metalness={0.7}
+            emissive={highlightColor}
+            emissiveIntensity={highlightIntensity}
+          />
+        </mesh>
+        {/* Light glow */}
+        <mesh position={[0, 1.04, 0]}>
+          <sphereGeometry args={[0.015, 10, 10]} />
+          <meshStandardMaterial color="#fef3c7" emissive="#fef3c7" emissiveIntensity={1.5} />
+        </mesh>
+      </group>
+    </group>
+  );
+}
+
 export function EaselModel({
   item,
   isSelected,

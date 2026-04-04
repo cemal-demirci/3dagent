@@ -8,12 +8,12 @@ import {
 import type {
   FacingPoint,
   FurnitureItem,
-  GymWorkoutLocation,
-  QaLabStationLocation,
+  BazaarBrowsingLocation,
+  KahvehaneSeatingLocation,
 } from "@/features/retro-office/core/types";
 export {
-  GYM_DEFAULT_TARGET,
-  resolveGymRoute,
+  BAZAAR_DEFAULT_TARGET,
+  resolveBazaarRoute,
 } from "@/features/retro-office/core/navigation/gymRoute";
 export { getJanitorCleaningStops } from "@/features/retro-office/core/navigation/janitorStops";
 export {
@@ -25,8 +25,8 @@ export {
   resolvePhoneBoothRoute,
 } from "@/features/retro-office/core/navigation/phoneBoothRoute";
 export {
-  QA_LAB_DEFAULT_TARGET,
-  resolveQaLabRoute,
+  KAHVEHANE_DEFAULT_TARGET,
+  resolveKahvehaneRoute,
 } from "@/features/retro-office/core/navigation/qaLabRoute";
 export {
   resolveServerRoomRoute,
@@ -343,145 +343,91 @@ export const getMeetingSeatLocations = (items: FurnitureItem[]) => {
   });
 };
 
-export const getGymWorkoutLocations = (
+export const getBazaarBrowsingLocations = (
   items: FurnitureItem[],
-): GymWorkoutLocation[] =>
+): BazaarBrowsingLocation[] =>
   items
     .filter((item) =>
       [
-        "treadmill",
-        "weight_bench",
-        "dumbbell_rack",
-        "exercise_bike",
-        "punching_bag",
-        "rowing_machine",
-        "kettlebell_rack",
-        "yoga_mat",
+        "spice_stall",
+        "carpet_stand",
+        "lantern_post",
+        "bazaar_counter",
+        "pottery_shelf",
       ].includes(item.type),
     )
     .sort((left, right) => left.y - right.y || left.x - right.x)
     .map((item) => {
-      // Each workout target is an agent standing point plus a facing direction toward equipment.
       const bounds = getItemBounds(item);
-      const equipmentCenterX = bounds.x + bounds.w / 2;
-      const equipmentCenterY = bounds.y + bounds.h / 2;
-      const facingTowardEquipment = (targetX: number, targetY: number) =>
-        Math.atan2(equipmentCenterX - targetX, equipmentCenterY - targetY);
-      if (item.type === "treadmill") {
+      const centerX = bounds.x + bounds.w / 2;
+      const centerY = bounds.y + bounds.h / 2;
+      const facingToward = (targetX: number, targetY: number) =>
+        Math.atan2(centerX - targetX, centerY - targetY);
+      if (item.type === "spice_stall") {
         const x = item.x + 35;
         const y = item.y + 65;
-        return {
-          x,
-          y,
-          facing: facingTowardEquipment(x, y),
-          workoutStyle: "run",
-        };
+        return { x, y, facing: facingToward(x, y), browsingStyle: "shopping" as const };
       }
-      if (item.type === "weight_bench") {
-        const x = item.x + 38;
-        const y = item.y + 20;
-        return {
-          x,
-          y,
-          facing: facingTowardEquipment(x, y),
-          workoutStyle: "lift",
-        };
-      }
-      if (item.type === "dumbbell_rack" || item.type === "kettlebell_rack") {
+      if (item.type === "carpet_stand") {
         const x = item.x - 18;
         const y = item.y + 14;
-        return {
-          x,
-          y,
-          facing: facingTowardEquipment(x, y),
-          workoutStyle: "lift",
-        };
+        return { x, y, facing: facingToward(x, y), browsingStyle: "inspecting" as const };
       }
-      if (item.type === "exercise_bike") {
-        const x = item.x + 18;
-        const y = item.y + 28;
-        return {
-          x,
-          y,
-          facing: facingTowardEquipment(x, y),
-          workoutStyle: "bike",
-        };
-      }
-      if (item.type === "rowing_machine") {
+      if (item.type === "bazaar_counter") {
         const x = item.x + 28;
         const y = item.y + 16;
-        return {
-          x,
-          y,
-          facing: facingTowardEquipment(x, y),
-          workoutStyle: "row",
-        };
+        return { x, y, facing: facingToward(x, y), browsingStyle: "haggling" as const };
       }
-      if (item.type === "yoga_mat") {
+      if (item.type === "pottery_shelf") {
         const x = item.x + 35;
         const y = item.y + 15;
-        return {
-          x,
-          y,
-          facing: facingTowardEquipment(x, y),
-          workoutStyle: "stretch",
-        };
+        return { x, y, facing: facingToward(x, y), browsingStyle: "admiring" as const };
       }
+      // lantern_post
       const x = item.x - 18;
       const y = item.y + 14;
-      return {
-        x,
-        y,
-        facing: facingTowardEquipment(x, y),
-        workoutStyle: "box",
-      };
+      return { x, y, facing: facingToward(x, y), browsingStyle: "resting" as const };
     });
 
-export const getQaLabStations = (
+export const getKahvehaneSeatingLocations = (
   items: FurnitureItem[],
-): QaLabStationLocation[] =>
+): KahvehaneSeatingLocation[] =>
   items
     .filter((item) =>
-      ["qa_terminal", "device_rack", "test_bench"].includes(item.type),
+      ["coffee_table", "sedir", "cezve_station", "backgammon_table", "tulip_lamp"].includes(item.type),
     )
     .sort((left, right) => left.y - right.y || left.x - right.x)
     .map((item) => {
-      // QA stations follow the same pattern as gym targets: derive a nearby standing point
-      // from authored furniture so scene motion stays data-driven.
       const bounds = getItemBounds(item);
-      const stationCenterX = bounds.x + bounds.w / 2;
-      const stationCenterY = bounds.y + bounds.h / 2;
-      const facingTowardStation = (targetX: number, targetY: number) =>
-        Math.atan2(stationCenterX - targetX, stationCenterY - targetY);
+      const centerX = bounds.x + bounds.w / 2;
+      const centerY = bounds.y + bounds.h / 2;
+      const facingToward = (targetX: number, targetY: number) =>
+        Math.atan2(centerX - targetX, centerY - targetY);
 
-      if (item.type === "qa_terminal") {
+      if (item.type === "coffee_table") {
         const x = item.x + 26;
         const y = item.y + 56;
-        return {
-          x,
-          y,
-          facing: facingTowardStation(x, y),
-          stationType: "console" as const,
-        };
+        return { x, y, facing: facingToward(x, y), kahvehaneActivity: "coffee" as const };
       }
-      if (item.type === "device_rack") {
+      if (item.type === "sedir") {
         const x = item.x - 18;
         const y = item.y + 18;
-        return {
-          x,
-          y,
-          facing: facingTowardStation(x, y),
-          stationType: "device_rack" as const,
-        };
+        return { x, y, facing: facingToward(x, y), kahvehaneActivity: "sohbet" as const };
       }
-      const x = item.x + 45;
-      const y = item.y + 58;
-      return {
-        x,
-        y,
-        facing: facingTowardStation(x, y),
-        stationType: "bench" as const,
-      };
+      if (item.type === "cezve_station") {
+        const x = item.x - 18;
+        const y = item.y + 18;
+        return { x, y, facing: facingToward(x, y), kahvehaneActivity: "cezve" as const };
+      }
+      if (item.type === "backgammon_table") {
+        const x = item.x + 45;
+        const y = item.y + 58;
+        return { x, y, facing: facingToward(x, y), kahvehaneActivity: "tavla" as const };
+      }
+      // tulip_lamp
+      const x = item.x + 14;
+      const y = item.y + 14;
+      return { x, y, facing: facingToward(x, y), kahvehaneActivity: "dinlenme" as const };
     });
 
 export const MEETING_OVERFLOW_LOCATIONS = [

@@ -7,6 +7,7 @@ import {
   type AgentIdentityValues,
 } from "@/features/agents/components/AgentIdentityFields";
 import { AgentAvatarEditorPanel } from "@/features/agents/components/AgentAvatarEditorPanel";
+import { t } from "@/lib/i18n";
 import {
   AGENT_FILE_META,
   AGENT_FILE_PLACEHOLDERS,
@@ -252,7 +253,7 @@ export function AgentCreateWizardModal({
       className="fixed inset-0 z-[140] flex items-center justify-center bg-background/84 p-4"
       role="dialog"
       aria-modal="true"
-      aria-label="Create agent wizard"
+      aria-label={t("wizard.createAgentWizard")}
       onClick={() => {
         if (!isWorking) {
           onClose(createdAgentId);
@@ -397,7 +398,7 @@ export function AgentCreateWizardModal({
                       <WizardTextAreaField
                         label="Core truths"
                         value={draft.soul.coreTruths}
-                        placeholder="e.g. Protect the user's time. Prefer clarity over theatrics."
+                        placeholder={t("wizard.coreTruthsPlaceholder")}
                         disabled={isWorking}
                         rows={5}
                         onChange={(value) => {
@@ -407,7 +408,7 @@ export function AgentCreateWizardModal({
                       <WizardTextAreaField
                         label="Boundaries"
                         value={draft.soul.boundaries}
-                        placeholder="e.g. Do not bluff. Say when something is uncertain."
+                        placeholder={t("wizard.boundariesPlaceholder")}
                         disabled={isWorking}
                         rows={5}
                         onChange={(value) => {
@@ -417,7 +418,7 @@ export function AgentCreateWizardModal({
                       <WizardTextAreaField
                         label="Vibe"
                         value={draft.soul.vibe}
-                        placeholder="e.g. Friendly, direct, and lightly playful."
+                        placeholder={t("wizard.vibePlaceholder")}
                         disabled={isWorking}
                         rows={4}
                         onChange={(value) => {
@@ -427,7 +428,7 @@ export function AgentCreateWizardModal({
                       <WizardTextAreaField
                         label="Continuity"
                         value={draft.soul.continuity}
-                        placeholder="e.g. Keep naming, preferences, and previous decisions consistent."
+                        placeholder={t("wizard.continuityPlaceholder")}
                         disabled={isWorking}
                         rows={4}
                         onChange={(value) => {
@@ -447,7 +448,7 @@ export function AgentCreateWizardModal({
                       <WizardField
                         label="Name"
                         value={draft.user.name}
-                        placeholder="e.g. Luke"
+                        placeholder={t("wizard.namePlaceholder")}
                         disabled={isWorking}
                         onChange={(value) => {
                           updateDraft("user", { ...draft.user, name: value });
@@ -456,7 +457,7 @@ export function AgentCreateWizardModal({
                       <WizardField
                         label="What to call them"
                         value={draft.user.callThem}
-                        placeholder="e.g. Luke"
+                        placeholder={t("wizard.callThemPlaceholder")}
                         disabled={isWorking}
                         onChange={(value) => {
                           updateDraft("user", { ...draft.user, callThem: value });
@@ -465,7 +466,7 @@ export function AgentCreateWizardModal({
                       <WizardField
                         label="Pronouns"
                         value={draft.user.pronouns}
-                        placeholder="e.g. he/him"
+                        placeholder={t("wizard.pronounsPlaceholder")}
                         disabled={isWorking}
                         onChange={(value) => {
                           updateDraft("user", { ...draft.user, pronouns: value });
@@ -474,7 +475,7 @@ export function AgentCreateWizardModal({
                       <WizardField
                         label="Timezone"
                         value={draft.user.timezone}
-                        placeholder="e.g. America/Chicago"
+                        placeholder={t("wizard.timezonePlaceholder")}
                         disabled={isWorking}
                         onChange={(value) => {
                           updateDraft("user", { ...draft.user, timezone: value });
@@ -484,7 +485,7 @@ export function AgentCreateWizardModal({
                         <WizardField
                           label="Notes"
                           value={draft.user.notes}
-                          placeholder="e.g. Prefers concise answers and fast iteration."
+                          placeholder={t("wizard.notesPlaceholder")}
                           disabled={isWorking}
                           onChange={(value) => {
                             updateDraft("user", { ...draft.user, notes: value });
@@ -495,7 +496,7 @@ export function AgentCreateWizardModal({
                         <WizardTextAreaField
                           label="Context"
                           value={draft.user.context}
-                          placeholder="e.g. Building Claw3D, likes practical UI improvements, and wants direct feedback."
+                          placeholder={t("wizard.contextPlaceholder")}
                           disabled={isWorking}
                           rows={7}
                           onChange={(value) => {

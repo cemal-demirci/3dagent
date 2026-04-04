@@ -24,6 +24,7 @@ import {
 import type { AgentState } from "@/features/agents/state/store";
 import type { CronCreateDraft, CronCreateTemplateId } from "@/lib/cron/createPayloadBuilder";
 import { formatCronPayload, formatCronSchedule, type CronJobSummary } from "@/lib/cron/types";
+import { t } from "@/lib/i18n";
 import type { SkillStatusReport } from "@/lib/skills/types";
 
 export type AgentSettingsPanelProps = {
@@ -480,7 +481,7 @@ export const AgentSettingsPanel = ({
                   <div
                     className="ui-segment ui-segment-command-mode mt-2 grid-cols-3"
                     role="group"
-                    aria-label="Run commands"
+                    aria-label={t("agentSettings.runCommands")}
                   >
                     {(
                       [
@@ -517,7 +518,7 @@ export const AgentSettingsPanel = ({
                   <button
                     type="button"
                     role="switch"
-                    aria-label="Web access"
+                    aria-label={t("agentSettings.webAccess")}
                     aria-checked={permissionsDraftValue.webAccess}
                     className={`ui-switch self-center ${permissionsDraftValue.webAccess ? "ui-switch--on" : ""}`}
                     onClick={() =>
@@ -543,7 +544,7 @@ export const AgentSettingsPanel = ({
                   <button
                     type="button"
                     role="switch"
-                    aria-label="File tools"
+                    aria-label={t("agentSettings.fileTools")}
                     aria-checked={permissionsDraftValue.fileTools}
                     className={`ui-switch self-center ${permissionsDraftValue.fileTools ? "ui-switch--on" : ""}`}
                     onClick={() =>
@@ -569,7 +570,7 @@ export const AgentSettingsPanel = ({
                   <button
                     type="button"
                     role="switch"
-                    aria-label="Browser automation"
+                    aria-label={t("agentSettings.browserAutomation")}
                     aria-checked="false"
                     className="ui-switch self-center"
                     disabled
@@ -864,7 +865,7 @@ export const AgentSettingsPanel = ({
           className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 p-4"
           role="dialog"
           aria-modal="true"
-          aria-label="Create automation"
+          aria-label={t("agentSettings.createAutomation")}
           onClick={closeCronCreate}
         >
           <div
@@ -938,7 +939,7 @@ export const AgentSettingsPanel = ({
                       Automation name
                     </span>
                     <input
-                      aria-label="Automation name"
+                      aria-label={t("agentSettings.automationName")}
                       className="h-10 rounded-md border border-border bg-surface-3 px-3 text-sm text-foreground outline-none"
                       value={cronDraft.name}
                       onChange={(event) => updateCronDraft({ name: event.target.value })}
@@ -949,7 +950,7 @@ export const AgentSettingsPanel = ({
                       Task
                     </span>
                     <textarea
-                      aria-label="Task"
+                      aria-label={t("agentSettings.task")}
                       className="min-h-28 rounded-md border border-border bg-surface-3 px-3 py-2 text-sm text-foreground outline-none"
                       value={cronDraft.taskText}
                       onChange={(event) => updateCronDraft({ taskText: event.target.value })}

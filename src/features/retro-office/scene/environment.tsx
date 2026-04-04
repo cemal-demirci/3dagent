@@ -60,52 +60,48 @@ function FramedPicture({
   );
 }
 
-function UsaFlagArt() {
+function TurkeyFlagArt() {
   const flagWidth = 0.52;
   const flagHeight = 0.3;
-  const stripeHeight = flagHeight / 13;
-  const cantonWidth = flagWidth * 0.4;
-  const cantonHeight = stripeHeight * 7;
+
+  // Crescent: outer circle center offset slightly left, inner circle offset a bit more right
+  const crescentCx = -0.02;
+  const outerR = 0.075;
+  const innerR = 0.06;
+  const innerOffset = 0.022; // shift inner circle right to form crescent
+
+  // Star center to the right of the crescent
+  const starCx = crescentCx + 0.1;
+  const starR = 0.028;
 
   return (
     <>
-      {Array.from({ length: 13 }).map((_, index) => (
+      {/* Red background */}
+      <mesh position={[0, 0, 0]}>
+        <planeGeometry args={[flagWidth, flagHeight]} />
+        <meshBasicMaterial color="#E30A17" side={2} />
+      </mesh>
+      {/* White outer crescent circle */}
+      <mesh position={[crescentCx, 0, 0.001]}>
+        <circleGeometry args={[outerR, 32]} />
+        <meshBasicMaterial color="#ffffff" side={2} />
+      </mesh>
+      {/* Red inner circle to carve crescent */}
+      <mesh position={[crescentCx + innerOffset, 0, 0.002]}>
+        <circleGeometry args={[innerR, 32]} />
+        <meshBasicMaterial color="#E30A17" side={2} />
+      </mesh>
+      {/* White star (5 cone triangles radiating from center) */}
+      {Array.from({ length: 5 }).map((_, i) => (
         <mesh
-          key={`usa-stripe-${index}`}
-          position={[0, flagHeight / 2 - stripeHeight / 2 - index * stripeHeight, 0]}
+          key={`tr-star-${i}`}
+          position={[starCx, 0, 0.003]}
+          rotation={[0, 0, -Math.PI / 2 + (i * 2 * Math.PI) / 5]}
         >
-          <planeGeometry args={[flagWidth, stripeHeight]} />
-          <meshBasicMaterial
-            color={index % 2 === 0 ? "#b22234" : "#ffffff"}
-            side={2}
-          />
+          <coneGeometry args={[starR * 0.45, starR * 0.95, 3]} />
+          <meshBasicMaterial color="#ffffff" side={2} />
         </mesh>
       ))}
-      <mesh
-        position={[
-          -flagWidth / 2 + cantonWidth / 2,
-          flagHeight / 2 - cantonHeight / 2,
-          0.001,
-        ]}
-      >
-        <planeGeometry args={[cantonWidth, cantonHeight]} />
-        <meshBasicMaterial color="#3c3b6e" side={2} />
-      </mesh>
-      {Array.from({ length: 5 }).map((_, row) =>
-        Array.from({ length: 6 }).map((__, column) => (
-          <mesh
-            key={`usa-star-${row}-${column}`}
-            position={[
-              -flagWidth / 2 + 0.04 + column * 0.025,
-              flagHeight / 2 - 0.03 - row * 0.035,
-              0.002,
-            ]}
-          >
-            <circleGeometry args={[0.0045, 6]} />
-            <meshBasicMaterial color="#ffffff" side={2} />
-          </mesh>
-        )),
-      )}
     </>
   );
 }
@@ -714,7 +710,7 @@ export const WallPictures = memo(function WallPictures({
       <OfficeFlagPole
         position={localFlagPolePosition}
         rotY={0.32}
-        art={<UsaFlagArt />}
+        art={<TurkeyFlagArt />}
       />
       {showRemoteOffice ? (
         <OfficeFlagPole
