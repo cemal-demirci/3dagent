@@ -5,7 +5,7 @@ AI ajanlarınız için 3D çalışma alanı.
 > Orijinal proje [iamlukethedev/Claw3D](https://github.com/iamlukethedev/Claw3D) tarafından geliştirilmiştir. Bu sürüm (3DAgent) Türkçe lokalizasyon, otomatik kurulum, branding ve ek özelliklerle genişletilmiştir. MIT lisansı altında dağıtılmaktadır.
 
 <p align="center">
-  <img src="docs/images/home-screen.png" alt="3DAgent Ana Ekran" width="100%" />
+  <img src="docs/images/landing-page.png" alt="3DAgent Landing Page" width="100%" />
 </p>
 
 3DAgent, AI otomasyonunu görsel bir iş yerine dönüştürür — ajanlarınız paylaşımlı bir 3D ortamda birlikte çalışır, kod yazar, test eder ve görevleri yürütür.
@@ -13,7 +13,11 @@ AI ajanlarınız için 3D çalışma alanı.
 **AI ekibiniz için bir ofis.**
 
 <p align="center">
-  <img src="docs/images/readme-image.png" alt="3DAgent Ofis Görünümü" width="100%" />
+  <img src="docs/images/office-main.png" alt="3DAgent 3D Ofis" width="100%" />
+</p>
+
+<p align="center">
+  <img src="docs/images/office-builder.png" alt="3DAgent Ofis Yapıcısı" width="100%" />
 </p>
 
 ---
