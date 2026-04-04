@@ -103,14 +103,14 @@ npm run dev          # http://localhost:3000
 
 ---
 
-## Stüdyo Ayarları
+## Karargah ve Yetenek Mağazası
 
 <p align="center">
-  <img src="docs/images/settings-panel.png" alt="3DAgent Stüdyo Ayarları — API Anahtarları ve Gateway" width="100%" />
+  <img src="docs/images/settings-panel.png" alt="3DAgent Karargah — Ajan Sonuçları ve Yönetim" width="100%" />
 </p>
 
 <p align="center">
-  <img src="docs/images/settings-voice.png" alt="3DAgent Ses Ayarları — Ses Seçimi ve Hız" width="100%" />
+  <img src="docs/images/settings-voice.png" alt="3DAgent Yetenek Mağazası — Skill Kurulumu" width="100%" />
 </p>
 
 ---
