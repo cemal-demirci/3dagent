@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.github
+.certs
+.env
+.env.local
+*.log
+tests
+docs
+.cursor
+.vscode

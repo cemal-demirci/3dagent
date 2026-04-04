@@ -5,6 +5,11 @@ import { CURATED_ELEVENLABS_VOICES } from "@/lib/voiceReply/catalog";
 import type { StudioGatewayAdapterType } from "@/lib/studio/settings";
 import { t } from "@/lib/i18n";
 import { AboutModal } from "./AboutModal";
+import {
+  requestNotificationPermission,
+  getNotificationPermission,
+  isNotificationSupported,
+} from "@/lib/notifications";
 
 type AIProviderStatus = {
   configured: boolean;
@@ -151,6 +156,119 @@ function AIKeysSection({ callGateway }: { callGateway?: (method: string, params:
             </div>
           );
         })}
+      </div>
+    </div>
+  );
+}
+
+function NotificationSection() {
+  const [permission, setPermission] = useState<string>("default");
+
+  useEffect(() => {
+    setPermission(
+      isNotificationSupported() ? getNotificationPermission() : "unsupported"
+    );
+  }, []);
+
+  const handleEnable = async () => {
+    const granted = await requestNotificationPermission();
+    setPermission(granted ? "granted" : "denied");
+  };
+
+  return (
+    <div className="mt-3 rounded-lg border border-cyan-500/10 bg-black/20 px-4 py-3">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="text-[11px] font-medium text-white">{t("notifications.title")}</div>
+          <div className="mt-1 text-[10px] text-white/75">{t("notifications.desc")}</div>
+        </div>
+        {permission === "granted" ? (
+          <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-emerald-300/80">
+            {t("notifications.enabled")}
+          </span>
+        ) : permission === "denied" ? (
+          <span className="text-[10px] text-rose-300/70">{t("notifications.denied")}</span>
+        ) : permission === "unsupported" ? (
+          <span className="text-[10px] text-white/40">{t("notifications.unsupported")}</span>
+        ) : (
+          <button
+            type="button"
+            onClick={handleEnable}
+            className="rounded-md border border-cyan-500/20 bg-cyan-500/10 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.14em] text-cyan-100 transition-colors hover:border-cyan-400/40 hover:bg-cyan-500/15"
+          >
+            {t("notifications.enable")}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ExportImportSection() {
+  const [importStatus, setImportStatus] = useState<"idle" | "success" | "error">("idle");
+
+  const handleExport = () => {
+    window.open("/api/studio/export", "_blank");
+  };
+
+  const handleImport = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const res = await fetch("/api/studio/import", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: text,
+        });
+        if (res.ok) {
+          setImportStatus("success");
+          setTimeout(() => setImportStatus("idle"), 2000);
+        } else {
+          setImportStatus("error");
+          setTimeout(() => setImportStatus("idle"), 2000);
+        }
+      } catch {
+        setImportStatus("error");
+        setTimeout(() => setImportStatus("idle"), 2000);
+      }
+    };
+    input.click();
+  };
+
+  return (
+    <div className="mt-3 rounded-lg border border-cyan-500/10 bg-black/20 px-4 py-3">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="text-[11px] font-medium text-white">{t("settings.exportImport")}</div>
+          <div className="mt-1 text-[10px] text-white/75">{t("settings.exportImportDesc")}</div>
+          {importStatus === "success" && (
+            <div className="mt-1 text-[10px] text-emerald-300">{t("settings.importSuccess")}</div>
+          )}
+          {importStatus === "error" && (
+            <div className="mt-1 text-[10px] text-rose-300">{t("settings.importError")}</div>
+          )}
+        </div>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={handleExport}
+            className="rounded-md border border-cyan-500/20 bg-cyan-500/10 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.14em] text-cyan-100 transition-colors hover:border-cyan-400/40 hover:bg-cyan-500/15"
+          >
+            {t("settings.export")}
+          </button>
+          <button
+            type="button"
+            onClick={handleImport}
+            className="rounded-md border border-cyan-500/20 bg-cyan-500/10 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.14em] text-cyan-100 transition-colors hover:border-cyan-400/40 hover:bg-cyan-500/15"
+          >
+            {t("settings.import")}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -644,6 +762,10 @@ export function SettingsPanel({
           <span>{t("settings.faster")}</span>
         </div>
       </div>
+      {/* Notifications */}
+      <NotificationSection />
+      {/* Export/Import */}
+      <ExportImportSection />
       {/* About Section */}
       <AboutSection />
     </div>

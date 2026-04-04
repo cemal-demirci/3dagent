@@ -1266,6 +1266,22 @@ export const tr = {
   "about.technologies": "Teknolojiler",
   "about.details": "Detaylar",
 
+  // ---- Notifications ----
+  "notifications.title": "Masaüstü Bildirimleri",
+  "notifications.desc": "Sekme arka plandayken ajan onayları ve görev güncellemeleri için bildirim alın.",
+  "notifications.enable": "Bildirimleri Etkinleştir",
+  "notifications.enabled": "Etkin",
+  "notifications.denied": "Engellendi — tarayıcı ayarlarından izin verin",
+  "notifications.unsupported": "Bu tarayıcı desteklemiyor",
+
+  // ---- Export/Import ----
+  "settings.exportImport": "Dışa/İçe Aktar",
+  "settings.exportImportDesc": "Studio ayarlarını yedekleyin veya geri yükleyin.",
+  "settings.export": "Dışa Aktar",
+  "settings.import": "İçe Aktar",
+  "settings.importSuccess": "Ayarlar başarıyla içe aktarıldı",
+  "settings.importError": "İçe aktarma başarısız",
+
   // ---- Access Gate ----
   "access.title": "Eri\u015fim",
   "access.tokenPlaceholder": "Eri\u015fim token'\u0131n\u0131z\u0131 girin",

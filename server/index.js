@@ -4,8 +4,12 @@ const next = require("next");
 
 const { createAccessGate } = require("./access-gate");
 const { createGatewayProxy } = require("./gateway-proxy");
+const { createRateLimiter } = require("./rate-limiter");
+const { logger } = require("./logger");
 const { assertPublicHostAllowed, resolveHosts } = require("./network-policy");
 const { loadUpstreamGatewaySettings } = require("./studio-settings");
+
+const startedAt = new Date();
 
 const resolvePort = () => {
   const raw = process.env.PORT?.trim() || "3000";
@@ -92,6 +96,23 @@ async function main() {
     token: process.env.STUDIO_ACCESS_TOKEN,
   });
 
+  const rateLimiter = createRateLimiter();
+
+  /** Health check handler — returns before Next.js or access gate */
+  const handleHealth = (req, res) => {
+    const pathname = resolvePathname(req.url);
+    if (pathname !== "/health" && pathname !== "/_health") return false;
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify({
+      status: "ok",
+      uptime: Math.floor((Date.now() - startedAt.getTime()) / 1000),
+      startedAt: startedAt.toISOString(),
+      version: require("../package.json").version,
+    }));
+    return true;
+  };
+
   const proxy = createGatewayProxy({
     loadUpstreamSettings: async () => {
       const settings = loadUpstreamGatewaySettings(process.env);
@@ -116,16 +137,17 @@ async function main() {
 
   const httpsCert = useHttps ? await generateHttpsCert() : null;
 
+  const handleRequest = (req, res) => {
+    if (handleHealth(req, res)) return;
+    if (rateLimiter.handleHttp(req, res)) return;
+    if (accessGate.handleHttp(req, res)) return;
+    handle(req, res);
+  };
+
   const createServer = () =>
     useHttps
-      ? https.createServer(httpsCert, (req, res) => {
-          if (accessGate.handleHttp(req, res)) return;
-          handle(req, res);
-        })
-      : http.createServer((req, res) => {
-          if (accessGate.handleHttp(req, res)) return;
-          handle(req, res);
-        });
+      ? https.createServer(httpsCert, handleRequest)
+      : http.createServer(handleRequest);
 
   const servers = hostnames.map(() => createServer());
 
@@ -178,8 +200,10 @@ async function main() {
 
   const protocol = useHttps ? "https" : "http";
   const browserUrl = `${protocol}://${hostForBrowser}:${port}`;
+  logger.info("Server ready", { url: browserUrl, hosts: hostnames, port, https: useHttps });
   console.info(`Open in browser: ${browserUrl}`);
   if (useHttps) {
+    logger.info("HTTPS mode active", { certDir: CERT_DIR });
     console.info("HTTPS mode: self-signed cert in use. You may need to accept a browser security warning once.");
     console.info(`Spotify redirect URI: ${browserUrl}/office`);
   }
