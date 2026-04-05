@@ -30,7 +30,7 @@ async function main() {
   const landing = await context.newPage();
   await landing.goto(BASE, { waitUntil: "networkidle" });
   await landing.waitForTimeout(1000);
-  await landing.screenshot({ path: `${OUT}/landing-page.png`, fullPage: false });
+  await landing.screenshot({ path: `${OUT}/landing-hero.png`, fullPage: false });
   await landing.close();
 
   // 2. Office main

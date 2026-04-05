@@ -1,24 +1,43 @@
 <p align="center">
-  <img src="docs/images/landing-page.png" alt="3DAgent Landing" width="100%" />
+  <img src="docs/images/landing-hero.png" alt="3DAgent Landing" width="100%" />
 </p>
 
 # 3DAgent — 3D AI Agent Workspace
 
-**3DAgent, yapay zeka ajanlarınızı gerçek zamanlı izleyip yönetebileceğiniz, tamamen Türkçe, açık kaynaklı bir 3D çalışma ortamıdır.**
+**3DAgent, [Claw3D](https://github.com/iamlukethedev/Claw3D)'nin 3D ajan ofisi altyapısını alıp üzerine Türkçe lokalizasyon, sesli komut, şirket oluşturucu, playbook otomasyonu, marketplace ve çok daha fazlasını ekleyerek oluşturulmuş, açık kaynaklı bir 3D AI çalışma ortamıdır.**
 
-Mevcut AI agent framework'leri (CrewAI, AutoGen, LangGraph, MetaGPT) güçlü araçlar sunar; ancak hepsinde ortak bir eksik vardır: **ajanlarınızın ne yaptığını görsel olarak takip edemezsiniz.** Terminal çıktıları ve log dosyaları arasında kaybolursunuz. Hangi ajanın hangi görevi üstlendiğini, birbirleriyle nasıl iletişim kurduğunu ve sürecin neresinde olduğunuzu anlamak için sürekli konsol izlemeniz gerekir.
+Claw3D, AI ajanları 3D bir ofiste görselleştiren güçlü bir araçtır. Ancak orijinal hâliyle İngilizce, temasız ve ek özellikler konusunda sınırlıdır. 3DAgent, Claw3D'nin OpenClaw Gateway SDK'sını kullanarak tüm bu temeli korur ve **18+ yeni özellik** ekler — sesli komut, AI şirket oluşturucu, playbook otomasyonu, skills marketplace, Spotify entegrasyonu, PWA desteği, tam Türkçe lokalizasyon ve daha fazlası.
 
-3DAgent bu sorunu kökünden çözer. İzometrik 3D bir ofis ortamında ajanlarınızı masalarında çalışırken izler, görev atamalarını Kanban panosuyla yönetir, hafıza duvarıyla notlar paylaşır ve tüm bunları tek bir tarayıcı sekmesinden yaparsınız. Python bağımlılığı yoktur — tamamen web tabanlıdır.
+### Claw3D vs 3DAgent
 
-### Neden 3DAgent?
+<p align="center">
+  <img src="docs/images/landing-comparison.png" alt="Claw3D vs 3DAgent Karşılaştırma" width="100%" />
+</p>
 
-- **Sektördeki tek 3D görsel çalışma alanı** — Ajanlar ofiste hareket eder, masalarında çalışır, görevlerini gerçek zamanlı takip edersiniz
-- **Türk mitolojisinden 6 AI ajan** — Her birinin kendine özgü kişiliği, uzmanlık alanı ve 3D avatarı vardır
-- **Entegre proje yönetimi** — Kanban panosu, Görev Kuyruğu ve Hafıza Duvarı ile ayrı araçlara ihtiyaç duymadan çalışırsınız
-- **Tamamen Türkçe** — 1300+ çeviri anahtarı ile arayüzden hata mesajlarına her şey Türkçe
-- **Açık kaynak ve ücretsiz** — Kendi sunucunuzda barındırabilirsiniz
-- **Web tabanlı** — Next.js 16 + React 19 + Three.js üzerine kurulu, Python bağımlılığı yok
-- **Çoklu LLM desteği** — OpenAI, Anthropic Claude, Google Gemini veya yerel modeller
+| Özellik | Claw3D | 3DAgent |
+|---------|--------|---------|
+| 3D İzometrik Ofis | ✅ | ✅ |
+| OpenClaw / Hermes Gateway | ✅ | ✅ |
+| Ajan Oluşturma & Düzenleme | ✅ | ✅ |
+| Ofis Yerleşim Editörü | ✅ | ✅ |
+| GitHub PR İnceleme | ✅ | ✅ |
+| Türkçe Lokalizasyon (1300+ anahtar) | ❌ | ✅ |
+| Türk Mitolojisi Ajan Teması | ❌ | ✅ |
+| AI Şirket Oluşturucu | ❌ | ✅ |
+| Sesli Komut (Whisper STT) | ❌ | ✅ |
+| Sesli Yanıt (ElevenLabs TTS) | ❌ | ✅ |
+| Telefon Kulübesi & SMS Kulübesi | ❌ | ✅ |
+| Playbook Otomasyonu (Cron) | ❌ | ✅ |
+| Görev Kuyruğu (4 Öncelik) | ❌ | ✅ |
+| Bellek Duvarı (Post-it) | ❌ | ✅ |
+| Skills Marketplace | ❌ | ✅ |
+| Spotify Jukebox (SOUNDCLAW) | ❌ | ✅ |
+| ATM / Hazine (Token Takip) | ❌ | ✅ |
+| Kahvehane & Kapalıçarşı | ❌ | ✅ |
+| SafeSkillScanner (20 Kural) | ❌ | ✅ |
+| PWA (Çevrimdışı + Kurulabilir) | ❌ | ✅ |
+| 5 Adımlı Onboarding Sihirbazı | ❌ | ✅ |
+| Analitik Paneli | ❌ | ✅ |
 
 > Fork: [iamlukethedev/Claw3D](https://github.com/iamlukethedev/Claw3D) | Lisans: MIT
 
@@ -45,6 +64,11 @@ Mevcut AI agent framework'leri (CrewAI, AutoGen, LangGraph, MetaGPT) güçlü ar
 </p>
 
 ### Türk Mitolojisi Temalı AI Ekibi
+
+<p align="center">
+  <img src="docs/images/landing-agents.png" alt="3DAgent Türk Mitolojisi Ajanları" width="100%" />
+</p>
+
 6 hazır ajan, Türk mitolojisinden ilham alan isim ve kişiliklerle:
 
 | Ajan | Rol | Vibe |
@@ -79,7 +103,17 @@ Her ajanın kendi tanıtım ekranı, uzmanlık alanları, kişilik dosyaları (S
 - **Custom** — Kendi orchestrator/runtime'ınızı bağlayın
 - Same-origin WebSocket proxy (tarayıcı → Studio → Gateway)
 
+### 3DAgent'a Özel Özellikler
+
+<p align="center">
+  <img src="docs/images/landing-features.png" alt="3DAgent'a Özel Özellikler" width="100%" />
+</p>
+
 ### İmersif Ekranlar
+
+<p align="center">
+  <img src="docs/images/landing-immersive.png" alt="3DAgent Sürükleyici Ekranlar" width="100%" />
+</p>
 
 <p align="center">
   <img src="docs/images/kanban-board.png" alt="3DAgent Kanban Panosu" width="100%" />
@@ -96,6 +130,10 @@ Her ajanın kendi tanıtım ekranı, uzmanlık alanları, kişilik dosyaları (S
 | Kapalıçarşı | Beceri pazarı (marketplace) |
 
 ### HQ Karargâh Panelleri
+
+<p align="center">
+  <img src="docs/images/landing-hq-panels.png" alt="3DAgent 12 Karargâh Paneli" width="100%" />
+</p>
 
 <p align="center">
   <img src="docs/images/settings-panel.png" alt="3DAgent Karargâh" width="100%" />
@@ -205,6 +243,10 @@ npm run dev
 ---
 
 ## Teknik Altyapı
+
+<p align="center">
+  <img src="docs/images/landing-tech-stack.png" alt="3DAgent Tech Stack" width="100%" />
+</p>
 
 | Katman | Teknoloji |
 |--------|-----------|
@@ -383,15 +425,28 @@ npm run dev
 
 ## Ekran Görüntüleri
 
+### Landing Sayfası
+
 | Ekran | Görüntü |
 |-------|---------|
-| Landing Sayfası | [landing-page.png](docs/images/landing-page.png) |
+| Hero | [landing-hero.png](docs/images/landing-hero.png) |
+| Claw3D vs 3DAgent | [landing-comparison.png](docs/images/landing-comparison.png) |
+| Türk Mitolojisi Ajanları | [landing-agents.png](docs/images/landing-agents.png) |
+| 3DAgent'a Özel Özellikler | [landing-features.png](docs/images/landing-features.png) |
+| 12 Karargâh Paneli | [landing-hq-panels.png](docs/images/landing-hq-panels.png) |
+| Sürükleyici Ekranlar | [landing-immersive.png](docs/images/landing-immersive.png) |
+| Tech Stack | [landing-tech-stack.png](docs/images/landing-tech-stack.png) |
+| CTA | [landing-cta.png](docs/images/landing-cta.png) |
+
+### Uygulama
+
+| Ekran | Görüntü |
+|-------|---------|
 | 3D Ofis | [office-main.png](docs/images/office-main.png) |
 | Kanban Panosu | [kanban-board.png](docs/images/kanban-board.png) |
 | HQ Karargâh | [settings-panel.png](docs/images/settings-panel.png) |
 | Hafıza Duvarı | [memory-wall.png](docs/images/memory-wall.png) |
 | Görev Kuyruğu | [task-queue.png](docs/images/task-queue.png) |
-| Atatürk Portresi | [ataturk-portrait.png](docs/images/ataturk-portrait.png) |
 | Ofis Builder | [office-builder.png](docs/images/office-builder.png) |
 
 ---
@@ -410,6 +465,10 @@ npm run dev
 | [CODE_DOCUMENTATION.md](CODE_DOCUMENTATION.md) | Kod haritası ve okuma sırası |
 
 ---
+
+<p align="center">
+  <img src="docs/images/landing-cta.png" alt="3DAgent — Hazır mısınız?" width="100%" />
+</p>
 
 ## Lisans
 
