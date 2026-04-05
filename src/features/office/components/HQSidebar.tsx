@@ -9,6 +9,8 @@ export type HQSidebarTab =
   | "history"
   | "kanban"
   | "playbooks"
+  | "taskQueue"
+  | "memoryWall"
   | "analytics";
 
 type HQSidebarProps = {
@@ -24,6 +26,8 @@ type HQSidebarProps = {
   historyPanel: ReactNode;
   kanbanPanel: ReactNode;
   playbooksPanel: ReactNode;
+  taskQueuePanel: ReactNode;
+  memoryWallPanel: ReactNode;
   analyticsPanel: ReactNode;
 };
 
@@ -32,10 +36,12 @@ const TAB_KEYS: Record<HQSidebarTab, string> = {
   history: "hq.sidebar.tabHistory",
   kanban: "hq.sidebar.tabKanban",
   playbooks: "hq.sidebar.tabPlaybooks",
+  taskQueue: "hq.sidebar.tabTaskQueue",
+  memoryWall: "hq.sidebar.tabMemoryWall",
   analytics: "hq.sidebar.analyticsTitle",
 };
 
-const PRIMARY_TABS: HQSidebarTab[] = ["inbox", "history", "kanban", "playbooks"];
+const PRIMARY_TABS: HQSidebarTab[] = ["inbox", "history", "kanban", "playbooks", "taskQueue", "memoryWall"];
 
 export function HQSidebar({
   open,
@@ -50,6 +56,8 @@ export function HQSidebar({
   historyPanel,
   kanbanPanel,
   playbooksPanel,
+  taskQueuePanel,
+  memoryWallPanel,
   analyticsPanel,
 }: HQSidebarProps) {
   const analyticsOnly = activeTab === "analytics";
@@ -61,9 +69,13 @@ export function HQSidebar({
         ? historyPanel
         : activeTab === "kanban"
           ? kanbanPanel
-        : activeTab === "playbooks"
-          ? playbooksPanel
-          : analyticsPanel;
+          : activeTab === "playbooks"
+            ? playbooksPanel
+            : activeTab === "taskQueue"
+              ? taskQueuePanel
+              : activeTab === "memoryWall"
+                ? memoryWallPanel
+                : analyticsPanel;
   const boardLikeWidth = activeTab === "kanban";
 
   return (
@@ -164,7 +176,7 @@ export function HQSidebar({
             <div
               role="tablist"
               aria-label={t("hq.sidebar.headquartersPanels")}
-              className="grid grid-cols-4 border-b border-cyan-500/15"
+              className="grid grid-cols-6 border-b border-cyan-500/15"
             >
               {PRIMARY_TABS.map((tab) => {
                 const isActive = tab === activeTab;

@@ -1299,8 +1299,48 @@ export const tr = {
   "access.submit": "Giri\u015f",
   "access.error": "Ge\u00e7ersiz token",
 
+  // ---- Task Queue Panel ----
+  "taskQueue.title": "G\u00f6rev Kuyru\u011fu",
+  "taskQueue.addTask": "G\u00f6rev ekle",
+  "taskQueue.titlePlaceholder": "G\u00f6rev ba\u015fl\u0131\u011f\u0131",
+  "taskQueue.descPlaceholder": "A\u00e7\u0131klama (opsiyonel)",
+  "taskQueue.from": "G\u00f6nderen",
+  "taskQueue.to": "Atanan",
+  "taskQueue.priority": "\u00d6ncelik",
+  "taskQueue.all": "T\u00fcm\u00fc",
+  "taskQueue.pending": "Beklemede",
+  "taskQueue.inProgress": "Devam Ediyor",
+  "taskQueue.completed": "Tamamland\u0131",
+  "taskQueue.low": "D\u00fc\u015f\u00fck",
+  "taskQueue.normal": "Normal",
+  "taskQueue.high": "Y\u00fcksek",
+  "taskQueue.urgent": "Acil",
+  "taskQueue.empty": "Hen\u00fcz g\u00f6rev yok.",
+  "taskQueue.delete": "Sil",
+  "hq.sidebar.tabTaskQueue": "G\u00f6revler",
+
+  // ---- Memory Wall Panel ----
+  "memoryWall.title": "Hafıza Duvarı",
+  "memoryWall.addMemory": "Hafıza ekle",
+  "memoryWall.placeholder": "Paylaşılacak bir not veya bilgi yazın...",
+  "memoryWall.author": "Yazan",
+  "memoryWall.authorPlaceholder": "Ajan adı",
+  "memoryWall.empty": "Henüz paylaşılan hafıza yok. İlk notu ekleyin!",
+  "memoryWall.delete": "Sil",
+  "memoryWall.justNow": "Az önce",
+  "memoryWall.minutesAgo": "{count} dk önce",
+  "memoryWall.hoursAgo": "{count} saat önce",
+  "memoryWall.daysAgo": "{count} gün önce",
+  "hq.sidebar.tabMemoryWall": "Hafıza",
+
   // ---- PWA ----
   "pwa.updateAvailable": "Yeni s\u00fcr\u00fcm mevcut",
   "pwa.updateAction": "G\u00fcncelle",
   "pwa.dismiss": "Kapat",
+
+  // ---- Security ----
+  "security.scanBlocked": "Engellendi",
+  "security.scanWarning": "Uyar\u0131",
+  "security.scanSafe": "G\u00fcvenli",
+  "security.scanResult": "G\u00fcvenlik tarama sonucu",
 } as const;

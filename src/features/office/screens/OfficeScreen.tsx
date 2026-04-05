@@ -142,6 +142,8 @@ import { KanbanDisabledPanel } from "@/features/office/components/panels/KanbanD
 import { PlaybooksPanel } from "@/features/office/components/panels/PlaybooksPanel";
 import { SkillsMarketplaceModal } from "@/features/office/components/panels/SkillsMarketplaceModal";
 import { TaskBoardPanel } from "@/features/office/components/panels/TaskBoardPanel";
+import { TaskQueuePanel } from "@/features/office/components/panels/TaskQueuePanel";
+import { MemoryWallPanel } from "@/features/office/components/panels/MemoryWallPanel";
 import { JukeboxPanel } from "@/features/spotify-jukebox/components/JukeboxPanel";
 import { JukeboxDisabledPanel } from "@/features/spotify-jukebox/components/JukeboxDisabledPanel";
 import { executeBrowserJukeboxCommand } from "@/features/spotify-jukebox/agentBridge";
@@ -4603,6 +4605,8 @@ export function OfficeScreen({
               standup={standupController}
             />
           }
+          taskQueuePanel={<TaskQueuePanel />}
+          memoryWallPanel={<MemoryWallPanel />}
           analyticsPanel={
             <AnalyticsPanel
               client={client}

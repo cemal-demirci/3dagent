@@ -106,6 +106,117 @@ function TurkeyFlagArt() {
   );
 }
 
+function AtaturkPortraitArt() {
+  return (
+    <>
+      {/* Warm cream background */}
+      <mesh position={[0, 0, 0]}>
+        <planeGeometry args={[0.5, 0.42]} />
+        <meshBasicMaterial color="#f5edd6" side={2} />
+      </mesh>
+
+      {/* Suit / shoulders – dark trapezoid approximated with overlapping boxes */}
+      <mesh position={[0, -0.13, 0.001]}>
+        <planeGeometry args={[0.34, 0.14]} />
+        <meshBasicMaterial color="#1a1a1a" side={2} />
+      </mesh>
+      <mesh position={[-0.12, -0.1, 0.001]}>
+        <planeGeometry args={[0.14, 0.1]} />
+        <meshBasicMaterial color="#1a1a1a" side={2} />
+      </mesh>
+      <mesh position={[0.12, -0.1, 0.001]}>
+        <planeGeometry args={[0.14, 0.1]} />
+        <meshBasicMaterial color="#1a1a1a" side={2} />
+      </mesh>
+
+      {/* White shirt collar – small "V" shape */}
+      <mesh position={[-0.02, -0.06, 0.002]} rotation={[0, 0, 0.25]}>
+        <planeGeometry args={[0.04, 0.06]} />
+        <meshBasicMaterial color="#e8e4dc" side={2} />
+      </mesh>
+      <mesh position={[0.02, -0.06, 0.002]} rotation={[0, 0, -0.25]}>
+        <planeGeometry args={[0.04, 0.06]} />
+        <meshBasicMaterial color="#e8e4dc" side={2} />
+      </mesh>
+
+      {/* Tie */}
+      <mesh position={[0, -0.1, 0.003]}>
+        <planeGeometry args={[0.025, 0.1]} />
+        <meshBasicMaterial color="#2c2c2c" side={2} />
+      </mesh>
+
+      {/* Head silhouette – dark circle */}
+      <mesh position={[0, 0.04, 0.001]}>
+        <circleGeometry args={[0.075, 32]} />
+        <meshBasicMaterial color="#3a2e26" side={2} />
+      </mesh>
+
+      {/* Face – slightly lighter oval */}
+      <mesh position={[0, 0.035, 0.002]}>
+        <circleGeometry args={[0.062, 32]} />
+        <meshBasicMaterial color="#c4a882" side={2} />
+      </mesh>
+
+      {/* Hair – dark arcs on top and sides */}
+      <mesh position={[0, 0.085, 0.003]}>
+        <circleGeometry args={[0.058, 32, 0, Math.PI]} />
+        <meshBasicMaterial color="#2a1e14" side={2} />
+      </mesh>
+      <mesh position={[-0.045, 0.06, 0.003]}>
+        <planeGeometry args={[0.025, 0.05]} />
+        <meshBasicMaterial color="#2a1e14" side={2} />
+      </mesh>
+      <mesh position={[0.045, 0.06, 0.003]}>
+        <planeGeometry args={[0.025, 0.05]} />
+        <meshBasicMaterial color="#2a1e14" side={2} />
+      </mesh>
+
+      {/* Eyes – two small dark dots */}
+      <mesh position={[-0.02, 0.04, 0.004]}>
+        <circleGeometry args={[0.008, 12]} />
+        <meshBasicMaterial color="#1a1410" side={2} />
+      </mesh>
+      <mesh position={[0.02, 0.04, 0.004]}>
+        <circleGeometry args={[0.008, 12]} />
+        <meshBasicMaterial color="#1a1410" side={2} />
+      </mesh>
+
+      {/* Eyebrows – thin dark lines */}
+      <mesh position={[-0.02, 0.054, 0.004]}>
+        <planeGeometry args={[0.026, 0.005]} />
+        <meshBasicMaterial color="#1a1410" side={2} />
+      </mesh>
+      <mesh position={[0.02, 0.054, 0.004]}>
+        <planeGeometry args={[0.026, 0.005]} />
+        <meshBasicMaterial color="#1a1410" side={2} />
+      </mesh>
+
+      {/* Nose – subtle vertical line */}
+      <mesh position={[0, 0.025, 0.004]}>
+        <planeGeometry args={[0.006, 0.022]} />
+        <meshBasicMaterial color="#b89870" side={2} />
+      </mesh>
+
+      {/* Mustache */}
+      <mesh position={[0, 0.008, 0.004]}>
+        <planeGeometry args={[0.035, 0.008]} />
+        <meshBasicMaterial color="#2a1e14" side={2} />
+      </mesh>
+
+      {/* Kalpak (hat) – rectangular block above head */}
+      <mesh position={[0, 0.13, 0.002]}>
+        <boxGeometry args={[0.1, 0.06, 0.001]} />
+        <meshBasicMaterial color="#1a1a1a" side={2} />
+      </mesh>
+      {/* Kalpak brim / band */}
+      <mesh position={[0, 0.105, 0.003]}>
+        <planeGeometry args={[0.11, 0.012]} />
+        <meshBasicMaterial color="#0d0d0d" side={2} />
+      </mesh>
+    </>
+  );
+}
+
 function BrazilFlagArt() {
   return (
     <>
@@ -1037,6 +1148,24 @@ export const WallPictures = memo(function WallPictures({
             </mesh>
           </>
         }
+      />
+
+      {/* Ataturk Portrait – prominent center position on north wall */}
+      <FramedPicture
+        position={[localCenterX + 1.5, pictureY + 0.12, northZ]}
+        rotY={0}
+        w={0.62}
+        h={0.52}
+        frameColor="#8B7531"
+        bgColor="#f5edd6"
+        art={<AtaturkPortraitArt />}
+      />
+      <spotLight
+        position={[localCenterX + 1.5, pictureY + 0.7, northZ + 0.5]}
+        intensity={0.8}
+        angle={0.4}
+        penumbra={0.6}
+        color="#fff8e7"
       />
 
       {null}
