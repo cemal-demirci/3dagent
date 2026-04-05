@@ -490,8 +490,8 @@ describe("AgentSettingsPanel", () => {
       })
     );
 
-    const githubToggle = screen.getByRole("switch", { name: "Skill github" });
-    const browserToggle = screen.getByRole("switch", { name: "Skill browser" });
+    const githubToggle = screen.getByRole("switch", { name: "github" });
+    const browserToggle = screen.getByRole("switch", { name: "browser" });
     expect(githubToggle).toHaveAttribute("aria-checked", "true");
     expect(browserToggle).toHaveAttribute("aria-checked", "false");
 
@@ -704,7 +704,7 @@ describe("AgentSettingsPanel", () => {
       })
     );
 
-    expect(screen.getByRole("switch", { name: "Skill browser" })).toBeDisabled();
+    expect(screen.getByRole("switch", { name: "browser" })).toBeDisabled();
     expect(screen.getByText("2/2")).toBeInTheDocument();
     expect(screen.getByText("Not supported")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Open System Setup" })).not.toBeInTheDocument();

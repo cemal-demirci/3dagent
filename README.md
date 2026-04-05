@@ -103,6 +103,13 @@ Her ajanın kendi tanıtım ekranı, uzmanlık alanları, kişilik dosyaları (S
 - **Custom** — Kendi orchestrator/runtime'ınızı bağlayın
 - Same-origin WebSocket proxy (tarayıcı → Studio → Gateway)
 
+### 💎 Akıllı Auth ve Ekonomik Devrim (Smart Auth)
+Bu projenin en büyük farkı, pahalı API anahtarlarına olan bağımlılığı ortadan kaldıran özel geliştirilmiş backend entegrasyonudur:
+- **CLI & SDK Köprüsü:** Backend sistemimiz, yerel bilgisayarınızda halihazırda yüklü olan **Claude CLI** veya **Google Gemini SDK** yetkilendirmelerini (OAuth) otomatik olarak yakalar ve stüdyoya köprüler.
+- **Sıfır Ek Maliyet:** Ekstra API kredisi satın almak yerine; mevcut **Claude Pro** aboneliğinizi veya Gemini'ın ücretsiz kotalarını doğrudan 3D ofisinizde kullanabilirsiniz.
+- **Otomatik Yetkilendirme:** API anahtarlarını manuel kopyalayıp yapıştırmakla uğraşmazsınız. CLI/SDK yapılandırılmışsa, Studio anında çalışmaya hazırdır.
+- **Kaynak Optimizasyonu:** Orijinal projenin yüksek kaynak tüketen gateway yapısı yerine, düşük CPU/RAM harcayan yüksek performanslı bir Node.js proxy katmanı geliştirilmiştir.
+
 ### 3DAgent'a Özel Özellikler
 
 <p align="center">

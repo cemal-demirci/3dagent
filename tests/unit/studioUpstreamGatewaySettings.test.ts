@@ -7,24 +7,25 @@ import { afterEach, describe, expect, it } from "vitest";
 const makeTempDir = (name: string) => fs.mkdtempSync(path.join(os.tmpdir(), `${name}-`));
 
 describe("server studio upstream gateway settings", () => {
-  const priorStateDir = process.env.OPENCLAW_STATE_DIR;
+  const priorStateDir = process.env.AGENT3D_STATE_DIR;
   let tempDir: string | null = null;
 
   afterEach(() => {
-    process.env.OPENCLAW_STATE_DIR = priorStateDir;
+    process.env.AGENT3D_STATE_DIR = priorStateDir;
     if (tempDir) {
       fs.rmSync(tempDir, { recursive: true, force: true });
       tempDir = null;
     }
   });
 
-  it("falls back to openclaw.json token/port when studio settings are missing", async () => {
-    tempDir = makeTempDir("studio-upstream-openclaw-defaults");
-    process.env.OPENCLAW_STATE_DIR = tempDir;
+  it("reads gateway url and token from settings.json", async () => {
+    tempDir = makeTempDir("studio-upstream-settings-json");
+    process.env.AGENT3D_STATE_DIR = tempDir;
 
+    fs.mkdirSync(path.join(tempDir, "3dagent"), { recursive: true });
     fs.writeFileSync(
-      path.join(tempDir, "openclaw.json"),
-      JSON.stringify({ gateway: { port: 18790, auth: { token: "tok" } } }, null, 2),
+      path.join(tempDir, "3dagent", "settings.json"),
+      JSON.stringify({ gateway: { url: "ws://localhost:18790", token: "tok" } }, null, 2),
       "utf8"
     );
 
@@ -34,9 +35,9 @@ describe("server studio upstream gateway settings", () => {
     expect(settings.token).toBe("tok");
   });
 
-  it("keeps a configured url and fills token from openclaw.json when missing", async () => {
-    tempDir = makeTempDir("studio-upstream-url-keep");
-    process.env.OPENCLAW_STATE_DIR = tempDir;
+  it("falls back to default url when settings.json has no gateway", async () => {
+    tempDir = makeTempDir("studio-upstream-no-gateway");
+    process.env.AGENT3D_STATE_DIR = tempDir;
 
     fs.mkdirSync(path.join(tempDir, "3dagent"), { recursive: true });
     fs.writeFileSync(
@@ -44,15 +45,10 @@ describe("server studio upstream gateway settings", () => {
       JSON.stringify({ gateway: { url: "ws://gateway.example:18789", token: "" } }, null, 2),
       "utf8"
     );
-    fs.writeFileSync(
-      path.join(tempDir, "openclaw.json"),
-      JSON.stringify({ gateway: { port: 18789, auth: { token: "tok-local" } } }, null, 2),
-      "utf8"
-    );
 
     const { loadUpstreamGatewaySettings } = await import("../../server/studio-settings");
     const settings = loadUpstreamGatewaySettings(process.env);
     expect(settings.url).toBe("ws://gateway.example:18789");
-    expect(settings.token).toBe("tok-local");
+    expect(settings.token).toBe("");
   });
 });

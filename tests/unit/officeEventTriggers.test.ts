@@ -136,7 +136,7 @@ describe("office event triggers", () => {
         sessionKey: "agent:worker:slack",
       }),
     ];
-    const gymEvent: EventFrame = {
+    const shoppingEvent: EventFrame = {
       type: "event",
       event: "chat",
       payload: {
@@ -145,7 +145,7 @@ describe("office event triggers", () => {
         state: "final",
         message: {
           role: "user",
-          text: "Let's go to the gym.",
+          text: "Let's go shopping.",
         },
       },
     };
@@ -163,14 +163,14 @@ describe("office event triggers", () => {
       },
     };
 
-    const afterGym = reduceOfficeAnimationTriggerEvent({
+    const afterShopping = reduceOfficeAnimationTriggerEvent({
       state: createOfficeAnimationTriggerState(),
       agents,
-      event: gymEvent,
+      event: shoppingEvent,
       nowMs: 5_000,
     });
     const afterStandup = reduceOfficeAnimationTriggerEvent({
-      state: afterGym,
+      state: afterShopping,
       agents,
       event: standupEvent,
       nowMs: 6_000,
@@ -237,7 +237,7 @@ describe("office event triggers", () => {
         },
       },
     });
-    const afterGym = reduceOfficeAnimationTriggerEvent({
+    const afterShopping = reduceOfficeAnimationTriggerEvent({
       state: afterDesk,
       agents,
       nowMs: 8_000,
@@ -249,14 +249,14 @@ describe("office event triggers", () => {
           sessionKey: "agent:worker:telegram",
           state: "final",
           message: {
-            text: "Go to the gym.",
+            text: "Go shopping.",
           },
         },
       },
     });
 
-    expect(afterGym.deskHoldByAgentId.worker).toBe(true);
-    expect(afterGym.manualBazaarUntilByAgentId.worker).toBeGreaterThan(8_000);
+    expect(afterShopping.deskHoldByAgentId.worker).toBe(true);
+    expect(afterShopping.manualBazaarUntilByAgentId.worker).toBeGreaterThan(8_000);
   });
 
   it("tracks streaming and reasoning activity from runtime events", () => {

@@ -5,10 +5,10 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 describe("studio setup paths", () => {
-  it("resolves settings path under OPENCLAW_STATE_DIR when set", async () => {
+  it("resolves settings path under AGENT3D_STATE_DIR when set", async () => {
     const { resolveStudioSettingsPath } = await import("../../server/studio-settings");
     const settingsPath = resolveStudioSettingsPath({
-      OPENCLAW_STATE_DIR: "/tmp/openclaw-state",
+      AGENT3D_STATE_DIR: "/tmp/openclaw-state",
     } as unknown as NodeJS.ProcessEnv);
     expect(settingsPath).toBe("/tmp/openclaw-state/3dagent/settings.json");
   });

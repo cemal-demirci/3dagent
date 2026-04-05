@@ -31,8 +31,10 @@ describe("studio settings route", () => {
     };
 
     expect(response.status).toBe(200);
-    expect(body.settings?.gateway).toBe(null);
-    expect(body.localGatewayDefaults ?? null).toBeNull();
+    // loadLocalGatewayDefaults always falls back to the demo gateway when no
+    // openclaw.json or explicit env var is configured.
+    expect(body.localGatewayDefaults).toBeTruthy();
+    expect(body.settings?.gateway).toBeTruthy();
     expect(body.settings?.version).toBe(1);
   });
 
@@ -69,7 +71,7 @@ describe("studio settings route", () => {
     process.env.OPENCLAW_STATE_DIR = tempDir;
 
     const response = await PUT({
-      json: async () => "nope",
+      text: async () => JSON.stringify("nope"),
     } as unknown as Request);
     const body = (await response.json()) as { error?: string };
 
@@ -92,7 +94,7 @@ describe("studio settings route", () => {
     };
 
     const putResponse = await PUT({
-      json: async () => patch,
+      text: async () => JSON.stringify(patch),
     } as unknown as Request);
     expect(putResponse.status).toBe(200);
 

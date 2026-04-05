@@ -3,7 +3,7 @@
 import { describe, expect, it } from "vitest";
 
 function mockReq(method = "GET") {
-  return { method, headers: {}, socket: {} };
+  return { method, url: "/", headers: {}, socket: {} };
 }
 
 function mockRes() {
@@ -45,7 +45,7 @@ describe("createSecurityHeaders", () => {
   it("sets HSTS for HTTPS", async () => {
     const { createSecurityHeaders } = await import("../../server/security-headers");
     const sh = createSecurityHeaders();
-    const req = { method: "GET", headers: { "x-forwarded-proto": "https" }, socket: {} };
+    const req = { method: "GET", url: "/", headers: { "x-forwarded-proto": "https" }, socket: {} };
     const res = mockRes();
     sh.applyHeaders(req, res);
     expect(res._headers["Strict-Transport-Security"]).toContain("max-age=");

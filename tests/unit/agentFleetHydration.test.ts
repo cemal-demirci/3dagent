@@ -6,7 +6,7 @@ import type { StudioSettings } from "@/lib/studio/settings";
 
 describe("hydrateAgentFleetFromGateway", () => {
   it("maps_gateway_results_into_seeds_and_selects_latest_assistant_agent", async () => {
-    const gatewayUrl = "ws://127.0.0.1:18789";
+    const gatewayUrl = "ws://localhost:18789";
 
     const settings: StudioSettings = {
       version: 1,

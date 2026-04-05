@@ -116,7 +116,7 @@ describe("AgentChatPanel composer autoresize", () => {
     const textarea = screen.getByPlaceholderText("type a message") as HTMLTextAreaElement;
 
     await waitFor(() => {
-      expect(textarea.style.height).toBe("200px");
+      expect(textarea.style.height).toBe("120px");
     });
 
     fireEvent.click(screen.getByRole("button", { name: "Send" }));

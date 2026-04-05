@@ -39,7 +39,7 @@ describe("deskDirectives", () => {
 
   it("builds a unified office intent snapshot", () => {
     expect(resolveOfficeIntentSnapshot("Let's go to the gym.")).toMatchObject({
-      bazaar: { directive: "bazaar", source: "manual" },
+      bazaar: null,
       desk: null,
       standup: null,
     });

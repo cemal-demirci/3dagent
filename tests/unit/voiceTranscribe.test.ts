@@ -14,6 +14,13 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 // ---------------------------------------------------------------------------
 
 vi.mock("@/lib/openclaw/voiceTranscription", () => ({
+  transcribeVoice: vi.fn().mockResolvedValue({
+    transcript: "hello world",
+    provider: "openai",
+    model: "whisper-1",
+    decision: { outcome: "success" },
+    ignored: false,
+  }),
   transcribeVoiceWithOpenClaw: vi.fn().mockResolvedValue({
     transcript: "hello world",
     provider: "openai",
