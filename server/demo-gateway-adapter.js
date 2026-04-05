@@ -223,6 +223,7 @@ const ENV_KEY_MAP = {
   anthropic: ["ANTHROPIC_API_KEY", "CLAUDE_API_KEY"],
   gemini: ["GEMINI_API_KEY", "GOOGLE_API_KEY"],
   openai: ["OPENAI_API_KEY"],
+  groq: ["GROQ_API_KEY"],
 };
 
 function autoLoadKeysFromEnv() {
@@ -596,38 +597,39 @@ function selectStreamFunction(agent) {
 // Mock reply (fallback when no AI keys configured)
 // ---------------------------------------------------------------------------
 function buildDemoReply(agent, message) {
-  const normalized = message.trim();
+  const normalized = message.trim().toLowerCase();
+  const isGreeting = /^(merhaba|selam|hey|sa|slm|naber|nasıl|nasil|hi|hello)/i.test(normalized);
   const replyMap = {
     "DevOps & Infrastructure": {
-      opening: `${agent.name} burada. Sunucular, Docker container'lar ve CI/CD pipeline'lar kontrol altinda.`,
-      action: "Docker compose, Jenkins pipeline, Linux server, network ve deployment konularinda yardimci olabilirim. Hangi sunucuyu kontrol edelim?",
+      greeting: `Merhaba! Ben ${agent.name}, DevOps ve altyapı konularında yardımcınızım. Sunucular, Docker container'lar ve CI/CD pipeline'larla ilgileniyorum. Ne üzerinde çalışalım?`,
+      response: `Anlaşıldı. Docker compose, Jenkins pipeline, Linux server yönetimi, Nginx konfigürasyonu ve deployment süreçlerinde destek verebilirim. Detay paylaşır mısınız?`,
     },
     "IoT & Embedded": {
-      opening: `${agent.name} aktif. ESP32 firmware ve sensor sistemleri hazir.`,
-      action: "PlatformIO, ESP32, SHT31/ADS1115/TSL2591 sensorler, aktuatorler ve MQTT protokolu konusunda calisabilirim. Firmware'da ne uzerinde calisalim?",
+      greeting: `Merhaba! Ben ${agent.name}, IoT ve gömülü sistemler uzmanıyım. ESP32 firmware, sensörler ve MQTT protokolü konusunda çalışıyorum. Nasıl yardımcı olabilirim?`,
+      response: `PlatformIO, ESP32, SHT31/ADS1115/TSL2591 sensörler, aktüatörler ve MQTT iletişimi konusunda destek verebilirim. Hangi modül üzerinde çalışıyorsunuz?`,
     },
     "Backend": {
-      opening: `${agent.name} backend masasinda. API'ler ve veritabani hazir.`,
-      action: "Node.js, Express, PostgreSQL, MQTT broker, WebSocket ve REST API tasarimi konularinda destek verebilirim. Hangi endpoint uzerinde calisiyoruz?",
+      greeting: `Merhaba! Ben ${agent.name}, backend geliştirme uzmanıyım. API tasarımı, veritabanı yönetimi ve sunucu tarafı mimarisiyle ilgileniyorum. Ne yapıyoruz?`,
+      response: `Node.js, Express, PostgreSQL, WebSocket ve REST API konularında yardımcı olabilirim. Hangi endpoint veya servis üzerinde çalışalım?`,
     },
     "Frontend & Mobile": {
-      opening: `${agent.name} UI masasinda. Arayuzler ve komponentler hazirlaniyor.`,
-      action: "React, Next.js, Tailwind CSS, React Native/Expo ve responsive tasarim konularinda calisabilirim. Hangi ekrani gelistirelim?",
+      greeting: `Merhaba! Ben ${agent.name}, frontend ve mobil geliştirme uzmanıyım. Kullanıcı arayüzleri ve responsive tasarım konusunda çalışıyorum. Hangi ekranı geliştiriyoruz?`,
+      response: `React, Next.js, Tailwind CSS, React Native ve Expo konularında destek verebilirim. Tasarım detaylarını paylaşır mısınız?`,
     },
     "Video & Streaming": {
-      opening: `${agent.name} yayin masasinda. Stream altyapisi aktif.`,
-      action: "FFmpeg, HLS/RTMP transcoding, WebRTC, CDN routing ve video analytics konularinda destek verebilirim. Hangi stream uzerinde calisalim?",
+      greeting: `Merhaba! Ben ${agent.name}, video ve streaming altyapısı uzmanıyım. Canlı yayın, transcoding ve CDN konularında çalışıyorum. Ne üzerinde çalışalım?`,
+      response: `FFmpeg, HLS/RTMP transcoding, WebRTC, CDN routing ve video analytics konularında yardımcı olabilirim. Hangi stream veya video işlemiyle ilgileniyorsunuz?`,
     },
     "AI & Automation": {
-      opening: `${agent.name} otomasyon merkezinde. Workflow'lar ve AI modelleri hazir.`,
-      action: "n8n workflow, Gemini/Claude API, Telegram bot, web scraping ve otomasyon zincirleri konusunda yardimci olabilirim. Hangi otomasyon uzerinde calisiyoruz?",
+      greeting: `Merhaba! Ben ${agent.name}, yapay zeka ve otomasyon uzmanıyım. Workflow otomasyonu ve LLM entegrasyonları konusunda çalışıyorum. Hangi otomasyon üzerinde çalışalım?`,
+      response: `n8n workflow, Gemini/Claude/GPT API entegrasyonu, Telegram bot ve otomasyon zincirleri konusunda destek verebilirim. Detayları paylaşır mısınız?`,
     },
   };
   const entry = replyMap[agent.role] || {
-    opening: `${agent.name} burada.`,
-    action: "Nasil yardimci olabilirim?",
+    greeting: `Merhaba! Ben ${agent.name}. Nasıl yardımcı olabilirim?`,
+    response: `Anlaşıldı. Bu konuda yardımcı olabilirim. Biraz daha detay paylaşır mısınız?`,
   };
-  return `${entry.opening} Mesajiniz: "${normalized}". ${entry.action}`;
+  return isGreeting ? entry.greeting : entry.response;
 }
 
 // ---------------------------------------------------------------------------
@@ -651,12 +653,13 @@ async function handleMethod(method, params, id, sendEvent) {
         if (provider === "anthropic") initAnthropicClient(apiKey);
         else if (provider === "gemini") initGeminiClient(apiKey);
         else if (provider === "openai") initOpenAIClient(apiKey);
-        // groq: key stored but no dedicated client init needed
+        else if (provider === "groq") process.env.GROQ_API_KEY = apiKey;
       } else {
         // Clear client when key is removed
         if (provider === "anthropic") anthropicClient = null;
         else if (provider === "gemini") geminiClient = null;
         else if (provider === "openai") openaiClient = null;
+        else if (provider === "groq") delete process.env.GROQ_API_KEY;
       }
       return resOk(id, {
         provider,

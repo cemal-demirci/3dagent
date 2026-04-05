@@ -1066,7 +1066,7 @@ const AgentChatComposer = memo(function AgentChatComposer({
           </button>
         </div>
       </div>
-      <div className="rounded-2xl border border-border/65 bg-surface-2/45 px-3 py-2">
+      <div className="w-full rounded-2xl border border-border/65 bg-surface-2/45 px-3 py-2">
         {queuedMessages.length > 0 ? (
           <div
             className={`mb-2 grid items-start gap-2 ${

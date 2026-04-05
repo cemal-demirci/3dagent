@@ -20,10 +20,10 @@ export const PERSONALITY_FILE_NAMES = [
 export type PersonalityFileName = (typeof PERSONALITY_FILE_NAMES)[number];
 
 export const PERSONALITY_FILE_LABELS: Record<PersonalityFileName, string> = {
-  "SOUL.md": "Persona",
-  "AGENTS.md": "Directives",
-  "USER.md": "Context",
-  "IDENTITY.md": "Identity",
+  "SOUL.md": "Kişilik",
+  "AGENTS.md": "Direktifler",
+  "USER.md": "Bağlam",
+  "IDENTITY.md": "Kimlik",
 };
 
 export const isAgentFileName = (value: string): value is AgentFileName =>
@@ -32,42 +32,42 @@ export const isAgentFileName = (value: string): value is AgentFileName =>
 export const AGENT_FILE_META: Record<AgentFileName, { title: string; hint: string }> = {
   "AGENTS.md": {
     title: "AGENTS.md",
-    hint: "Operating instructions, priorities, and rules.",
+    hint: "Çalışma talimatları, öncelikler ve kurallar.",
   },
   "SOUL.md": {
     title: "SOUL.md",
-    hint: "Persona, tone, and boundaries.",
+    hint: "Kişilik, ton ve sınırlar.",
   },
   "IDENTITY.md": {
     title: "IDENTITY.md",
-    hint: "Name, vibe, and emoji.",
+    hint: "İsim, karakter ve emoji.",
   },
   "USER.md": {
     title: "USER.md",
-    hint: "User profile and preferences.",
+    hint: "Kullanıcı profili ve tercihler.",
   },
   "TOOLS.md": {
     title: "TOOLS.md",
-    hint: "Local tool notes and conventions.",
+    hint: "Araç notları ve gelenekler.",
   },
   "HEARTBEAT.md": {
     title: "HEARTBEAT.md",
-    hint: "Small checklist for heartbeat runs.",
+    hint: "Periyodik kontrol listesi.",
   },
   "MEMORY.md": {
     title: "MEMORY.md",
-    hint: "Durable memory for this agent.",
+    hint: "Ajanın kalıcı hafızası.",
   },
 };
 
 export const AGENT_FILE_PLACEHOLDERS: Record<AgentFileName, string> = {
-  "AGENTS.md": "How should this agent work? Priorities, rules, and habits.",
-  "SOUL.md": "Tone, personality, boundaries, and how it should sound.",
-  "IDENTITY.md": "Name, vibe, emoji, and a one-line identity.",
-  "USER.md": "How should it address you? Preferences and context.",
-  "TOOLS.md": "Local tool notes, conventions, and shortcuts.",
-  "HEARTBEAT.md": "A tiny checklist for periodic runs.",
-  "MEMORY.md": "Durable facts, decisions, and preferences to remember.",
+  "AGENTS.md": "Bu ajan nasıl çalışmalı? Öncelikler, kurallar ve alışkanlıklar.",
+  "SOUL.md": "Ton, kişilik, sınırlar ve nasıl konuşmalı.",
+  "IDENTITY.md": "İsim, karakter, emoji ve tek cümlelik kimlik.",
+  "USER.md": "Size nasıl hitap etmeli? Tercihler ve bağlam.",
+  "TOOLS.md": "Araç notları, gelenekler ve kısayollar.",
+  "HEARTBEAT.md": "Periyodik çalıştırma için küçük kontrol listesi.",
+  "MEMORY.md": "Hatırlanması gereken kalıcı bilgiler ve kararlar.",
 };
 
 export const createAgentFilesState = () =>

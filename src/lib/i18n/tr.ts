@@ -2,8 +2,11 @@ export const tr = {
   // ---- Gateway Connect Screen ----
   "connect.localDetected": "Yerel gateway port {port} üzerinde tespit edildi. Bağlanılıyor…",
   "connect.connectingRemote": "Uzak gateway'e bağlanılıyor…",
-  "connect.noLocalGateway": "Yerel gateway bulunamadı.",
+  "connect.noLocalGateway": "Gateway'e bağlı değil — aşağıdan bağlanın.",
+  "connect.noLocalGatewayError": "Yerel gateway'e bağlanılamadı (port {port}). Demo gateway çalışıyor mu?",
   "connect.notConnected": "Herhangi bir gateway'e bağlı değil.",
+  "connect.quickDemo": "Demo ile Başla",
+  "connect.quickDemoHint": "Demo gateway zaten çalışıyor — tek tıkla bağlanın.",
   "connect.copied": "Kopyalandı",
   "connect.copyFailed": "Komut kopyalanamadı.",
   "connect.pnpmHint": "Kaynak checkout'ta {command} kullanın.",

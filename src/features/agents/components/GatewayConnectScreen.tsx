@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Check, Copy, Eye, EyeOff } from "lucide-react";
+import { Check, Copy, Eye, EyeOff, Zap } from "lucide-react";
 import type { GatewayStatus } from "@/lib/gateway/GatewayClient";
 import { isLocalGatewayUrl } from "@/lib/gateway/local-gateway";
 import type { StudioGatewayAdapterType, StudioGatewaySettings } from "@/lib/studio/settings";
@@ -85,11 +85,14 @@ export const GatewayConnectScreen = ({
     if (status === "connecting") {
       return t("connect.connectingRemote");
     }
+    if (isLocal && error) {
+      return tReplace("connect.noLocalGatewayError", { port: localPort });
+    }
     if (isLocal) {
       return t("connect.noLocalGateway");
     }
     return t("connect.notConnected");
-  }, [isLocal, localPort, status]);
+  }, [error, isLocal, localPort, status]);
   const connectDisabled = status === "connecting";
   const connectLabel = connectDisabled ? t("connect.connecting") : t("connect.connect");
   const statusDotClass =
@@ -230,6 +233,27 @@ export const GatewayConnectScreen = ({
           <p className="text-sm font-semibold text-foreground">{statusCopy}</p>
         </div>
       </div>
+
+      {status !== "connected" && isLocal && selectedAdapterType === "builtin" ? (
+        <div className="ui-card border-amber-500/30 bg-amber-950/20 px-4 py-4 sm:px-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-amber-400/10">
+              <Zap className="h-5 w-5 text-amber-400" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-foreground">{t("connect.quickDemoHint")}</p>
+            </div>
+            <button
+              type="button"
+              className="ui-btn-primary shrink-0 px-5 py-2.5 text-xs font-semibold tracking-[0.05em]"
+              onClick={onConnect}
+              disabled={connectDisabled}
+            >
+              {connectDisabled ? t("connect.connecting") : t("connect.quickDemo")}
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       <div className="ui-card px-4 py-5 sm:px-6">
         <div>

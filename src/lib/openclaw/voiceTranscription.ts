@@ -65,7 +65,7 @@ export const sanitizeVoiceFileName = (
 export const buildVoiceTranscriptionErrorMessage = (
   decision: MediaUnderstandingDecision | null | undefined,
 ): string => {
-  if (!decision) return "OpenClaw did not return a transcript.";
+  if (!decision) return "Transkript alınamadı.";
   const outcome = decision.outcome?.trim() || "unknown";
   const reasons = (decision.attachments ?? [])
     .flatMap((attachment) => attachment.attempts ?? [])
@@ -74,15 +74,15 @@ export const buildVoiceTranscriptionErrorMessage = (
   const detail = reasons[0] ? ` ${reasons[0]}` : "";
   switch (outcome) {
     case "disabled":
-      return `OpenClaw audio transcription is disabled.${detail}`.trim();
+      return `Ses transkripsiyonu devre dışı.${detail}`.trim();
     case "no-attachment":
-      return "OpenClaw did not receive any audio to transcribe.";
+      return "Transkript için ses dosyası alınamadı.";
     case "scope-deny":
-      return `OpenClaw blocked audio transcription for this request.${detail}`.trim();
+      return `Bu istek için ses transkripsiyonu engellendi.${detail}`.trim();
     case "skipped":
-      return `OpenClaw skipped audio transcription.${detail}`.trim();
+      return `Ses transkripsiyonu atlandı.${detail}`.trim();
     default:
-      return `OpenClaw did not return a transcript.${detail}`.trim();
+      return `Transkript alınamadı.${detail}`.trim();
   }
 };
 

@@ -17,11 +17,11 @@ export async function POST(request: Request) {
     const body = (await request.json()) as VoiceReplyRequestBody;
     const text = typeof body.text === "string" ? body.text.replace(/\s+/g, " ").trim() : "";
     if (!text) {
-      return NextResponse.json({ error: "Voice reply text is required." }, { status: 400 });
+      return NextResponse.json({ error: "Sesli yanıt metni gerekli." }, { status: 400 });
     }
     if (text.length > MAX_REPLY_CHARS) {
       return NextResponse.json(
-        { error: `Voice reply text exceeds ${MAX_REPLY_CHARS} characters.` },
+        { error: `Sesli yanıt metni ${MAX_REPLY_CHARS} karakteri aşıyor.` },
         { status: 400 }
       );
     }
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     const message =
-      error instanceof Error ? error.message : "Failed to synthesize the voice reply.";
+      error instanceof Error ? error.message : "Sesli yanıt sentezlenemedi.";
     const status = message.includes("Missing ELEVENLABS_API_KEY") ? 503 : 500;
     return NextResponse.json({ error: message }, { status });
   }
