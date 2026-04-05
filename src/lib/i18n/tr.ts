@@ -116,6 +116,7 @@ export const tr = {
   "chat.introMsg4": "Bugün ne üzerinde çalışıyoruz?",
   "chat.introMsg5": "Buradayım ve hazırım. Plan nedir?",
   "chat.introFallback": "Bugün size nasıl yardımcı olabilirim?",
+  "chat.introExpertise": "Uzmanlık alanları",
   "chat.unknown": "Bilinmiyor",
   "chat.execApprovalRequired": "Yürütme onayı gerekli",
   "chat.hostLabel": "Sunucu: {host}",

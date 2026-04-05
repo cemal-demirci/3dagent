@@ -1,359 +1,345 @@
-# 3DAGENT — Cemal Claude Ofis
-
-AI ajanlarınız için 3D çalışma alanı.
-
-> Orijinal proje [iamlukethedev/Claw3D](https://github.com/iamlukethedev/Claw3D)'den fork edilmiştir. MIT lisansı altında dağıtılmaktadır.
-
 <p align="center">
-  <img src="docs/images/landing-page.png" alt="3DAgent Landing Page" width="100%" />
+  <img src="docs/images/landing-page.png" alt="3DAgent" width="100%" />
 </p>
 
-3DAgent, AI otomasyonunu görsel bir iş yerine dönüştürür — ajanlarınız paylaşımlı bir 3D ortamda birlikte çalışır, kod yazar, test eder ve görevleri yürütür.
+# 3DAgent — 3D AI Agent Workspace
 
-**AI ekibiniz için bir ofis.**
+AI ajanlariniz icin gercek zamanli 3D calisma ortami.
+Sesli komut, coklu ajan yonetimi, sirket kurma, kanban, marketplace ve PWA — hepsi tek workspace'te.
+
+> Fork: [iamlukethedev/Claw3D](https://github.com/iamlukethedev/Claw3D) | Lisans: MIT
 
 <p align="center">
   <img src="docs/images/office-main.png" alt="3DAgent 3D Ofis" width="100%" />
 </p>
 
-<p align="center">
-  <img src="docs/images/office-builder.png" alt="3DAgent Ofis Yapıcısı" width="100%" />
-</p>
-
 ---
 
-## Hızlı Başlangıç
-
-```bash
-git clone https://github.com/cemal-demirci/3dagent.git
-cd 3dagent
-npm install          # Sonunda "npm run setup çalıştırın" hatırlatması çıkar
-npm run setup        # İnteraktif kurulum wizard'ı
-npm run dev          # http://localhost:3000
-```
-
-`npm run setup` şunları otomatik halleder:
-- Node.js ve npm sürüm kontrolü
-- Claude CLI kurulum + OAuth giriş
-- Gemini CLI kontrolü + auth
-- `.env` dosyası oluşturma
-- API key girişi (opsiyonel — CLI zaten yetişiyor)
-- Demo gateway bağlantı testi
-
----
-
-## Orijinal Özellikler
+## Ozellikler
 
 ### 3D Retro Ofis
-- Ajanların masalarında çalıştığı, hareket ettiği paylaşımlı 3D ortam
-- Odalar, masalar, navigasyon, animasyonlar ve olay tabanlı aktivite ipuçları
-- Ofis düzeni builder'ı (`/office/builder`) ile özelleştirme
-- Isı haritası ve iz takibi
+- Ajanlarin masalarinda calistigi, hareket ettigi paylasimli 3D ortam
+- Odalar, masalar, navigasyon, animasyonlar ve olay tabanli aktivite ipuclari
+- Ofis duzeni builder'i (`/office/builder`) ile ozellestirme
+- Isi haritasi ve iz takibi
 
-### Ajan Yönetimi
-- Filo kenar çubuğundan ajan oluşturma, yapılandırma ve izleme
-- Gerçek zamanlı sohbet + komut onaylama
-- Oturum kontrolleri, yeni oturum başlatma
-- Avatar özelleştirme ve ajan düzenleme
-- Beyin dosyaları (personality, memory, tools) düzenleme
-- Ajan yetenekleri (skills) yönetimi
+### Turk Mitolojisi Temali AI Ekibi
+6 hazir ajan, Turk mitolojisinden ilham alan isim ve kisiliklerle:
+
+| Ajan | Rol | Vibe |
+|------|-----|------|
+| Asena | Bas Gelistirici | Kod yazan disi kurt |
+| Umay | UX/Tasarim | Kullaniciyi koruyan ana tanrica |
+| Kayra | DevOps & Altyapi | Dunyayi duzenleyen yaratici tanri |
+| Erlik | QA & Guvenlik | Yeraltinin bekci tanrisi |
+| Tulpar | Pazarlama & Icerik | Kanatlari ruzgar olan savaş ati |
+| Tengri | Proje Yonetimi | Gokyuzu tanrisi, buyuk resmi goren |
+
+Her ajanin kendi tanitim ekrani, uzmanlik alanlari, kisilik dosyalari (SOUL.md, IDENTITY.md, AGENTS.md) ve 3D avatari vardir.
+
+### Sirket Kurma (Company Builder)
+- Tek bir istemden AI tabanli sirket olusturma
+- Turkce isim, rol, sorumluluk ve kisilik otomatik uretimi
+- Organizasyon semasi onizleme
+- Rol ekleme/cikarma/duzenleme
+- Mevcut ajanlari otomatik degistirme
+
+### Ajan Yonetimi
+- Filo kenar cubugundan ajan olusturma, yapilandirma ve izleme
+- Gercek zamanli sohbet + komut onaylama
+- Ajan tanitim ekrani: rol, uzmanlik alanlari, kisilik ozeti
+- Avatar ozellestirme ve beyin dosyalari duzenleme
+- Ajan yetenekleri (skills) yonetimi
 
 ### Gateway Mimarisi
-- **OpenClaw** — Resmi gateway protokolü
-- **Hermes** — WebSocket adaptörü ile alternatif runtime
-- **Demo** — Gerçek backend olmadan ofisi keşfetmek için mock gateway
-- **Custom** — Kendi orchestrator/runtime'ınızı bağlayın
-- Same-origin WebSocket proxy (tarayıcı → Studio → Gateway)
+- **OpenClaw** — Resmi gateway protokolu
+- **Hermes** — WebSocket adaptoru ile alternatif runtime
+- **Demo** — Gercek backend olmadan ofisi kesfetmek icin mock gateway
+- **Custom** — Kendi orchestrator/runtime'inizi baglayin
+- Same-origin WebSocket proxy (tarayici → Studio → Gateway)
 
-### İmersif Ekranlar
-- **GitHub Kod İnceleme Odası** — PR inceleme, diff görüntüleme, satır içi yorum
-- **Kanban Panosu** — Sürükle-bırak görev yönetimi, ajan atama, playbook bağlama
-- **ATM / Hazine** — Token kullanım defteri, ajan harcamaları, bütçe uyarıları
-- **Telefon Kabini** — Ajanlarla sesli/yazılı iletişim
-- **Mesajlaşma Kabini** — SMS tarzı mesajlaşma
-- **Kahvehane** — Test ve sohbet köşesi
-- **Kapalıçarşı** — Beceri pazarı (marketplace)
-
-### HQ Karargah Panelleri
-- **Inbox** — Gelen bildirimler ve onay istekleri
-- **Geçmiş** — Oturum geçmişi ve loglar
-- **Analitik** — Kullanım istatistikleri
-- **Playbook'lar** — Otomatik iş akışları
-- **Görev Panosu** — Kanban tarzı görev takibi
-
-### Çoklu Ofis Desteği
-- Uzak ofis bağlantısı (presence endpoint veya OpenClaw gateway)
-- Salt okunur uzak ajan görüntüleme
-- Etiket ve kaynak türü yapılandırması
-
-### Ses Desteği
-- ElevenLabs TTS ile sesli ajan yanıtları
-- Ses seçimi ve hız ayarı
-- Sesli mesaj kaydı
-
-### Kanban Görev Panosu
+### Imersif Ekranlar
 
 <p align="center">
   <img src="docs/images/kanban-board.png" alt="3DAgent Kanban Panosu" width="100%" />
 </p>
 
+| Ekran | Aciklama |
+|-------|----------|
+| GitHub Kod Inceleme Odasi | PR inceleme, diff, satirici yorum |
+| Kanban Panosu | Surukle-birak gorev yonetimi, ajan atama |
+| ATM / Hazine | Token kullanim defteri, butce uyarilari |
+| Telefon Kabini | Sesli/yazili ajan iletisimi |
+| Mesajlasma Kabini | SMS tarzi mesajlasma |
+| Kahvehane | Test ve sohbet kosesi |
+| Kapalicarsi | Beceri pazari (marketplace) |
+
+### HQ Karargah Panelleri
+
+<p align="center">
+  <img src="docs/images/settings-panel.png" alt="3DAgent Karargah" width="100%" />
+</p>
+
+- **Inbox** — Gelen bildirimler ve onay istekleri
+- **Gecmis** — Oturum gecmisi ve denetim gunlugu
+- **Analitik** — Kullanim, harcama ve performans metrikleri
+- **Playbook'lar** — Otomatik is akislari ve zamanlanmis gorevler
+- **Gorev Panosu** — Kanban tarzi gorev takibi
+
+### Ses Destegi
+- **Groq Whisper** ile sesli mesaj transkripsiyon
+- **ElevenLabs TTS** ile sesli ajan yanitlari
+- Ses secimi ve hiz ayari
+- Turkce hata mesajlari
+
+### PWA & Cevrimdisi Destek
+- Service worker (Serwist) ile cevrimdisi calisma
+- Guncelleme bildirimi banner'i
+- Uygulamayi ana ekrana ekleme (standalone)
+- Otomatik ikon uretimi (192x192, 512x512)
+
+### Turkce Lokalizasyon
+- 1300+ ceviri anahtari
+- Tum UI bilesenleri, onboarding, ayarlar, paneller Turkce
+- Sirket kurma, ajan kisilikleri, hata mesajlari Turkce
+- AI prompt'lari Turkce icerik uretir
+
+### Coklu Ofis Destegi
+- Uzak ofis baglantisi (presence endpoint veya OpenClaw gateway)
+- Salt okunur uzak ajan goruntuleme
+- Etiket ve kaynak turu yapilandirmasi
+
 ### Spotify Jukebox (SOUNDCLAW)
-- Ofiste müzik çalma
+- Ofiste muzik calma
 - OAuth entegrasyonu
 
 ---
 
-## Karargah ve Yetenek Mağazası
+## Hizli Baslangic
 
-<p align="center">
-  <img src="docs/images/settings-panel.png" alt="3DAgent Karargah — Ajan Sonuçları ve Yönetim" width="100%" />
-</p>
+### 1. Kaynak Koddan
 
-<p align="center">
-  <img src="docs/images/settings-voice.png" alt="3DAgent Yetenek Mağazası — Skill Kurulumu" width="100%" />
-</p>
+```bash
+git clone https://github.com/cemal-demirci/3dagent.git
+cd 3dagent
+npm install
+npm run setup        # Interaktif kurulum wizard'i
+npm run dev          # http://localhost:3000
+```
 
----
+`npm run setup` sunlari otomatik halleder:
+- Node.js ve npm surum kontrolu
+- Claude CLI kurulum + OAuth giris
+- Gemini CLI kontrolu + auth
+- `.env` dosyasi olusturma
+- API key girisi (opsiyonel)
+- Demo gateway baglanti testi
 
-## Eklenen Özellikler (Bu Sürüm)
+### 2. Docker ile
 
-### Otomatik Kurulum Wizard'ı
-- `npm run setup` — 6 adımlı renkli terminal wizard
-- Claude CLI otomatik kurulum + OAuth login
-- Gemini CLI kontrolü + Google auth
-- `.env` otomatik oluşturma
-- API key girişi (opsiyonel)
-- Gateway bağlantı testi
-- `npm install` sonrası hatırlatma mesajı
+```bash
+docker compose up -d
+# http://localhost:3000
+```
 
-### Türkçe Lokalizasyon
-- 1260+ çeviri anahtarı
-- Tüm UI bileşenleri, onboarding, ayarlar, paneller Türkçe
+### 3. Demo Modu (Backend Gerekmez)
 
-### cemal.cloud Branding
-- Sayfa başlığı: "3DAgent — by Cemal Demirci"
-- Loading ekranında 3DAGENT + cemal.cloud
-- Onboarding wizard'da branding başlık ve footer
-- Hakkında modalı (versiyon, geliştirici, teknolojiler, lisans)
-- Settings panelinde "Hakkında" bölümü
-
-### CLI/SDK Durum Badge'leri
-- Gateway bağlantısında Claude Agent SDK durumu
-- Gemini CLI auth durumu
-- CLI aktifse API key formu yerine "Zaten yapılandırılmış" badge'i
-- CLI yoksa sarı uyarı + yönlendirme
-
-### Erişim Kapısı Ekranı (Access Gate)
-- `STUDIO_ACCESS_TOKEN` ayarlıyken branded login formu
-- Token girişi → cookie ayarla → otomatik yenileme
-- Hatalı token'da görsel hata mesajı
-- cemal.cloud branding
-
-### Güvenlik Başlıkları
-- X-Content-Type-Options, X-Frame-Options, X-XSS-Protection
-- Referrer-Policy, Permissions-Policy
-- HTTPS üzerinde HSTS (Strict-Transport-Security)
-- Yapılandırılabilir CORS desteği (preflight dahil)
-
-### Rate Limiting
-- IP bazlı kayan pencere (sliding window) hız sınırlayıcı
-- Sadece `/api/*` route'larını sınırlar, statik dosya ve WebSocket'i atlar
-- `RATE_LIMIT_MAX` ve `RATE_LIMIT_WINDOW_MS` ile yapılandırma
-- `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset` başlıkları
-
-### Yapılandırılmış Loglama (Structured Logging)
-- JSON formatında stdout/stderr çıktı
-- `LOG_LEVEL` ile seviye kontrolü (debug, info, warn, error)
-- Sıfır bağımlılık — sadece Node.js built-in
-
-### Health Check
-- `/health` endpoint'i — durum, uptime, sürüm bilgisi
-- Docker HEALTHCHECK ile entegre
-
-### Docker Desteği
-- Multi-stage Dockerfile (builder → runner)
-- Non-root kullanıcı (`agent3d`, uid 1001)
-- docker-compose.yml ile tek komutta çalıştırma
-- Otomatik health check
-
-### CI/CD (GitHub Actions)
-- Push ve PR'da otomatik çalışır (main branch)
-- Node.js 20 ve 22 matris testi
-- Lint → Typecheck → Test → Build pipeline'ı
-
-### Masaüstü Bildirimleri
-- Tarayıcı Notification API entegrasyonu
-- İzin isteme ve durum kontrolü
-- Tab odakta değilken bildirim gönderme
-- Settings panelinden yapılandırma
-
-### Dışa/İçe Aktarma (Export/Import)
-- `/api/studio/export` — Tüm ayarları JSON olarak indir
-- `/api/studio/import` — JSON dosyasından ayarları yükle
-- Settings panelinden tek tıkla erişim
-
-### PWA Desteği
-- `manifest.json` — Standalone uygulama modu
-- SVG favicon (C3 logosu)
-- Open Graph ve Twitter meta etiketleri
-- Tema rengi: amber (#fbbf24)
-
-### API Dokümantasyonu
-- Tüm endpoint'ler belgelenmiş → [`API.md`](API.md)
+```bash
+npm run dev
+# Demo backend otomatik baslar (port 18789)
+# Baglanti ekraninda "Demo ile Basla" butonuna tiklayin
+```
 
 ---
 
-## Teknik Altyapı
+## Teknik Altyapi
 
 | Katman | Teknoloji |
 |--------|-----------|
-| Frontend | Next.js 16, React 19, TypeScript |
+| Frontend | Next.js 16, React 19, TypeScript 5 |
 | 3D Grafik | Three.js, React Three Fiber, Drei |
-| Oyun Motoru | Phaser (builder ve interaktif yüzeyler) |
+| Oyun Motoru | Phaser (builder ve interaktif yuzeyler) |
 | Stil | Tailwind CSS 4 |
 | AI SDK'lar | Claude Agent SDK, Google Gemini, OpenAI |
-| Gerçek Zamanlı | WebSocket (ws) |
-| Ses | ElevenLabs TTS |
+| Gercek Zamanli | WebSocket (ws) |
+| Ses | Groq Whisper (STT), ElevenLabs (TTS) |
+| PWA | Serwist (service worker) |
 | Test | Vitest (unit), Playwright (e2e) |
-| Sunucu | Node.js custom server (HTTP/HTTPS + WebSocket proxy) |
+| Sunucu | Node.js custom server (HTTP/HTTPS + WS proxy) |
+| CI/CD | GitHub Actions (lint → typecheck → test → build) |
 
 ---
 
-## Proje Yapısı
+## Proje Yapisi
 
 ```
 3dagent/
 ├── server/                    # Node.js backend
 │   ├── index.js               # Ana sunucu (HTTP/HTTPS + Next.js)
-│   ├── access-gate.js         # Token kimlik doğrulama
+│   ├── access-gate.js         # Token kimlik dogrulama
 │   ├── gateway-proxy.js       # WebSocket proxy
-│   ├── rate-limiter.js        # IP bazlı hız sınırlayıcı
-│   ├── security-headers.js    # Güvenlik başlıkları middleware
-│   ├── logger.js              # Yapılandırılmış JSON logger
-│   ├── demo-gateway-adapter.js # Demo gateway
-│   └── hermes-gateway-adapter.js # Hermes adaptörü
+│   ├─�� rate-limiter.js        # IP bazli hiz sinirlandirici
+│   ├── security-headers.js    # Guvenlik basliklari
+│   ├── logger.js              # JSON logger
+│   ├── demo-gateway-adapter.js # Demo gateway (mock AI)
+│   └── hermes-gateway-adapter.js # Hermes adaptoru
 │
 ├── scripts/
-│   ├── setup.js               # Otomatik kurulum wizard'ı
-│   └── postinstall-hint.js    # npm install sonrası ipucu
+│   ├── setup.js               # Otomatik kurulum wizard'i
+│   └── generate-pwa-icons.mjs # PWA ikon uretici
 │
 ├── src/
 │   ├── app/                   # Next.js App Router
-│   │   ├── layout.tsx         # Root layout + metadata
-│   │   ├── office/            # Ana ofis arayüzü
-│   │   └── api/               # API route'ları
+│   │   ├── layout.tsx         # Root layout + metadata + PWA
+│   │   ├── page.tsx           # Landing sayfasi
+│   │   ├── office/            # Ana ofis arayuzu
+│   │   ├── offline/           # Cevrimdisi fallback
+│   │   ├── sw.ts              # Service worker kaynagi
+│   │   └── api/               # API route'lari
 │   │
 │   ├── features/
-│   │   ├── office/            # Ofis UI + paneller
-│   │   ├── agents/            # Ajan bileşenleri + state
-│   │   ├── onboarding/        # Başlangıç wizard'ı
-│   │   ├── retro-office/      # 3D retro ofis
-│   │   ├── company-builder/   # Şirket oluşturucu
-│   │   └── spotify-jukebox/   # Müzik çalar
+│   │   ├── agents/            # Ajan bilesenleri, state, islemler
+│   │   ├── office/            # Ofis UI, paneller, imersif ekranlar
+│   │   ├── retro-office/      # 3D retro ofis motoru
+│   │   ├── company-builder/   # Sirket olusturucu
+│   │   ├── onboarding/        # Baslangic wizard'i
+│   │   ├── pwa/               # PWA guncelleme banner'i
+│   │   └── spotify-jukebox/   # Muzik calar
 │   │
 │   └── lib/
-│       ├── i18n/              # Türkçe çeviriler (1280+ key)
-│       ├── gateway/           # Gateway iletişimi
-│       ├── studio/            # Studio ayarları
-│       ├── notifications.ts   # Masaüstü bildirimleri
-│       └── voiceReply/        # ElevenLabs TTS
+│       ├── i18n/              # Turkce ceviriler (1300+ key)
+│       ├── gateway/           # Gateway iletisimi
+│       ├── agents/            # Preset ajanlar, kisilik dosyalari
+│       ├── studio/            # Studio ayarlari
+│       ├── voiceReply/        # ElevenLabs TTS
+│       ���── openclaw/          # Ses transkripsiyon (Groq Whisper)
+│       └── notifications.ts   # Masaustu bildirimleri
 │
-├── tests/unit/                # Unit testler (Vitest)
-├── public/
-│   ├── favicon.svg            # SVG favicon
-│   └── manifest.json          # PWA manifest
-├── .github/workflows/ci.yml   # CI/CD pipeline
+├── tests/                     # Unit + E2E testler
+├── docs/                      # Mimari, API, rehber dokumanlari
+├── public/                    # Statik dosyalar, PWA manifest, ikonlar
+├── .github/workflows/         # CI/CD pipeline
 ├── Dockerfile                 # Multi-stage Docker build
 ├── docker-compose.yml         # Docker Compose
-├── API.md                     # API dokümantasyonu
-├── .env.example               # Ortam değişkeni şablonu
 └── package.json               # v0.1.4
 ```
 
 ---
 
-## Ortam Değişkenleri
+## Ortam Degiskenleri
 
-| Değişken | Açıklama |
-|----------|----------|
-| `NEXT_PUBLIC_GATEWAY_URL` | Varsayılan gateway URL (build-time) |
-| `DEBUG` | OpenClaw konsolunu göster (varsayılan: true) |
-| `PORT` / `HOST` | Sunucu adresi |
-| `STUDIO_ACCESS_TOKEN` | Uzak erişim için token koruması |
-| `ANTHROPIC_API_KEY` | Claude API anahtarı |
-| `GEMINI_API_KEY` | Gemini API anahtarı |
-| `OPENAI_API_KEY` | OpenAI API anahtarı |
-| `ELEVENLABS_API_KEY` | Sesli yanıt için ElevenLabs |
-| `RATE_LIMIT_MAX` | Pencere başına max istek (varsayılan: 100) |
-| `RATE_LIMIT_WINDOW_MS` | Pencere süresi ms (varsayılan: 60000) |
-| `LOG_LEVEL` | Log seviyesi: debug, info, warn, error (varsayılan: info) |
-| `CORS_ORIGIN` | CORS izin verilen origin (boşsa CORS kapalı) |
+| Degisken | Aciklama | Varsayilan |
+|----------|----------|------------|
+| `PORT` | Sunucu portu | 3000 |
+| `HOST` | Sunucu adresi | 0.0.0.0 |
+| `DEBUG` | OpenClaw konsol | true |
+| `STUDIO_ACCESS_TOKEN` | Uzak erisim tokeni | — |
+| `DEMO_ADAPTER_PORT` | Demo gateway portu | 18789 |
+| `ANTHROPIC_API_KEY` | Claude API | — |
+| `GEMINI_API_KEY` | Gemini API | — |
+| `OPENAI_API_KEY` | OpenAI API | — |
+| `GROQ_API_KEY` | Groq Whisper + LLM | — |
+| `ELEVENLABS_API_KEY` | ElevenLabs TTS | — |
+| `ELEVENLABS_VOICE_ID` | Ses secimi | — |
+| `RATE_LIMIT_MAX` | Pencere basina max istek | 120 |
+| `RATE_LIMIT_WINDOW_MS` | Pencere suresi (ms) | 60000 |
+| `LOG_LEVEL` | Log seviyesi | info |
+| `CORS_ORIGIN` | CORS izni | — |
 
-Tüm değişkenler için: [`.env.example`](.env.example)
+Tum degiskenler: [`.env.example`](.env.example)
 
 ---
 
 ## Komutlar
 
-| Komut | Açıklama |
+| Komut | Aciklama |
 |-------|----------|
-| `npm run setup` | İnteraktif kurulum wizard'ı |
-| `npm run dev` | Geliştirme sunucusu |
+| `npm run setup` | Interaktif kurulum wizard'i |
+| `npm run dev` | Gelistirme sunucusu (demo gateway dahil) |
 | `npm run build` | Production build |
 | `npm run start` | Production sunucu |
-| `npm run demo-gateway` | Demo gateway başlat |
-| `npm run hermes-adapter` | Hermes adaptörünü başlat |
+| `npm run demo-gateway` | Bagimsiz demo gateway |
+| `npm run hermes-adapter` | Hermes adaptorunu baslat |
+| `npm run generate:pwa-icons` | PWA ikonlarini uret |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | TypeScript kontrol |
 | `npm run test` | Unit testler (Vitest) |
 | `npm run e2e` | E2E testler (Playwright) |
-| `docker compose up -d` | Docker ile çalıştır |
+| `docker compose up -d` | Docker ile calistir |
 
 ---
 
-## Bağlantı Senaryoları
+## Baglanti Senaryolari
 
 ### Yerel Gateway + Yerel Studio
 ```bash
 npm run dev
-# Tarayıcıda: http://localhost:3000
-# Gateway URL: ws://localhost:18789
+# http://localhost:3000 → ws://localhost:18789
 ```
 
-### Uzak Gateway + Yerel Studio (Tailscale)
+### Uzak Gateway (Tailscale)
 ```bash
 # Gateway host'ta:
 tailscale serve --yes --bg --https 443 http://127.0.0.1:18789
 # Studio'da URL: wss://<gateway-host>.ts.net
 ```
 
-### Uzak Gateway + Yerel Studio (SSH)
+### Uzak Gateway (SSH Tunel)
 ```bash
 ssh -L 18789:127.0.0.1:18789 user@<gateway-host>
 # Studio'da URL: ws://localhost:18789
 ```
 
-### Demo Modu (Backend Gerekmez)
+### Demo Modu
 ```bash
 npm run dev
-# Demo backend otomatik başlar
-# Studio'da "Demo backend" seçin
+# Demo backend otomatik baslar, "Demo ile Basla" tiklayin
 ```
+
+---
+
+## Guvenlik
+
+- Guvenlik basliklari (X-Content-Type-Options, X-Frame-Options, HSTS, vb.)
+- IP bazli rate limiting
+- Yapilandirilabilir CORS
+- Token tabanli erisim kapisi
+- Non-root Docker kullanici
+- Gateway tokenlari sunucu tarafinda — tarayicida saklanmaz
 
 ---
 
 ## Sorun Giderme
 
-| Sorun | Çözüm |
+| Sorun | Cozum |
 |-------|-------|
-| Connect başarısız | Gateway URL ve token'ı kontrol edin |
-| `EPROTO` hatası | `wss://` yerine `ws://` deneyin (TLS olmayan endpoint) |
-| `INVALID_REQUEST` | Gateway çok eski — güncelleyin veya demo kullanın |
-| `401 Studio access token` | `STUDIO_ACCESS_TOKEN` ayarlı, cookie eksik |
-| CLI bulunamadı | `npm run setup` çalıştırın |
+| Baglanti basarisiz | Gateway URL ve token'i kontrol edin |
+| `EPROTO` hatasi | `wss://` yerine `ws://` deneyin |
+| `INVALID_REQUEST` | Gateway eski — guncelleyin veya demo kullanin |
+| `401 Studio access token` | `STUDIO_ACCESS_TOKEN` ayarli, cookie eksik |
+| CLI bulunamadi | `npm run setup` calistirin |
+| GROQ API key hatasi | Ayarlar → AI Anahtarlari'ndan key ekleyin |
+| Kanban acilmiyor | Demo gateway baglantisinizi kontrol edin |
+
+---
+
+## Dokumantasyon
+
+| Dosya | Icerik |
+|-------|--------|
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Sistem mimarisi ve tasarim kararlari |
+| [API.md](API.md) | API endpoint dokumantasyonu |
+| [VISION.md](VISION.md) | Proje vizyonu ve hedefleri |
+| [ROADMAP.md](ROADMAP.md) | Gelistirme yol haritasi |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Katki rehberi |
+| [CREATING_SKILLS.md](CREATING_SKILLS.md) | Yetenek olusturma rehberi |
+| [SECURITY.md](SECURITY.md) | Guvenlik politikasi |
+| [CODE_DOCUMENTATION.md](CODE_DOCUMENTATION.md) | Kod haritasi ve okuma sirasi |
 
 ---
 
 ## Lisans
 
-MIT — Orijinal proje [iamlukethedev/Claw3D](https://github.com/iamlukethedev/Claw3D)'den fork edilmiştir.
+MIT — Orijinal proje [iamlukethedev/Claw3D](https://github.com/iamlukethedev/Claw3D)'den fork edilmistir.
+
+Gelistirici: [Cemal Demirci](https://cemal.cloud) | [GitHub](https://github.com/cemal-demirci)

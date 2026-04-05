@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://3d.cemal.cloud"),
   title: "3DAgent — 3D AI Agent Workspace",
   description:
-    "AI ajanlarınız için gerçek zamanlı 3D çalışma ortamı. Sesli komut, multi-agent yönetimi, marketplace ve kanban — hepsi tek workspace'te.",
+    "AI ajanlarınız için gerçek zamanlı 3D çalışma ortamı. Türk mitolojisi temalı AI ekibi, sesli komut, şirket kurma, kanban, marketplace ve PWA — hepsi tek workspace'te.",
   icons: {
     icon: "/favicon.svg",
   },
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "3DAgent — 3D AI Agent Workspace",
     description:
-      "AI ajanlarınız için gerçek zamanlı 3D çalışma ortamı. Sesli komut, multi-agent yönetimi, marketplace ve kanban.",
+      "AI ajanlarınız için gerçek zamanlı 3D çalışma ortamı. Türk mitolojisi temalı AI ekibi, sesli komut, şirket kurma, kanban ve PWA.",
     siteName: "3DAgent",
     type: "website",
     url: "https://3d.cemal.cloud",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "3DAgent — 3D AI Agent Workspace",
     description:
-      "AI ajanlarınız için gerçek zamanlı 3D çalışma ortamı. Sesli komut, multi-agent, marketplace ve kanban.",
+      "AI ajanlarınız için gerçek zamanlı 3D çalışma ortamı. Türk mitolojisi temalı AI ekibi, sesli komut, şirket kurma ve kanban.",
   },
 };
 

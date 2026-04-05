@@ -13,7 +13,8 @@ import {
 import type { AgentState as AgentRecord } from "@/features/agents/state/store";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Check, ChevronRight, Clock, Mic, Pencil, Square, Trash2, X } from "lucide-react";
+import { Check, ChevronRight, Clock, Mic, Pencil, Sparkles, Square, Trash2, X } from "lucide-react";
+import { PRESET_AGENTS } from "@/lib/agents/presetAgents";
 import type { GatewayModelChoice } from "@/lib/gateway/models";
 import type { AgentAvatarProfile } from "@/lib/avatars/profile";
 import { rewriteMediaLinesToMarkdown } from "@/lib/text/media-markdown";
@@ -72,6 +73,35 @@ const stableStringHash = (value: string): number => {
     hash = (hash * 31 + value.charCodeAt(i)) >>> 0;
   }
   return hash;
+};
+
+type PresetIntroInfo = {
+  role: string;
+  emoji: string;
+  vibe: string;
+  expertise: string[];
+};
+
+const extractPresetIntroInfo = (agentName: string): PresetIntroInfo | null => {
+  const preset = PRESET_AGENTS.find(
+    (entry) => entry.name.toLowerCase() === agentName.toLowerCase(),
+  );
+  if (!preset) return null;
+  const soulContent = preset.files["SOUL.md"] ?? "";
+  const expertiseSection = soulContent.match(/## Uzmanlık\n([\s\S]*?)(?=\n##|$)/);
+  const expertise = expertiseSection
+    ? expertiseSection[1]
+        .split("\n")
+        .map((line) => line.replace(/^[-*]\s*/, "").trim())
+        .filter((line) => line.length > 0)
+        .slice(0, 4)
+    : [];
+  return {
+    role: preset.role,
+    emoji: preset.emoji,
+    vibe: preset.vibe,
+    expertise,
+  };
 };
 
 const resolveEmptyChatIntroMessage = (agentId: string, sessionEpoch: number | undefined): string => {
@@ -525,6 +555,8 @@ const AssistantIntroCard = memo(function AssistantIntroCard({
   name: string;
   title: string;
 }) {
+  const presetInfo = useMemo(() => extractPresetIntroInfo(name), [name]);
+
   return (
     <div className="w-full self-start">
       <div className={`relative w-full ${ASSISTANT_MAX_WIDTH_DEFAULT_CLASS} ${ASSISTANT_GUTTER_CLASS}`}>
@@ -543,7 +575,40 @@ const AssistantIntroCard = memo(function AssistantIntroCard({
           </div>
         </div>
         <div className="ui-chat-assistant-card mt-2">
-          <div className="text-[14px] leading-[1.65] text-foreground">{title}</div>
+          {presetInfo ? (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">{presetInfo.emoji}</span>
+                <span className="text-xs font-semibold uppercase tracking-[0.1em] text-amber-400/90">
+                  {presetInfo.role}
+                </span>
+              </div>
+              <div className="text-[13px] italic leading-relaxed text-muted-foreground">
+                {presetInfo.vibe}
+              </div>
+              {presetInfo.expertise.length > 0 ? (
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-foreground/50">
+                    <Sparkles className="h-3 w-3" />
+                    {t("chat.introExpertise")}
+                  </div>
+                  <ul className="space-y-1">
+                    {presetInfo.expertise.map((item) => (
+                      <li key={item} className="text-[12px] leading-relaxed text-foreground/75">
+                        <span className="mr-1.5 text-amber-400/60">›</span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+              <div className="border-t border-border/30 pt-2 text-[14px] leading-[1.65] text-foreground">
+                {title}
+              </div>
+            </div>
+          ) : (
+            <div className="text-[14px] leading-[1.65] text-foreground">{title}</div>
+          )}
           <div className="mt-2 font-mono text-[10px] tracking-[0.03em] text-muted-foreground/80">
             {t("chat.tryDescribing")}
           </div>

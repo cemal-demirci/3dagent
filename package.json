@@ -1,7 +1,7 @@
 {
   "name": "3dagent",
   "version": "0.1.4",
-  "description": "Cemal Claude Ofis — 3D AI Agent Office",
+  "description": "3DAgent — AI ajanlariniz icin gercek zamanli 3D calisma ortami",
   "private": true,
   "license": "MIT",
   "scripts": {

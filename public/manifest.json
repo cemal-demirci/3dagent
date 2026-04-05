@@ -1,7 +1,7 @@
 {
   "name": "3DAgent — by Cemal Demirci",
   "short_name": "3DAgent",
-  "description": "AI agent workspace — cemal.cloud",
+  "description": "AI ajanlariniz icin gercek zamanli 3D calisma ortami. Sesli komut, coklu ajan yonetimi, sirket kurma ve kanban.",
   "start_url": "/office",
   "display": "standalone",
   "background_color": "#0a0a0a",
