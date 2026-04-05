@@ -476,7 +476,7 @@ async function streamClaudeAgentReply(agent, history, userMessage, abortSignal, 
       options: {
         systemPrompt,
         model: "claude-sonnet-4-20250514",
-        maxTurns: 1,
+        maxTurns: 5,
         abortController,
         allowedTools: [],
       },
