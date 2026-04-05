@@ -496,4 +496,4 @@ npm run dev
 
 MIT — Orijinal proje [iamlukethedev/Claw3D](https://github.com/iamlukethedev/Claw3D)'den fork edilmiştir.
 
-Geliştirici: [Cemal Demirci]([https://cemal.cloud](https://www.linkedin.com/in/cemaldemirci/)) | [GitHub](https://github.com/cemal-demirci)
+Geliştirici: [Cemal Demirci]([https://cemal.cloud](https://www.linkedin.com/in/cemaldemirci) | [GitHub](https://github.com/cemal-demirci)
