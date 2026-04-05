@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/landing-page.png" alt="3DAgent" width="100%" />
+  <img src="docs/images/landing-page.png" alt="3DAgent Landing" width="100%" />
 </p>
 
 # 3DAgent — 3D AI Agent Workspace
@@ -22,6 +22,8 @@ Sesli komut, coklu ajan yonetimi, sirket kurma, kanban, marketplace ve PWA — h
 - Odalar, masalar, navigasyon, animasyonlar ve olay tabanli aktivite ipuclari
 - Ofis duzeni builder'i (`/office/builder`) ile ozellestirme
 - Isi haritasi ve iz takibi
+- Ataturk portresi (altin cerceveli, spot isikli)
+- Turk bayragi direği
 
 ### Turk Mitolojisi Temali AI Ekibi
 6 hazir ajan, Turk mitolojisinden ilham alan isim ve kisiliklerle:
@@ -32,7 +34,7 @@ Sesli komut, coklu ajan yonetimi, sirket kurma, kanban, marketplace ve PWA — h
 | Umay | UX/Tasarim | Kullaniciyi koruyan ana tanrica |
 | Kayra | DevOps & Altyapi | Dunyayi duzenleyen yaratici tanri |
 | Erlik | QA & Guvenlik | Yeraltinin bekci tanrisi |
-| Tulpar | Pazarlama & Icerik | Kanatlari ruzgar olan savaş ati |
+| Tulpar | Pazarlama & Icerik | Kanatlari ruzgar olan savas ati |
 | Tengri | Proje Yonetimi | Gokyuzu tanrisi, buyuk resmi goren |
 
 Her ajanin kendi tanitim ekrani, uzmanlik alanlari, kisilik dosyalari (SOUL.md, IDENTITY.md, AGENTS.md) ve 3D avatari vardir.
@@ -80,11 +82,42 @@ Her ajanin kendi tanitim ekrani, uzmanlik alanlari, kisilik dosyalari (SOUL.md, 
   <img src="docs/images/settings-panel.png" alt="3DAgent Karargah" width="100%" />
 </p>
 
-- **Inbox** — Gelen bildirimler ve onay istekleri
+- **Gelen Kutusu** — Bildirimler ve onay istekleri
 - **Gecmis** — Oturum gecmisi ve denetim gunlugu
-- **Analitik** — Kullanim, harcama ve performans metrikleri
+- **Kanban** — Gorev yonetimi panosu
 - **Playbook'lar** — Otomatik is akislari ve zamanlanmis gorevler
-- **Gorev Panosu** — Kanban tarzi gorev takibi
+- **Gorev Kuyrugu** — Ajanlar arasi gorev atama ve takibi
+- **Hafiza Duvari** — Ajanlar arasi paylasimli not sistemi
+- **Analitik** — Kullanim, harcama ve performans metrikleri
+
+### Hafiza Duvari (Memory Wall)
+
+<p align="center">
+  <img src="docs/images/memory-wall.png" alt="3DAgent Hafiza Duvari" width="100%" />
+</p>
+
+- Ajanlar arasi paylasimli post-it not sistemi
+- 5 renk secenegi ile gorsel kategorizasyon
+- Yazar ismi ve zaman damgasi
+- localStorage ile kalici depolama
+
+### Gorev Kuyrugu (Task Queue)
+
+<p align="center">
+  <img src="docs/images/task-queue.png" alt="3DAgent Gorev Kuyrugu" width="100%" />
+</p>
+
+- Ajanlar arasi gorev atama sistemi
+- 4 oncelik seviyesi (dusuk, normal, yuksek, acil)
+- 3 durum takibi (beklemede, devam ediyor, tamamlandi)
+- 6 preset ajan arasinda gorev yonlendirme
+- Filtreleme ve localStorage kaliciligi
+
+### Guvenlik (SafeSkillScanner)
+- Ajan komutlarini regex tabanli guvenlik taramasi
+- 20 kural: dosya sistemi, ag, kimlik bilgileri, yetki yukseltme
+- Tehlikeli komutlar engellenir, uyarilar bildirilir
+- `rm -rf /`, fork bomb, `curl | bash` gibi pattern'ler yakalanir
 
 ### Ses Destegi
 - **Groq Whisper** ile sesli mesaj transkripsiyon
@@ -178,7 +211,7 @@ npm run dev
 │   ├── index.js               # Ana sunucu (HTTP/HTTPS + Next.js)
 │   ├── access-gate.js         # Token kimlik dogrulama
 │   ├── gateway-proxy.js       # WebSocket proxy
-│   ├─�� rate-limiter.js        # IP bazli hiz sinirlandirici
+│   ├── rate-limiter.js        # IP bazli hiz sinirlandirici
 │   ├── security-headers.js    # Guvenlik basliklari
 │   ├── logger.js              # JSON logger
 │   ├── demo-gateway-adapter.js # Demo gateway (mock AI)
@@ -186,7 +219,8 @@ npm run dev
 │
 ├── scripts/
 │   ├── setup.js               # Otomatik kurulum wizard'i
-│   └── generate-pwa-icons.mjs # PWA ikon uretici
+│   ├── generate-pwa-icons.mjs # PWA ikon uretici
+│   └── take-screenshots.mjs   # README ekran goruntusu uretici
 │
 ├── src/
 │   ├── app/                   # Next.js App Router
@@ -200,6 +234,9 @@ npm run dev
 │   ├── features/
 │   │   ├── agents/            # Ajan bilesenleri, state, islemler
 │   │   ├── office/            # Ofis UI, paneller, imersif ekranlar
+│   │   │   └── components/panels/  # HQ panelleri
+│   │   │       ├── MemoryWallPanel.tsx  # Hafiza Duvari
+│   │   │       └── TaskQueuePanel.tsx   # Gorev Kuyrugu
 │   │   ├── retro-office/      # 3D retro ofis motoru
 │   │   ├── company-builder/   # Sirket olusturucu
 │   │   ├── onboarding/        # Baslangic wizard'i
@@ -210,9 +247,10 @@ npm run dev
 │       ├── i18n/              # Turkce ceviriler (1300+ key)
 │       ├── gateway/           # Gateway iletisimi
 │       ├── agents/            # Preset ajanlar, kisilik dosyalari
+│       ├── security/          # SafeSkillScanner guvenlik modulu
 │       ├── studio/            # Studio ayarlari
 │       ├── voiceReply/        # ElevenLabs TTS
-│       ���── openclaw/          # Ses transkripsiyon (Groq Whisper)
+│       ├── openclaw/          # Ses transkripsiyon (Groq Whisper)
 │       └── notifications.ts   # Masaustu bildirimleri
 │
 ├── tests/                     # Unit + E2E testler
@@ -306,6 +344,7 @@ npm run dev
 - Token tabanli erisim kapisi
 - Non-root Docker kullanici
 - Gateway tokenlari sunucu tarafinda — tarayicida saklanmaz
+- SafeSkillScanner ile tehlikeli komut tespiti (20 regex kurali)
 
 ---
 
@@ -320,6 +359,20 @@ npm run dev
 | CLI bulunamadi | `npm run setup` calistirin |
 | GROQ API key hatasi | Ayarlar → AI Anahtarlari'ndan key ekleyin |
 | Kanban acilmiyor | Demo gateway baglantisinizi kontrol edin |
+
+---
+
+## Ekran Goruntuleri
+
+| Ekran | Goruntu |
+|-------|---------|
+| Landing Sayfasi | [landing-page.png](docs/images/landing-page.png) |
+| 3D Ofis | [office-main.png](docs/images/office-main.png) |
+| Kanban Panosu | [kanban-board.png](docs/images/kanban-board.png) |
+| HQ Karargah | [settings-panel.png](docs/images/settings-panel.png) |
+| Hafiza Duvari | [memory-wall.png](docs/images/memory-wall.png) |
+| Gorev Kuyrugu | [task-queue.png](docs/images/task-queue.png) |
+| Ofis Builder | [office-builder.png](docs/images/office-builder.png) |
 
 ---
 
