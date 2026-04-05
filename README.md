@@ -105,9 +105,9 @@ Her ajanın kendi tanıtım ekranı, uzmanlık alanları, kişilik dosyaları (S
 - Same-origin WebSocket proxy (tarayıcı → Studio → Gateway)
 
 ### 💎 Akıllı Auth (Smart Auth)
-Demo gateway, yerel ortamınızdaki mevcut CLI/SDK kurulumlarını otomatik algılar ve ek yapılandırma gerekmeden kullanıma sunar:
+Demo gateway, yerel ortamınızdaki mevcut CLI/SDK kurulumlarını otomatik algılar ve ek yapılandırma gerekmeden kullanıma sunar — **ek API maliyeti neredeyse sıfır:**
 - **CLI/SDK Algılama:** Sunucu başlatılırken **Claude Agent SDK** (`@anthropic-ai/claude-agent-sdk`) ve **Google Gemini CLI** (`@google/gemini-cli`) kurulumları kontrol edilir. Algılanan araç varsa ilgili stream fonksiyonu otomatik seçilir.
-- **Mevcut Aboneliği Kullan:** CLI/SDK yapılandırılmışsa, mevcut Claude Pro aboneliğinizi veya Gemini'ın ücretsiz kotalarını doğrudan 3D ofisinizde kullanabilirsiniz.
+- **Neredeyse Sıfır Maliyet:** Gemini CLI ücretsiz kotayla, Claude CLI ise mevcut Pro aboneliğinizle çalışır — ekstra API kredisi satın almanıza gerek kalmaz.
 - **Otomatik Fallback Zinciri:** `selectStreamFunction()` sırasıyla API SDK → CLI/SDK → Mock demo akışını dener. Hiçbir gerçek backend yoksa demo modu devreye girer.
 - **Manuel API Key Desteği:** İsterseniz API anahtarlarını ortam değişkenleri veya ayarlar panelinden de girebilirsiniz.
 
