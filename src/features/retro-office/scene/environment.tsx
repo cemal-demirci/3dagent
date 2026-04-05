@@ -981,7 +981,7 @@ export const WallPictures = memo(function WallPictures({
       />
 
       <FramedPicture
-        position={[localCenterX, pictureY, southZ]}
+        position={[localCenterX + 2.5, pictureY, southZ]}
         rotY={Math.PI}
         w={0.5}
         h={0.36}
@@ -1151,20 +1151,44 @@ export const WallPictures = memo(function WallPictures({
         }
       />
 
-      {/* Ataturk Portrait – prominent center position on north wall */}
-      <FramedPicture
-        position={[localCenterX, pictureY + 0.18, northZ]}
-        rotY={0}
-        w={1.1}
-        h={0.88}
-        frameColor="#8B7531"
-        bgColor="#f5edd6"
-        art={<AtaturkPortraitArt />}
-      />
+      {/* Ataturk Portrait – freestanding easel near center of office */}
+      <group position={[localCenterX - 2, 0, localCenterZ + 1]}>
+        {/* Easel legs */}
+        <mesh position={[-0.18, 0.4, -0.08]} rotation={[0.12, 0, 0.06]}>
+          <boxGeometry args={[0.03, 0.85, 0.03]} />
+          <meshStandardMaterial color="#5c3a1e" roughness={0.8} />
+        </mesh>
+        <mesh position={[0.18, 0.4, -0.08]} rotation={[0.12, 0, -0.06]}>
+          <boxGeometry args={[0.03, 0.85, 0.03]} />
+          <meshStandardMaterial color="#5c3a1e" roughness={0.8} />
+        </mesh>
+        <mesh position={[0, 0.35, 0.12]} rotation={[-0.25, 0, 0]}>
+          <boxGeometry args={[0.03, 0.75, 0.03]} />
+          <meshStandardMaterial color="#5c3a1e" roughness={0.8} />
+        </mesh>
+        {/* Easel shelf */}
+        <mesh position={[0, 0.22, -0.02]}>
+          <boxGeometry args={[0.44, 0.025, 0.06]} />
+          <meshStandardMaterial color="#5c3a1e" roughness={0.8} />
+        </mesh>
+        {/* Portrait on easel — tilted slightly back */}
+        <group position={[0, 0.58, -0.04]} rotation={[-0.12, 0, 0]}>
+          <FramedPicture
+            position={[0, 0, 0]}
+            rotY={0}
+            w={0.7}
+            h={0.56}
+            frameColor="#8B7531"
+            bgColor="#f5edd6"
+            art={<AtaturkPortraitArt />}
+          />
+        </group>
+      </group>
       <spotLight
-        position={[localCenterX, pictureY + 1.0, northZ + 0.6]}
-        intensity={1.2}
-        angle={0.5}
+        position={[localCenterX - 2, 1.6, localCenterZ + 1.5]}
+        target-position={[localCenterX - 2, 0.6, localCenterZ + 1]}
+        intensity={1.5}
+        angle={0.4}
         penumbra={0.5}
         color="#fff8e7"
       />
