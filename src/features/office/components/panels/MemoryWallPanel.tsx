@@ -76,20 +76,10 @@ function saveMemories(items: MemoryItem[]): void {
 /* ------------------------------------------------------------------ */
 
 export function MemoryWallPanel() {
-  const [memories, setMemories] = useState<MemoryItem[]>([]);
+  const [memories, setMemories] = useState<MemoryItem[]>(loadMemories);
   const [newContent, setNewContent] = useState("");
   const [newAuthor, setNewAuthor] = useState("");
   const [selectedColor, setSelectedColor] = useState(STICKY_COLORS[0]);
-
-  // Load from localStorage on mount
-  useEffect(() => {
-    setMemories(loadMemories());
-  }, []);
-
-  // Persist whenever memories change (skip initial empty render)
-  useEffect(() => {
-    saveMemories(memories);
-  }, [memories]);
 
   // Refresh relative timestamps every 30s
   const [, setTick] = useState(0);
@@ -110,12 +100,20 @@ export function MemoryWallPanel() {
       timestamp: Date.now(),
     };
 
-    setMemories((prev) => [item, ...prev]);
+    setMemories((prev) => {
+      const next = [item, ...prev];
+      saveMemories(next);
+      return next;
+    });
     setNewContent("");
   }, [newContent, newAuthor, selectedColor]);
 
   const handleDelete = useCallback((id: string) => {
-    setMemories((prev) => prev.filter((m) => m.id !== id));
+    setMemories((prev) => {
+      const next = prev.filter((m) => m.id !== id);
+      saveMemories(next);
+      return next;
+    });
   }, []);
 
   const handleKeyDown = useCallback(

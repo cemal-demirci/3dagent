@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import {
   ListTodo,
   Plus,
@@ -141,7 +141,7 @@ function StatusBadge({ status }: { status: TaskStatus }) {
 /* ---------- main component ---------- */
 
 export function TaskQueuePanel() {
-  const [tasks, setTasks] = useState<TaskItem[]>([]);
+  const [tasks, setTasks] = useState<TaskItem[]>(readTasks);
   const [filter, setFilter] = useState<"all" | TaskStatus>("all");
   const [showForm, setShowForm] = useState(false);
 
@@ -151,11 +151,6 @@ export function TaskQueuePanel() {
   const [formFrom, setFormFrom] = useState(AGENTS[0]);
   const [formTo, setFormTo] = useState(AGENTS[1]);
   const [formPriority, setFormPriority] = useState<TaskPriority>("normal");
-
-  /* load from localStorage on mount */
-  useEffect(() => {
-    setTasks(readTasks());
-  }, []);
 
   /* persist whenever tasks change (skip initial empty render) */
   const persist = useCallback((next: TaskItem[]) => {
