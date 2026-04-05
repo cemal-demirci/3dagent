@@ -23,7 +23,11 @@ Sesli komut, coklu ajan yonetimi, sirket kurma, kanban, marketplace ve PWA — h
 - Ofis duzeni builder'i (`/office/builder`) ile ozellestirme
 - Isi haritasi ve iz takibi
 - Ataturk portresi (altin cerceveli, spot isikli)
-- Turk bayragi direği
+- Turk bayragi diregi
+
+<p align="center">
+  <img src="docs/images/ataturk-portrait.png" alt="3DAgent Ataturk Portresi" width="100%" />
+</p>
 
 ### Turk Mitolojisi Temali AI Ekibi
 6 hazir ajan, Turk mitolojisinden ilham alan isim ve kisiliklerle:
@@ -372,6 +376,7 @@ npm run dev
 | HQ Karargah | [settings-panel.png](docs/images/settings-panel.png) |
 | Hafiza Duvari | [memory-wall.png](docs/images/memory-wall.png) |
 | Gorev Kuyrugu | [task-queue.png](docs/images/task-queue.png) |
+| Ataturk Portresi | [ataturk-portrait.png](docs/images/ataturk-portrait.png) |
 | Ofis Builder | [office-builder.png](docs/images/office-builder.png) |
 
 ---

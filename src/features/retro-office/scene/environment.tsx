@@ -107,15 +107,16 @@ function TurkeyFlagArt() {
 }
 
 function AtaturkPortraitArt() {
+  const s = 1.7; // scale factor for bigger frame
   return (
-    <>
+    <group scale={[s, s, 1]}>
       {/* Warm cream background */}
       <mesh position={[0, 0, 0]}>
         <planeGeometry args={[0.5, 0.42]} />
         <meshBasicMaterial color="#f5edd6" side={2} />
       </mesh>
 
-      {/* Suit / shoulders – dark trapezoid approximated with overlapping boxes */}
+      {/* Suit / shoulders */}
       <mesh position={[0, -0.13, 0.001]}>
         <planeGeometry args={[0.34, 0.14]} />
         <meshBasicMaterial color="#1a1a1a" side={2} />
@@ -129,7 +130,7 @@ function AtaturkPortraitArt() {
         <meshBasicMaterial color="#1a1a1a" side={2} />
       </mesh>
 
-      {/* White shirt collar – small "V" shape */}
+      {/* White shirt collar */}
       <mesh position={[-0.02, -0.06, 0.002]} rotation={[0, 0, 0.25]}>
         <planeGeometry args={[0.04, 0.06]} />
         <meshBasicMaterial color="#e8e4dc" side={2} />
@@ -145,19 +146,19 @@ function AtaturkPortraitArt() {
         <meshBasicMaterial color="#2c2c2c" side={2} />
       </mesh>
 
-      {/* Head silhouette – dark circle */}
+      {/* Head silhouette */}
       <mesh position={[0, 0.04, 0.001]}>
         <circleGeometry args={[0.075, 32]} />
         <meshBasicMaterial color="#3a2e26" side={2} />
       </mesh>
 
-      {/* Face – slightly lighter oval */}
+      {/* Face */}
       <mesh position={[0, 0.035, 0.002]}>
         <circleGeometry args={[0.062, 32]} />
         <meshBasicMaterial color="#c4a882" side={2} />
       </mesh>
 
-      {/* Hair – dark arcs on top and sides */}
+      {/* Hair */}
       <mesh position={[0, 0.085, 0.003]}>
         <circleGeometry args={[0.058, 32, 0, Math.PI]} />
         <meshBasicMaterial color="#2a1e14" side={2} />
@@ -171,7 +172,7 @@ function AtaturkPortraitArt() {
         <meshBasicMaterial color="#2a1e14" side={2} />
       </mesh>
 
-      {/* Eyes – two small dark dots */}
+      {/* Eyes */}
       <mesh position={[-0.02, 0.04, 0.004]}>
         <circleGeometry args={[0.008, 12]} />
         <meshBasicMaterial color="#1a1410" side={2} />
@@ -181,7 +182,7 @@ function AtaturkPortraitArt() {
         <meshBasicMaterial color="#1a1410" side={2} />
       </mesh>
 
-      {/* Eyebrows – thin dark lines */}
+      {/* Eyebrows */}
       <mesh position={[-0.02, 0.054, 0.004]}>
         <planeGeometry args={[0.026, 0.005]} />
         <meshBasicMaterial color="#1a1410" side={2} />
@@ -191,7 +192,7 @@ function AtaturkPortraitArt() {
         <meshBasicMaterial color="#1a1410" side={2} />
       </mesh>
 
-      {/* Nose – subtle vertical line */}
+      {/* Nose */}
       <mesh position={[0, 0.025, 0.004]}>
         <planeGeometry args={[0.006, 0.022]} />
         <meshBasicMaterial color="#b89870" side={2} />
@@ -203,17 +204,17 @@ function AtaturkPortraitArt() {
         <meshBasicMaterial color="#2a1e14" side={2} />
       </mesh>
 
-      {/* Kalpak (hat) – rectangular block above head */}
+      {/* Kalpak (hat) */}
       <mesh position={[0, 0.13, 0.002]}>
         <boxGeometry args={[0.1, 0.06, 0.001]} />
         <meshBasicMaterial color="#1a1a1a" side={2} />
       </mesh>
-      {/* Kalpak brim / band */}
+      {/* Kalpak brim */}
       <mesh position={[0, 0.105, 0.003]}>
         <planeGeometry args={[0.11, 0.012]} />
         <meshBasicMaterial color="#0d0d0d" side={2} />
       </mesh>
-    </>
+    </group>
   );
 }
 
@@ -1152,19 +1153,19 @@ export const WallPictures = memo(function WallPictures({
 
       {/* Ataturk Portrait – prominent center position on north wall */}
       <FramedPicture
-        position={[localCenterX + 1.5, pictureY + 0.12, northZ]}
+        position={[localCenterX, pictureY + 0.18, northZ]}
         rotY={0}
-        w={0.62}
-        h={0.52}
+        w={1.1}
+        h={0.88}
         frameColor="#8B7531"
         bgColor="#f5edd6"
         art={<AtaturkPortraitArt />}
       />
       <spotLight
-        position={[localCenterX + 1.5, pictureY + 0.7, northZ + 0.5]}
-        intensity={0.8}
-        angle={0.4}
-        penumbra={0.6}
+        position={[localCenterX, pictureY + 1.0, northZ + 0.6]}
+        intensity={1.2}
+        angle={0.5}
+        penumbra={0.5}
         color="#fff8e7"
       />
 
