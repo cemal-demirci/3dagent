@@ -442,8 +442,15 @@ npm run dev
 
 ### Landing Sayfası
 
+<p align="center">
+  <img src="docs/images/landing-full.png" alt="3DAgent Landing — Tam Sayfa" width="100%" />
+  <br/>
+  <em>Landing sayfasının tam görünümü</em>
+</p>
+
 | Ekran | Görüntü |
 |-------|---------|
+| Tam Sayfa | [landing-full.png](docs/images/landing-full.png) |
 | Hero | [landing-hero.png](docs/images/landing-hero.png) |
 | Claw3D vs 3DAgent | [landing-comparison.png](docs/images/landing-comparison.png) |
 | Türk Mitolojisi Ajanları | [landing-agents.png](docs/images/landing-agents.png) |
