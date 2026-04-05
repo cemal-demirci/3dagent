@@ -6,7 +6,7 @@
 
 **3DAgent, [Claw3D](https://github.com/iamlukethedev/Claw3D)'nin 3D ajan ofisi altyapısını alıp üzerine Türkçe lokalizasyon, sesli komut, şirket oluşturucu, playbook otomasyonu, marketplace ve çok daha fazlasını ekleyerek oluşturulmuş, açık kaynaklı bir 3D AI çalışma ortamıdır.**
 
-Claw3D, AI ajanları 3D bir ofiste görselleştiren güçlü bir araçtır. Ancak orijinal hâliyle İngilizce, temasız ve ek özellikler konusunda sınırlıdır. 3DAgent, Claw3D'nin OpenClaw Gateway SDK'sını kullanarak tüm bu temeli korur ve **18+ yeni özellik** ekler — sesli komut, AI şirket oluşturucu, playbook otomasyonu, skills marketplace, Spotify entegrasyonu, PWA desteği, tam Türkçe lokalizasyon ve daha fazlası.
+Claw3D, AI ajanları 3D bir ofiste görselleştiren güçlü bir araçtır. Ancak orijinal hâliyle İngilizce, temasız ve ek özellikler konusunda sınırlıdır. 3DAgent, Claw3D'nin OpenClaw Gateway SDK'sını kullanarak tüm bu temeli korur ve sesli komut, AI şirket oluşturucu, playbook otomasyonu, skills marketplace, Spotify entegrasyonu, PWA desteği, tam Türkçe lokalizasyon ve daha fazlasını ekler.
 
 ### Claw3D vs 3DAgent
 
@@ -51,10 +51,11 @@ Claw3D, AI ajanları 3D bir ofiste görselleştiren güçlü bir araçtır. Anca
 
 ### 3D Retro Ofis
 - Ajanların masalarında çalıştığı, hareket ettiği paylaşımlı 3D ortam
-- Odalar, masalar, navigasyon, animasyonlar ve olay tabanlı aktivite ipuçları
+- Odalar arası navigasyon: GitHub odası, kahvehane, kapalıçarşı, beceri pazarı
+- Olay tabanlı oda tetikleyicileri (NLP intent ile mesaj içeriğinden oda eşleme)
 - Ofis düzeni builder'ı (`/office/builder`) ile özelleştirme
 - Isı haritası ve iz takibi
-- Atatürk portresi (altın çerçeveli, spot ışıklı)
+- Atatürk portresi (altın çerçeveli `#8B7531`, spot ışıklı, 512x640 texture)
 - Türk bayrağı direği
 
 <p align="center">
@@ -103,12 +104,12 @@ Her ajanın kendi tanıtım ekranı, uzmanlık alanları, kişilik dosyaları (S
 - **Custom** — Kendi orchestrator/runtime'ınızı bağlayın
 - Same-origin WebSocket proxy (tarayıcı → Studio → Gateway)
 
-### 💎 Akıllı Auth ve Ekonomik Devrim (Smart Auth)
-Bu projenin en büyük farkı, pahalı API anahtarlarına olan bağımlılığı ortadan kaldıran özel geliştirilmiş backend entegrasyonudur:
-- **CLI & SDK Köprüsü:** Backend sistemimiz, yerel bilgisayarınızda halihazırda yüklü olan **Claude CLI** veya **Google Gemini SDK** yetkilendirmelerini (OAuth) otomatik olarak yakalar ve stüdyoya köprüler.
-- **Sıfır Ek Maliyet:** Ekstra API kredisi satın almak yerine; mevcut **Claude Pro** aboneliğinizi veya Gemini'ın ücretsiz kotalarını doğrudan 3D ofisinizde kullanabilirsiniz.
-- **Otomatik Yetkilendirme:** API anahtarlarını manuel kopyalayıp yapıştırmakla uğraşmazsınız. CLI/SDK yapılandırılmışsa, Studio anında çalışmaya hazırdır.
-- **Kaynak Optimizasyonu:** Orijinal projenin yüksek kaynak tüketen gateway yapısı yerine, düşük CPU/RAM harcayan yüksek performanslı bir Node.js proxy katmanı geliştirilmiştir.
+### 💎 Akıllı Auth (Smart Auth)
+Demo gateway, yerel ortamınızdaki mevcut CLI/SDK kurulumlarını otomatik algılar ve ek yapılandırma gerekmeden kullanıma sunar:
+- **CLI/SDK Algılama:** Sunucu başlatılırken **Claude Agent SDK** (`@anthropic-ai/claude-agent-sdk`) ve **Google Gemini CLI** (`@google/gemini-cli`) kurulumları kontrol edilir. Algılanan araç varsa ilgili stream fonksiyonu otomatik seçilir.
+- **Mevcut Aboneliği Kullan:** CLI/SDK yapılandırılmışsa, mevcut Claude Pro aboneliğinizi veya Gemini'ın ücretsiz kotalarını doğrudan 3D ofisinizde kullanabilirsiniz.
+- **Otomatik Fallback Zinciri:** `selectStreamFunction()` sırasıyla API SDK → CLI/SDK → Mock demo akışını dener. Hiçbir gerçek backend yoksa demo modu devreye girer.
+- **Manuel API Key Desteği:** İsterseniz API anahtarlarını ortam değişkenleri veya ayarlar panelinden de girebilirsiniz.
 
 ### 3DAgent'a Özel Özellikler
 
@@ -406,13 +407,15 @@ npm run dev
 
 ## Güvenlik
 
-- Güvenlik başlıkları (X-Content-Type-Options, X-Frame-Options, HSTS, vb.)
-- IP bazlı rate limiting
+- Güvenlik başlıkları (X-Content-Type-Options, X-Frame-Options, HSTS, Referrer-Policy vb.)
+- IP bazlı rate limiting (yapılandırılabilir pencere ve limit)
 - Yapılandırılabilir CORS
-- Token tabanlı erişim kapısı
+- Token tabanlı erişim kapısı (access-gate.js)
+- Ed25519 cihaz kimlik doğrulama (device auth)
 - Non-root Docker kullanıcı
 - Gateway tokenları sunucu tarafında — tarayıcıda saklanmaz
 - SafeSkillScanner ile tehlikeli komut tespiti (20 regex kuralı)
+- WebSocket otomatik yeniden bağlantı (üstel geri çekilme)
 
 ---
 
