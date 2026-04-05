@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" fill="none">
+  <rect width="400" height="500" fill="#f5edd6"/>
+
+  <!-- Background warm gradient effect -->
+  <rect x="0" y="350" width="400" height="150" fill="#e8dcc0"/>
+
+  <!-- Suit / shoulders -->
+  <path d="M80 500 L120 340 L200 310 L280 340 L320 500 Z" fill="#1a1a1a"/>
+  <path d="M40 500 L80 380 L120 340 L120 500 Z" fill="#1a1a1a"/>
+  <path d="M280 340 L320 380 L360 500 L280 500 Z" fill="#1a1a1a"/>
+
+  <!-- White shirt collar -->
+  <path d="M170 310 L185 340 L200 360 L215 340 L230 310 L200 320 Z" fill="#e8e4dc"/>
+
+  <!-- Tie -->
+  <path d="M193 330 L200 420 L207 330 Z" fill="#2c2c2c"/>
+
+  <!-- Neck -->
+  <rect x="185" y="280" width="30" height="40" rx="5" fill="#c4a882"/>
+
+  <!-- Head -->
+  <ellipse cx="200" cy="220" rx="62" ry="75" fill="#c4a882"/>
+
+  <!-- Hair - dark -->
+  <ellipse cx="200" cy="175" rx="58" ry="45" fill="#2a1e14"/>
+  <rect x="142" y="175" width="20" height="50" fill="#2a1e14"/>
+  <rect x="238" y="175" width="20" height="50" fill="#2a1e14"/>
+
+  <!-- Forehead -->
+  <ellipse cx="200" cy="200" rx="50" ry="30" fill="#c4a882"/>
+
+  <!-- Eyes -->
+  <ellipse cx="180" cy="225" rx="8" ry="5" fill="#1a1410"/>
+  <ellipse cx="220" cy="225" rx="8" ry="5" fill="#1a1410"/>
+
+  <!-- Eye whites -->
+  <ellipse cx="180" cy="224" rx="4" ry="3" fill="#ffffff" opacity="0.3"/>
+  <ellipse cx="220" cy="224" rx="4" ry="3" fill="#ffffff" opacity="0.3"/>
+
+  <!-- Eyebrows -->
+  <path d="M168 215 Q180 210 192 215" stroke="#1a1410" stroke-width="3" fill="none"/>
+  <path d="M208 215 Q220 210 232 215" stroke="#1a1410" stroke-width="3" fill="none"/>
+
+  <!-- Nose -->
+  <path d="M200 230 L196 252 Q200 256 204 252 L200 230" fill="#b89870"/>
+
+  <!-- Mustache -->
+  <path d="M175 262 Q188 268 200 264 Q212 268 225 262 Q212 272 200 270 Q188 272 175 262" fill="#2a1e14"/>
+
+  <!-- Mouth line -->
+  <path d="M190 278 Q200 282 210 278" stroke="#a0785a" stroke-width="1.5" fill="none"/>
+
+  <!-- Ears -->
+  <ellipse cx="140" cy="225" rx="8" ry="14" fill="#c4a882"/>
+  <ellipse cx="260" cy="225" rx="8" ry="14" fill="#c4a882"/>
+
+  <!-- Kalpak (hat) -->
+  <path d="M145 170 L145 115 Q145 95 200 90 Q255 95 255 115 L255 170" fill="#1a1a1a"/>
+  <!-- Kalpak band -->
+  <rect x="143" y="165" width="114" height="10" fill="#0d0d0d"/>
+  <!-- Kalpak top highlight -->
+  <path d="M160 115 Q200 105 240 115" stroke="#333" stroke-width="2" fill="none"/>
+
+  <!-- Gold frame border (inner) -->
+  <rect x="8" y="8" width="384" height="484" rx="2" stroke="#8B7531" stroke-width="6" fill="none"/>
+  <rect x="16" y="16" width="368" height="468" rx="1" stroke="#a08938" stroke-width="2" fill="none"/>
+</svg>

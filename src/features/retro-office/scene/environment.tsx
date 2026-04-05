@@ -1,6 +1,7 @@
 "use client";
 
-import { memo, type ReactNode } from "react";
+import { memo, Suspense, type ReactNode } from "react";
+import { useTexture } from "@react-three/drei";
 import {
   CANVAS_H,
   CANVAS_W,
@@ -107,114 +108,12 @@ function TurkeyFlagArt() {
 }
 
 function AtaturkPortraitArt() {
-  const s = 1.7; // scale factor for bigger frame
+  const texture = useTexture("/office-assets/ataturk-portrait.png");
   return (
-    <group scale={[s, s, 1]}>
-      {/* Warm cream background */}
-      <mesh position={[0, 0, 0]}>
-        <planeGeometry args={[0.5, 0.42]} />
-        <meshBasicMaterial color="#f5edd6" side={2} />
-      </mesh>
-
-      {/* Suit / shoulders */}
-      <mesh position={[0, -0.13, 0.001]}>
-        <planeGeometry args={[0.34, 0.14]} />
-        <meshBasicMaterial color="#1a1a1a" side={2} />
-      </mesh>
-      <mesh position={[-0.12, -0.1, 0.001]}>
-        <planeGeometry args={[0.14, 0.1]} />
-        <meshBasicMaterial color="#1a1a1a" side={2} />
-      </mesh>
-      <mesh position={[0.12, -0.1, 0.001]}>
-        <planeGeometry args={[0.14, 0.1]} />
-        <meshBasicMaterial color="#1a1a1a" side={2} />
-      </mesh>
-
-      {/* White shirt collar */}
-      <mesh position={[-0.02, -0.06, 0.002]} rotation={[0, 0, 0.25]}>
-        <planeGeometry args={[0.04, 0.06]} />
-        <meshBasicMaterial color="#e8e4dc" side={2} />
-      </mesh>
-      <mesh position={[0.02, -0.06, 0.002]} rotation={[0, 0, -0.25]}>
-        <planeGeometry args={[0.04, 0.06]} />
-        <meshBasicMaterial color="#e8e4dc" side={2} />
-      </mesh>
-
-      {/* Tie */}
-      <mesh position={[0, -0.1, 0.003]}>
-        <planeGeometry args={[0.025, 0.1]} />
-        <meshBasicMaterial color="#2c2c2c" side={2} />
-      </mesh>
-
-      {/* Head silhouette */}
-      <mesh position={[0, 0.04, 0.001]}>
-        <circleGeometry args={[0.075, 32]} />
-        <meshBasicMaterial color="#3a2e26" side={2} />
-      </mesh>
-
-      {/* Face */}
-      <mesh position={[0, 0.035, 0.002]}>
-        <circleGeometry args={[0.062, 32]} />
-        <meshBasicMaterial color="#c4a882" side={2} />
-      </mesh>
-
-      {/* Hair */}
-      <mesh position={[0, 0.085, 0.003]}>
-        <circleGeometry args={[0.058, 32, 0, Math.PI]} />
-        <meshBasicMaterial color="#2a1e14" side={2} />
-      </mesh>
-      <mesh position={[-0.045, 0.06, 0.003]}>
-        <planeGeometry args={[0.025, 0.05]} />
-        <meshBasicMaterial color="#2a1e14" side={2} />
-      </mesh>
-      <mesh position={[0.045, 0.06, 0.003]}>
-        <planeGeometry args={[0.025, 0.05]} />
-        <meshBasicMaterial color="#2a1e14" side={2} />
-      </mesh>
-
-      {/* Eyes */}
-      <mesh position={[-0.02, 0.04, 0.004]}>
-        <circleGeometry args={[0.008, 12]} />
-        <meshBasicMaterial color="#1a1410" side={2} />
-      </mesh>
-      <mesh position={[0.02, 0.04, 0.004]}>
-        <circleGeometry args={[0.008, 12]} />
-        <meshBasicMaterial color="#1a1410" side={2} />
-      </mesh>
-
-      {/* Eyebrows */}
-      <mesh position={[-0.02, 0.054, 0.004]}>
-        <planeGeometry args={[0.026, 0.005]} />
-        <meshBasicMaterial color="#1a1410" side={2} />
-      </mesh>
-      <mesh position={[0.02, 0.054, 0.004]}>
-        <planeGeometry args={[0.026, 0.005]} />
-        <meshBasicMaterial color="#1a1410" side={2} />
-      </mesh>
-
-      {/* Nose */}
-      <mesh position={[0, 0.025, 0.004]}>
-        <planeGeometry args={[0.006, 0.022]} />
-        <meshBasicMaterial color="#b89870" side={2} />
-      </mesh>
-
-      {/* Mustache */}
-      <mesh position={[0, 0.008, 0.004]}>
-        <planeGeometry args={[0.035, 0.008]} />
-        <meshBasicMaterial color="#2a1e14" side={2} />
-      </mesh>
-
-      {/* Kalpak (hat) */}
-      <mesh position={[0, 0.13, 0.002]}>
-        <boxGeometry args={[0.1, 0.06, 0.001]} />
-        <meshBasicMaterial color="#1a1a1a" side={2} />
-      </mesh>
-      {/* Kalpak brim */}
-      <mesh position={[0, 0.105, 0.003]}>
-        <planeGeometry args={[0.11, 0.012]} />
-        <meshBasicMaterial color="#0d0d0d" side={2} />
-      </mesh>
-    </group>
+    <mesh>
+      <planeGeometry args={[0.56, 0.7]} />
+      <meshBasicMaterial map={texture} side={2} />
+    </mesh>
   );
 }
 
@@ -1152,41 +1051,42 @@ export const WallPictures = memo(function WallPictures({
       />
 
       {/* Ataturk Portrait – freestanding easel near center of office */}
-      <group position={[localCenterX - 2, 0, localCenterZ + 1]}>
+      <Suspense fallback={null}>
+      <group position={[localCenterX - 2, 0, localCenterZ + 1.5]}>
         {/* Easel legs */}
-        <mesh position={[-0.18, 0.4, -0.08]} rotation={[0.12, 0, 0.06]}>
-          <boxGeometry args={[0.03, 0.85, 0.03]} />
+        <mesh position={[-0.22, 0.5, -0.1]} rotation={[0.1, 0, 0.05]}>
+          <boxGeometry args={[0.035, 1.05, 0.035]} />
           <meshStandardMaterial color="#5c3a1e" roughness={0.8} />
         </mesh>
-        <mesh position={[0.18, 0.4, -0.08]} rotation={[0.12, 0, -0.06]}>
-          <boxGeometry args={[0.03, 0.85, 0.03]} />
+        <mesh position={[0.22, 0.5, -0.1]} rotation={[0.1, 0, -0.05]}>
+          <boxGeometry args={[0.035, 1.05, 0.035]} />
           <meshStandardMaterial color="#5c3a1e" roughness={0.8} />
         </mesh>
-        <mesh position={[0, 0.35, 0.12]} rotation={[-0.25, 0, 0]}>
-          <boxGeometry args={[0.03, 0.75, 0.03]} />
+        <mesh position={[0, 0.45, 0.14]} rotation={[-0.22, 0, 0]}>
+          <boxGeometry args={[0.035, 0.95, 0.035]} />
           <meshStandardMaterial color="#5c3a1e" roughness={0.8} />
         </mesh>
         {/* Easel shelf */}
-        <mesh position={[0, 0.22, -0.02]}>
-          <boxGeometry args={[0.44, 0.025, 0.06]} />
+        <mesh position={[0, 0.28, -0.03]}>
+          <boxGeometry args={[0.52, 0.03, 0.07]} />
           <meshStandardMaterial color="#5c3a1e" roughness={0.8} />
         </mesh>
         {/* Portrait on easel — tilted slightly back */}
-        <group position={[0, 0.58, -0.04]} rotation={[-0.12, 0, 0]}>
+        <group position={[0, 0.72, -0.05]} rotation={[-0.1, 0, 0]}>
           <FramedPicture
             position={[0, 0, 0]}
             rotY={0}
-            w={0.7}
-            h={0.56}
+            w={0.64}
+            h={0.8}
             frameColor="#8B7531"
             bgColor="#f5edd6"
             art={<AtaturkPortraitArt />}
           />
         </group>
       </group>
+      </Suspense>
       <spotLight
         position={[localCenterX - 2, 1.6, localCenterZ + 1.5]}
-        target-position={[localCenterX - 2, 0.6, localCenterZ + 1]}
         intensity={1.5}
         angle={0.4}
         penumbra={0.5}
