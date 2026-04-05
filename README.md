@@ -4,8 +4,21 @@
 
 # 3DAgent — 3D AI Agent Workspace
 
-AI ajanlariniz icin gercek zamanli 3D calisma ortami.
-Sesli komut, coklu ajan yonetimi, sirket kurma, kanban, marketplace ve PWA — hepsi tek workspace'te.
+**3DAgent, yapay zeka ajanlarınızı gerçek zamanlı izleyip yönetebileceğiniz, tamamen Türkçe, açık kaynaklı bir 3D çalışma ortamıdır.**
+
+Mevcut AI agent framework'leri (CrewAI, AutoGen, LangGraph, MetaGPT) güçlü araçlar sunar; ancak hepsinde ortak bir eksik vardır: **ajanlarınızın ne yaptığını görsel olarak takip edemezsiniz.** Terminal çıktıları ve log dosyaları arasında kaybolursunuz. Hangi ajanın hangi görevi üstlendiğini, birbirleriyle nasıl iletişim kurduğunu ve sürecin neresinde olduğunuzu anlamak için sürekli konsol izlemeniz gerekir.
+
+3DAgent bu sorunu kökünden çözer. İzometrik 3D bir ofis ortamında ajanlarınızı masalarında çalışırken izler, görev atamalarını Kanban panosuyla yönetir, hafıza duvarıyla notlar paylaşır ve tüm bunları tek bir tarayıcı sekmesinden yaparsınız. Python bağımlılığı yoktur — tamamen web tabanlıdır.
+
+### Neden 3DAgent?
+
+- **Sektördeki tek 3D görsel çalışma alanı** — Ajanlar ofiste hareket eder, masalarında çalışır, görevlerini gerçek zamanlı takip edersiniz
+- **Türk mitolojisinden 6 AI ajan** — Her birinin kendine özgü kişiliği, uzmanlık alanı ve 3D avatarı vardır
+- **Entegre proje yönetimi** — Kanban panosu, Görev Kuyruğu ve Hafıza Duvarı ile ayrı araçlara ihtiyaç duymadan çalışırsınız
+- **Tamamen Türkçe** — 1300+ çeviri anahtarı ile arayüzden hata mesajlarına her şey Türkçe
+- **Açık kaynak ve ücretsiz** — Kendi sunucunuzda barındırabilirsiniz
+- **Web tabanlı** — Next.js 16 + React 19 + Three.js üzerine kurulu, Python bağımlılığı yok
+- **Çoklu LLM desteği** — OpenAI, Anthropic Claude, Google Gemini veya yerel modeller
 
 > Fork: [iamlukethedev/Claw3D](https://github.com/iamlukethedev/Claw3D) | Lisans: MIT
 
@@ -15,144 +28,146 @@ Sesli komut, coklu ajan yonetimi, sirket kurma, kanban, marketplace ve PWA — h
 
 ---
 
-## Ozellikler
+## Özellikler
 
 ### 3D Retro Ofis
-- Ajanlarin masalarinda calistigi, hareket ettigi paylasimli 3D ortam
-- Odalar, masalar, navigasyon, animasyonlar ve olay tabanli aktivite ipuclari
-- Ofis duzeni builder'i (`/office/builder`) ile ozellestirme
-- Isi haritasi ve iz takibi
-- Ataturk portresi (altin cerceveli, spot isikli)
-- Turk bayragi diregi
+- Ajanların masalarında çalıştığı, hareket ettiği paylaşımlı 3D ortam
+- Odalar, masalar, navigasyon, animasyonlar ve olay tabanlı aktivite ipuçları
+- Ofis düzeni builder'ı (`/office/builder`) ile özelleştirme
+- Isı haritası ve iz takibi
+- Atatürk portresi (altın çerçeveli, spot ışıklı)
+- Türk bayrağı direği
 
 <p align="center">
-  <img src="docs/images/ataturk-portrait.png" alt="3DAgent Ataturk Portresi" width="100%" />
+  <img src="docs/images/ataturk-portrait.png" alt="Atatürk Portresi — 3D ofiste altın çerçeveli" width="220" />
+  <br/>
+  <em>Ofis duvarında altın çerçeveli Atatürk portresi</em>
 </p>
 
-### Turk Mitolojisi Temali AI Ekibi
-6 hazir ajan, Turk mitolojisinden ilham alan isim ve kisiliklerle:
+### Türk Mitolojisi Temalı AI Ekibi
+6 hazır ajan, Türk mitolojisinden ilham alan isim ve kişiliklerle:
 
 | Ajan | Rol | Vibe |
 |------|-----|------|
-| Asena | Bas Gelistirici | Kod yazan disi kurt |
-| Umay | UX/Tasarim | Kullaniciyi koruyan ana tanrica |
-| Kayra | DevOps & Altyapi | Dunyayi duzenleyen yaratici tanri |
-| Erlik | QA & Guvenlik | Yeraltinin bekci tanrisi |
-| Tulpar | Pazarlama & Icerik | Kanatlari ruzgar olan savas ati |
-| Tengri | Proje Yonetimi | Gokyuzu tanrisi, buyuk resmi goren |
+| Asena | Baş Geliştirici | Kod yazan dişi kurt |
+| Umay | UX/Tasarım | Kullanıcıyı koruyan ana tanrıça |
+| Kayra | DevOps & Altyapı | Dünyayı düzenleyen yaratıcı tanrı |
+| Erlik | QA & Güvenlik | Yeraltının bekçi tanrısı |
+| Tulpar | Pazarlama & İçerik | Kanatları rüzgâr olan savaş atı |
+| Tengri | Proje Yönetimi | Gökyüzü tanrısı, büyük resmi gören |
 
-Her ajanin kendi tanitim ekrani, uzmanlik alanlari, kisilik dosyalari (SOUL.md, IDENTITY.md, AGENTS.md) ve 3D avatari vardir.
+Her ajanın kendi tanıtım ekranı, uzmanlık alanları, kişilik dosyaları (SOUL.md, IDENTITY.md, AGENTS.md) ve 3D avatarı vardır.
 
-### Sirket Kurma (Company Builder)
-- Tek bir istemden AI tabanli sirket olusturma
-- Turkce isim, rol, sorumluluk ve kisilik otomatik uretimi
-- Organizasyon semasi onizleme
-- Rol ekleme/cikarma/duzenleme
-- Mevcut ajanlari otomatik degistirme
+### Şirket Kurma (Company Builder)
+- Tek bir istemden AI tabanlı şirket oluşturma
+- Türkçe isim, rol, sorumluluk ve kişilik otomatik üretimi
+- Organizasyon şeması önizleme
+- Rol ekleme/çıkarma/düzenleme
+- Mevcut ajanları otomatik değiştirme
 
-### Ajan Yonetimi
-- Filo kenar cubugundan ajan olusturma, yapilandirma ve izleme
-- Gercek zamanli sohbet + komut onaylama
-- Ajan tanitim ekrani: rol, uzmanlik alanlari, kisilik ozeti
-- Avatar ozellestirme ve beyin dosyalari duzenleme
-- Ajan yetenekleri (skills) yonetimi
+### Ajan Yönetimi
+- Filo kenar çubuğundan ajan oluşturma, yapılandırma ve izleme
+- Gerçek zamanlı sohbet + komut onaylama
+- Ajan tanıtım ekranı: rol, uzmanlık alanları, kişilik özeti
+- Avatar özelleştirme ve beyin dosyaları düzenleme
+- Ajan yetenekleri (skills) yönetimi
 
 ### Gateway Mimarisi
-- **OpenClaw** — Resmi gateway protokolu
-- **Hermes** — WebSocket adaptoru ile alternatif runtime
-- **Demo** — Gercek backend olmadan ofisi kesfetmek icin mock gateway
-- **Custom** — Kendi orchestrator/runtime'inizi baglayin
-- Same-origin WebSocket proxy (tarayici → Studio → Gateway)
+- **OpenClaw** — Resmi gateway protokolü
+- **Hermes** — WebSocket adaptörü ile alternatif runtime
+- **Demo** — Gerçek backend olmadan ofisi keşfetmek için mock gateway
+- **Custom** — Kendi orchestrator/runtime'ınızı bağlayın
+- Same-origin WebSocket proxy (tarayıcı → Studio → Gateway)
 
-### Imersif Ekranlar
+### İmersif Ekranlar
 
 <p align="center">
   <img src="docs/images/kanban-board.png" alt="3DAgent Kanban Panosu" width="100%" />
 </p>
 
-| Ekran | Aciklama |
+| Ekran | Açıklama |
 |-------|----------|
-| GitHub Kod Inceleme Odasi | PR inceleme, diff, satirici yorum |
-| Kanban Panosu | Surukle-birak gorev yonetimi, ajan atama |
-| ATM / Hazine | Token kullanim defteri, butce uyarilari |
-| Telefon Kabini | Sesli/yazili ajan iletisimi |
-| Mesajlasma Kabini | SMS tarzi mesajlasma |
-| Kahvehane | Test ve sohbet kosesi |
-| Kapalicarsi | Beceri pazari (marketplace) |
+| GitHub Kod İnceleme Odası | PR inceleme, diff, satırıcı yorum |
+| Kanban Panosu | Sürükle-bırak görev yönetimi, ajan atama |
+| ATM / Hazine | Token kullanım defteri, bütçe uyarıları |
+| Telefon Kabini | Sesli/yazılı ajan iletişimi |
+| Mesajlaşma Kabini | SMS tarzı mesajlaşma |
+| Kahvehane | Test ve sohbet köşesi |
+| Kapalıçarşı | Beceri pazarı (marketplace) |
 
-### HQ Karargah Panelleri
+### HQ Karargâh Panelleri
 
 <p align="center">
-  <img src="docs/images/settings-panel.png" alt="3DAgent Karargah" width="100%" />
+  <img src="docs/images/settings-panel.png" alt="3DAgent Karargâh" width="100%" />
 </p>
 
 - **Gelen Kutusu** — Bildirimler ve onay istekleri
-- **Gecmis** — Oturum gecmisi ve denetim gunlugu
-- **Kanban** — Gorev yonetimi panosu
-- **Playbook'lar** — Otomatik is akislari ve zamanlanmis gorevler
-- **Gorev Kuyrugu** — Ajanlar arasi gorev atama ve takibi
-- **Hafiza Duvari** — Ajanlar arasi paylasimli not sistemi
-- **Analitik** — Kullanim, harcama ve performans metrikleri
+- **Geçmiş** — Oturum geçmişi ve denetim günlüğü
+- **Kanban** — Görev yönetimi panosu
+- **Playbook'lar** — Otomatik iş akışları ve zamanlanmış görevler
+- **Görev Kuyruğu** — Ajanlar arası görev atama ve takibi
+- **Hafıza Duvarı** — Ajanlar arası paylaşımlı not sistemi
+- **Analitik** — Kullanım, harcama ve performans metrikleri
 
-### Hafiza Duvari (Memory Wall)
-
-<p align="center">
-  <img src="docs/images/memory-wall.png" alt="3DAgent Hafiza Duvari" width="100%" />
-</p>
-
-- Ajanlar arasi paylasimli post-it not sistemi
-- 5 renk secenegi ile gorsel kategorizasyon
-- Yazar ismi ve zaman damgasi
-- localStorage ile kalici depolama
-
-### Gorev Kuyrugu (Task Queue)
+### Hafıza Duvarı (Memory Wall)
 
 <p align="center">
-  <img src="docs/images/task-queue.png" alt="3DAgent Gorev Kuyrugu" width="100%" />
+  <img src="docs/images/memory-wall.png" alt="3DAgent Hafıza Duvarı" width="100%" />
 </p>
 
-- Ajanlar arasi gorev atama sistemi
-- 4 oncelik seviyesi (dusuk, normal, yuksek, acil)
-- 3 durum takibi (beklemede, devam ediyor, tamamlandi)
-- 6 preset ajan arasinda gorev yonlendirme
-- Filtreleme ve localStorage kaliciligi
+- Ajanlar arası paylaşımlı post-it not sistemi
+- 5 renk seçeneği ile görsel kategorizasyon
+- Yazar ismi ve zaman damgası
+- localStorage ile kalıcı depolama
 
-### Guvenlik (SafeSkillScanner)
-- Ajan komutlarini regex tabanli guvenlik taramasi
-- 20 kural: dosya sistemi, ag, kimlik bilgileri, yetki yukseltme
-- Tehlikeli komutlar engellenir, uyarilar bildirilir
-- `rm -rf /`, fork bomb, `curl | bash` gibi pattern'ler yakalanir
+### Görev Kuyruğu (Task Queue)
 
-### Ses Destegi
+<p align="center">
+  <img src="docs/images/task-queue.png" alt="3DAgent Görev Kuyruğu" width="100%" />
+</p>
+
+- Ajanlar arası görev atama sistemi
+- 4 öncelik seviyesi (düşük, normal, yüksek, acil)
+- 3 durum takibi (beklemede, devam ediyor, tamamlandı)
+- 6 preset ajan arasında görev yönlendirme
+- Filtreleme ve localStorage kalıcılığı
+
+### Güvenlik (SafeSkillScanner)
+- Ajan komutlarını regex tabanlı güvenlik taraması
+- 20 kural: dosya sistemi, ağ, kimlik bilgileri, yetki yükseltme
+- Tehlikeli komutlar engellenir, uyarılar bildirilir
+- `rm -rf /`, fork bomb, `curl | bash` gibi pattern'ler yakalanır
+
+### Ses Desteği
 - **Groq Whisper** ile sesli mesaj transkripsiyon
-- **ElevenLabs TTS** ile sesli ajan yanitlari
-- Ses secimi ve hiz ayari
-- Turkce hata mesajlari
+- **ElevenLabs TTS** ile sesli ajan yanıtları
+- Ses seçimi ve hız ayarı
+- Türkçe hata mesajları
 
-### PWA & Cevrimdisi Destek
-- Service worker (Serwist) ile cevrimdisi calisma
-- Guncelleme bildirimi banner'i
-- Uygulamayi ana ekrana ekleme (standalone)
-- Otomatik ikon uretimi (192x192, 512x512)
+### PWA & Çevrimdışı Destek
+- Service worker (Serwist) ile çevrimdışı çalışma
+- Güncelleme bildirimi banner'ı
+- Uygulamayı ana ekrana ekleme (standalone)
+- Otomatik ikon üretimi (192x192, 512x512)
 
-### Turkce Lokalizasyon
-- 1300+ ceviri anahtari
-- Tum UI bilesenleri, onboarding, ayarlar, paneller Turkce
-- Sirket kurma, ajan kisilikleri, hata mesajlari Turkce
-- AI prompt'lari Turkce icerik uretir
+### Türkçe Lokalizasyon
+- 1300+ çeviri anahtarı
+- Tüm UI bileşenleri, onboarding, ayarlar, paneller Türkçe
+- Şirket kurma, ajan kişilikleri, hata mesajları Türkçe
+- AI prompt'ları Türkçe içerik üretir
 
-### Coklu Ofis Destegi
-- Uzak ofis baglantisi (presence endpoint veya OpenClaw gateway)
-- Salt okunur uzak ajan goruntuleme
-- Etiket ve kaynak turu yapilandirmasi
+### Çoklu Ofis Desteği
+- Uzak ofis bağlantısı (presence endpoint veya OpenClaw gateway)
+- Salt okunur uzak ajan görüntüleme
+- Etiket ve kaynak türü yapılandırması
 
 ### Spotify Jukebox (SOUNDCLAW)
-- Ofiste muzik calma
+- Ofiste müzik çalma
 - OAuth entegrasyonu
 
 ---
 
-## Hizli Baslangic
+## Hızlı Başlangıç
 
 ### 1. Kaynak Koddan
 
@@ -160,17 +175,17 @@ Her ajanin kendi tanitim ekrani, uzmanlik alanlari, kisilik dosyalari (SOUL.md, 
 git clone https://github.com/cemal-demirci/3dagent.git
 cd 3dagent
 npm install
-npm run setup        # Interaktif kurulum wizard'i
+npm run setup        # İnteraktif kurulum wizard'ı
 npm run dev          # http://localhost:3000
 ```
 
-`npm run setup` sunlari otomatik halleder:
-- Node.js ve npm surum kontrolu
-- Claude CLI kurulum + OAuth giris
-- Gemini CLI kontrolu + auth
-- `.env` dosyasi olusturma
-- API key girisi (opsiyonel)
-- Demo gateway baglanti testi
+`npm run setup` şunları otomatik halleder:
+- Node.js ve npm sürüm kontrolü
+- Claude CLI kurulum + OAuth giriş
+- Gemini CLI kontrolü + auth
+- `.env` dosyası oluşturma
+- API key girişi (opsiyonel)
+- Demo gateway bağlantı testi
 
 ### 2. Docker ile
 
@@ -183,22 +198,22 @@ docker compose up -d
 
 ```bash
 npm run dev
-# Demo backend otomatik baslar (port 18789)
-# Baglanti ekraninda "Demo ile Basla" butonuna tiklayin
+# Demo backend otomatik başlar (port 18789)
+# Bağlantı ekranında "Demo ile Başla" butonuna tıklayın
 ```
 
 ---
 
-## Teknik Altyapi
+## Teknik Altyapı
 
 | Katman | Teknoloji |
 |--------|-----------|
 | Frontend | Next.js 16, React 19, TypeScript 5 |
 | 3D Grafik | Three.js, React Three Fiber, Drei |
-| Oyun Motoru | Phaser (builder ve interaktif yuzeyler) |
+| Oyun Motoru | Phaser (builder ve interaktif yüzeyler) |
 | Stil | Tailwind CSS 4 |
 | AI SDK'lar | Claude Agent SDK, Google Gemini, OpenAI |
-| Gercek Zamanli | WebSocket (ws) |
+| Gerçek Zamanlı | WebSocket (ws) |
 | Ses | Groq Whisper (STT), ElevenLabs (TTS) |
 | PWA | Serwist (service worker) |
 | Test | Vitest (unit), Playwright (e2e) |
@@ -207,58 +222,58 @@ npm run dev
 
 ---
 
-## Proje Yapisi
+## Proje Yapısı
 
 ```
 3dagent/
 ├── server/                    # Node.js backend
 │   ├── index.js               # Ana sunucu (HTTP/HTTPS + Next.js)
-│   ├── access-gate.js         # Token kimlik dogrulama
+│   ├── access-gate.js         # Token kimlik doğrulama
 │   ├── gateway-proxy.js       # WebSocket proxy
-│   ├── rate-limiter.js        # IP bazli hiz sinirlandirici
-│   ├── security-headers.js    # Guvenlik basliklari
+│   ├── rate-limiter.js        # IP bazlı hız sınırlandırıcı
+│   ├── security-headers.js    # Güvenlik başlıkları
 │   ├── logger.js              # JSON logger
 │   ├── demo-gateway-adapter.js # Demo gateway (mock AI)
-│   └── hermes-gateway-adapter.js # Hermes adaptoru
+│   └── hermes-gateway-adapter.js # Hermes adaptörü
 │
 ├── scripts/
-│   ├── setup.js               # Otomatik kurulum wizard'i
-│   ├── generate-pwa-icons.mjs # PWA ikon uretici
-│   └── take-screenshots.mjs   # README ekran goruntusu uretici
+│   ├── setup.js               # Otomatik kurulum wizard'ı
+│   ├── generate-pwa-icons.mjs # PWA ikon üretici
+│   └── take-screenshots.mjs   # README ekran görüntüsü üretici
 │
 ├── src/
 │   ├── app/                   # Next.js App Router
 │   │   ├── layout.tsx         # Root layout + metadata + PWA
-│   │   ├── page.tsx           # Landing sayfasi
-│   │   ├── office/            # Ana ofis arayuzu
-│   │   ├── offline/           # Cevrimdisi fallback
-│   │   ├── sw.ts              # Service worker kaynagi
-│   │   └── api/               # API route'lari
+│   │   ├── page.tsx           # Landing sayfası
+│   │   ├── office/            # Ana ofis arayüzü
+│   │   ├── offline/           # Çevrimdışı fallback
+│   │   ├── sw.ts              # Service worker kaynağı
+│   │   └── api/               # API route'ları
 │   │
 │   ├── features/
-│   │   ├── agents/            # Ajan bilesenleri, state, islemler
+│   │   ├── agents/            # Ajan bileşenleri, state, işlemler
 │   │   ├── office/            # Ofis UI, paneller, imersif ekranlar
 │   │   │   └── components/panels/  # HQ panelleri
-│   │   │       ├── MemoryWallPanel.tsx  # Hafiza Duvari
-│   │   │       └── TaskQueuePanel.tsx   # Gorev Kuyrugu
+│   │   │       ├── MemoryWallPanel.tsx  # Hafıza Duvarı
+│   │   │       └── TaskQueuePanel.tsx   # Görev Kuyruğu
 │   │   ├── retro-office/      # 3D retro ofis motoru
-│   │   ├── company-builder/   # Sirket olusturucu
-│   │   ├── onboarding/        # Baslangic wizard'i
-│   │   ├── pwa/               # PWA guncelleme banner'i
-│   │   └── spotify-jukebox/   # Muzik calar
+│   │   ├── company-builder/   # Şirket oluşturucu
+│   │   ├── onboarding/        # Başlangıç wizard'ı
+│   │   ├── pwa/               # PWA güncelleme banner'ı
+│   │   └── spotify-jukebox/   # Müzik çalar
 │   │
 │   └── lib/
-│       ├── i18n/              # Turkce ceviriler (1300+ key)
-│       ├── gateway/           # Gateway iletisimi
-│       ├── agents/            # Preset ajanlar, kisilik dosyalari
-│       ├── security/          # SafeSkillScanner guvenlik modulu
-│       ├── studio/            # Studio ayarlari
+│       ├── i18n/              # Türkçe çeviriler (1300+ key)
+│       ├── gateway/           # Gateway iletişimi
+│       ├── agents/            # Preset ajanlar, kişilik dosyaları
+│       ├── security/          # SafeSkillScanner güvenlik modülü
+│       ├── studio/            # Studio ayarları
 │       ├── voiceReply/        # ElevenLabs TTS
 │       ├── openclaw/          # Ses transkripsiyon (Groq Whisper)
-│       └── notifications.ts   # Masaustu bildirimleri
+│       └── notifications.ts   # Masaüstü bildirimleri
 │
 ├── tests/                     # Unit + E2E testler
-├── docs/                      # Mimari, API, rehber dokumanlari
+├── docs/                      # Mimari, API, rehber dokümanları
 ├── public/                    # Statik dosyalar, PWA manifest, ikonlar
 ├── .github/workflows/         # CI/CD pipeline
 ├── Dockerfile                 # Multi-stage Docker build
@@ -268,50 +283,50 @@ npm run dev
 
 ---
 
-## Ortam Degiskenleri
+## Ortam Değişkenleri
 
-| Degisken | Aciklama | Varsayilan |
+| Değişken | Açıklama | Varsayılan |
 |----------|----------|------------|
 | `PORT` | Sunucu portu | 3000 |
 | `HOST` | Sunucu adresi | 0.0.0.0 |
 | `DEBUG` | OpenClaw konsol | true |
-| `STUDIO_ACCESS_TOKEN` | Uzak erisim tokeni | — |
+| `STUDIO_ACCESS_TOKEN` | Uzak erişim tokeni | — |
 | `DEMO_ADAPTER_PORT` | Demo gateway portu | 18789 |
 | `ANTHROPIC_API_KEY` | Claude API | — |
 | `GEMINI_API_KEY` | Gemini API | — |
 | `OPENAI_API_KEY` | OpenAI API | — |
 | `GROQ_API_KEY` | Groq Whisper + LLM | — |
 | `ELEVENLABS_API_KEY` | ElevenLabs TTS | — |
-| `ELEVENLABS_VOICE_ID` | Ses secimi | — |
-| `RATE_LIMIT_MAX` | Pencere basina max istek | 120 |
-| `RATE_LIMIT_WINDOW_MS` | Pencere suresi (ms) | 60000 |
+| `ELEVENLABS_VOICE_ID` | Ses seçimi | — |
+| `RATE_LIMIT_MAX` | Pencere başına max istek | 120 |
+| `RATE_LIMIT_WINDOW_MS` | Pencere süresi (ms) | 60000 |
 | `LOG_LEVEL` | Log seviyesi | info |
 | `CORS_ORIGIN` | CORS izni | — |
 
-Tum degiskenler: [`.env.example`](.env.example)
+Tüm değişkenler: [`.env.example`](.env.example)
 
 ---
 
 ## Komutlar
 
-| Komut | Aciklama |
+| Komut | Açıklama |
 |-------|----------|
-| `npm run setup` | Interaktif kurulum wizard'i |
-| `npm run dev` | Gelistirme sunucusu (demo gateway dahil) |
+| `npm run setup` | İnteraktif kurulum wizard'ı |
+| `npm run dev` | Geliştirme sunucusu (demo gateway dahil) |
 | `npm run build` | Production build |
 | `npm run start` | Production sunucu |
-| `npm run demo-gateway` | Bagimsiz demo gateway |
-| `npm run hermes-adapter` | Hermes adaptorunu baslat |
-| `npm run generate:pwa-icons` | PWA ikonlarini uret |
+| `npm run demo-gateway` | Bağımsız demo gateway |
+| `npm run hermes-adapter` | Hermes adaptörünü başlat |
+| `npm run generate:pwa-icons` | PWA ikonlarını üret |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | TypeScript kontrol |
 | `npm run test` | Unit testler (Vitest) |
 | `npm run e2e` | E2E testler (Playwright) |
-| `docker compose up -d` | Docker ile calistir |
+| `docker compose up -d` | Docker ile çalıştır |
 
 ---
 
-## Baglanti Senaryolari
+## Bağlantı Senaryoları
 
 ### Yerel Gateway + Yerel Studio
 ```bash
@@ -326,7 +341,7 @@ tailscale serve --yes --bg --https 443 http://127.0.0.1:18789
 # Studio'da URL: wss://<gateway-host>.ts.net
 ```
 
-### Uzak Gateway (SSH Tunel)
+### Uzak Gateway (SSH Tünel)
 ```bash
 ssh -L 18789:127.0.0.1:18789 user@<gateway-host>
 # Studio'da URL: ws://localhost:18789
@@ -335,69 +350,69 @@ ssh -L 18789:127.0.0.1:18789 user@<gateway-host>
 ### Demo Modu
 ```bash
 npm run dev
-# Demo backend otomatik baslar, "Demo ile Basla" tiklayin
+# Demo backend otomatik başlar, "Demo ile Başla" tıklayın
 ```
 
 ---
 
-## Guvenlik
+## Güvenlik
 
-- Guvenlik basliklari (X-Content-Type-Options, X-Frame-Options, HSTS, vb.)
-- IP bazli rate limiting
-- Yapilandirilabilir CORS
-- Token tabanli erisim kapisi
-- Non-root Docker kullanici
-- Gateway tokenlari sunucu tarafinda — tarayicida saklanmaz
-- SafeSkillScanner ile tehlikeli komut tespiti (20 regex kurali)
+- Güvenlik başlıkları (X-Content-Type-Options, X-Frame-Options, HSTS, vb.)
+- IP bazlı rate limiting
+- Yapılandırılabilir CORS
+- Token tabanlı erişim kapısı
+- Non-root Docker kullanıcı
+- Gateway tokenları sunucu tarafında — tarayıcıda saklanmaz
+- SafeSkillScanner ile tehlikeli komut tespiti (20 regex kuralı)
 
 ---
 
 ## Sorun Giderme
 
-| Sorun | Cozum |
+| Sorun | Çözüm |
 |-------|-------|
-| Baglanti basarisiz | Gateway URL ve token'i kontrol edin |
-| `EPROTO` hatasi | `wss://` yerine `ws://` deneyin |
-| `INVALID_REQUEST` | Gateway eski — guncelleyin veya demo kullanin |
-| `401 Studio access token` | `STUDIO_ACCESS_TOKEN` ayarli, cookie eksik |
-| CLI bulunamadi | `npm run setup` calistirin |
-| GROQ API key hatasi | Ayarlar → AI Anahtarlari'ndan key ekleyin |
-| Kanban acilmiyor | Demo gateway baglantisinizi kontrol edin |
+| Bağlantı başarısız | Gateway URL ve token'ı kontrol edin |
+| `EPROTO` hatası | `wss://` yerine `ws://` deneyin |
+| `INVALID_REQUEST` | Gateway eski — güncelleyin veya demo kullanın |
+| `401 Studio access token` | `STUDIO_ACCESS_TOKEN` ayarlı, cookie eksik |
+| CLI bulunamadı | `npm run setup` çalıştırın |
+| GROQ API key hatası | Ayarlar → AI Anahtarları'ndan key ekleyin |
+| Kanban açılmıyor | Demo gateway bağlantısını kontrol edin |
 
 ---
 
-## Ekran Goruntuleri
+## Ekran Görüntüleri
 
-| Ekran | Goruntu |
+| Ekran | Görüntü |
 |-------|---------|
-| Landing Sayfasi | [landing-page.png](docs/images/landing-page.png) |
+| Landing Sayfası | [landing-page.png](docs/images/landing-page.png) |
 | 3D Ofis | [office-main.png](docs/images/office-main.png) |
 | Kanban Panosu | [kanban-board.png](docs/images/kanban-board.png) |
-| HQ Karargah | [settings-panel.png](docs/images/settings-panel.png) |
-| Hafiza Duvari | [memory-wall.png](docs/images/memory-wall.png) |
-| Gorev Kuyrugu | [task-queue.png](docs/images/task-queue.png) |
-| Ataturk Portresi | [ataturk-portrait.png](docs/images/ataturk-portrait.png) |
+| HQ Karargâh | [settings-panel.png](docs/images/settings-panel.png) |
+| Hafıza Duvarı | [memory-wall.png](docs/images/memory-wall.png) |
+| Görev Kuyruğu | [task-queue.png](docs/images/task-queue.png) |
+| Atatürk Portresi | [ataturk-portrait.png](docs/images/ataturk-portrait.png) |
 | Ofis Builder | [office-builder.png](docs/images/office-builder.png) |
 
 ---
 
-## Dokumantasyon
+## Dokümantasyon
 
-| Dosya | Icerik |
+| Dosya | İçerik |
 |-------|--------|
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Sistem mimarisi ve tasarim kararlari |
-| [API.md](API.md) | API endpoint dokumantasyonu |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Sistem mimarisi ve tasarım kararları |
+| [API.md](API.md) | API endpoint dokümantasyonu |
 | [VISION.md](VISION.md) | Proje vizyonu ve hedefleri |
-| [ROADMAP.md](ROADMAP.md) | Gelistirme yol haritasi |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Katki rehberi |
-| [CREATING_SKILLS.md](CREATING_SKILLS.md) | Yetenek olusturma rehberi |
-| [SECURITY.md](SECURITY.md) | Guvenlik politikasi |
-| [CODE_DOCUMENTATION.md](CODE_DOCUMENTATION.md) | Kod haritasi ve okuma sirasi |
+| [ROADMAP.md](ROADMAP.md) | Geliştirme yol haritası |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Katkı rehberi |
+| [CREATING_SKILLS.md](CREATING_SKILLS.md) | Yetenek oluşturma rehberi |
+| [SECURITY.md](SECURITY.md) | Güvenlik politikası |
+| [CODE_DOCUMENTATION.md](CODE_DOCUMENTATION.md) | Kod haritası ve okuma sırası |
 
 ---
 
 ## Lisans
 
-MIT — Orijinal proje [iamlukethedev/Claw3D](https://github.com/iamlukethedev/Claw3D)'den fork edilmistir.
+MIT — Orijinal proje [iamlukethedev/Claw3D](https://github.com/iamlukethedev/Claw3D)'den fork edilmiştir.
 
-Gelistirici: [Cemal Demirci](https://cemal.cloud) | [GitHub](https://github.com/cemal-demirci)
+Geliştirici: [Cemal Demirci](https://cemal.cloud) | [GitHub](https://github.com/cemal-demirci)

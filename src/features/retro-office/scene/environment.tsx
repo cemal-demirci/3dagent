@@ -939,7 +939,7 @@ export const WallPictures = memo(function WallPictures({
       />
 
       <FramedPicture
-        position={[westX, pictureY, localCenterZ - 3.5]}
+        position={[westX, pictureY, localCenterZ - 5]}
         rotY={-Math.PI / 2}
         w={0.52}
         h={0.4}
@@ -964,7 +964,7 @@ export const WallPictures = memo(function WallPictures({
       />
 
       <FramedPicture
-        position={[westX, pictureY, localCenterZ + 2.5]}
+        position={[westX, pictureY, localCenterZ + 5]}
         rotY={-Math.PI / 2}
         w={0.58}
         h={0.44}
@@ -1050,45 +1050,22 @@ export const WallPictures = memo(function WallPictures({
         }
       />
 
-      {/* Ataturk Portrait – freestanding easel near center of office */}
+      {/* Atatürk Portresi — batı duvar, altın çerçeveli */}
       <Suspense fallback={null}>
-      <group position={[localCenterX - 2, 0, localCenterZ + 1.5]}>
-        {/* Easel legs */}
-        <mesh position={[-0.22, 0.5, -0.1]} rotation={[0.1, 0, 0.05]}>
-          <boxGeometry args={[0.035, 1.05, 0.035]} />
-          <meshStandardMaterial color="#5c3a1e" roughness={0.8} />
-        </mesh>
-        <mesh position={[0.22, 0.5, -0.1]} rotation={[0.1, 0, -0.05]}>
-          <boxGeometry args={[0.035, 1.05, 0.035]} />
-          <meshStandardMaterial color="#5c3a1e" roughness={0.8} />
-        </mesh>
-        <mesh position={[0, 0.45, 0.14]} rotation={[-0.22, 0, 0]}>
-          <boxGeometry args={[0.035, 0.95, 0.035]} />
-          <meshStandardMaterial color="#5c3a1e" roughness={0.8} />
-        </mesh>
-        {/* Easel shelf */}
-        <mesh position={[0, 0.28, -0.03]}>
-          <boxGeometry args={[0.52, 0.03, 0.07]} />
-          <meshStandardMaterial color="#5c3a1e" roughness={0.8} />
-        </mesh>
-        {/* Portrait on easel — tilted slightly back */}
-        <group position={[0, 0.72, -0.05]} rotation={[-0.1, 0, 0]}>
-          <FramedPicture
-            position={[0, 0, 0]}
-            rotY={0}
-            w={0.64}
-            h={0.8}
-            frameColor="#8B7531"
-            bgColor="#f5edd6"
-            art={<AtaturkPortraitArt />}
-          />
-        </group>
-      </group>
+        <FramedPicture
+          position={[westX, pictureY + 0.15, localCenterZ]}
+          rotY={-Math.PI / 2}
+          w={0.9}
+          h={1.12}
+          frameColor="#8B7531"
+          bgColor="#f5edd6"
+          art={<AtaturkPortraitArt />}
+        />
       </Suspense>
       <spotLight
-        position={[localCenterX - 2, 1.6, localCenterZ + 1.5]}
+        position={[westX + 0.6, pictureY + 1.0, localCenterZ]}
         intensity={1.5}
-        angle={0.4}
+        angle={0.45}
         penumbra={0.5}
         color="#fff8e7"
       />
