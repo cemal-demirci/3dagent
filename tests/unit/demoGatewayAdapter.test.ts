@@ -11,7 +11,7 @@ describe("demo-gateway-adapter", () => {
       ok: true,
     });
 
-    const jobId = addResult.payload?.id;
+    const jobId = ("payload" in addResult) ? (addResult as { payload: { id: string } }).payload.id : undefined;
     expect(typeof jobId).toBe("string");
 
     const runResult = await handleMethod("cron.run", { id: jobId }, "2", () => {});
