@@ -4046,7 +4046,7 @@ export function OfficeScreen({
     [marketplace.skillsReport],
   );
   const taskManagerReady = useMemo(
-    () => (taskManagerSkill ? deriveSkillReadinessState(taskManagerSkill) === "ready" : false),
+    () => (taskManagerSkill ? deriveSkillReadinessState(taskManagerSkill) === "ready" : true),
     [taskManagerSkill],
   );
   const soundclawReady = useMemo(

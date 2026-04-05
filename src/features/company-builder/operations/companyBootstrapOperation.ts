@@ -49,8 +49,8 @@ export async function runCompanyBootstrapOperation(params: {
   if (deletableAgentIds.length > 0 && params.deleteExistingAgent) {
     params.setStatusLine(
       deletableAgentIds.length === 1
-        ? "Replacing your current agent."
-        : `Replacing your current ${deletableAgentIds.length} agents.`,
+        ? "Mevcut ajanınız değiştiriliyor."
+        : `Mevcut ${deletableAgentIds.length} ajanınız değiştiriliyor.`,
     );
     for (const agentId of deletableAgentIds) {
       await params.deleteExistingAgent(agentId);
@@ -64,10 +64,10 @@ export async function runCompanyBootstrapOperation(params: {
     const firstBlueprint = remainingBlueprints.shift();
     if (firstBlueprint) {
       if (params.clearReusedAgentState) {
-        params.setStatusLine("Clearing the previous main agent state.");
+        params.setStatusLine("Önceki ana ajan durumu temizleniyor.");
         await params.clearReusedAgentState(reusableAgentId);
       }
-      params.setStatusLine(`Reconfiguring main as ${firstBlueprint.agentName}.`);
+      params.setStatusLine(`Ana ajan ${firstBlueprint.agentName} olarak yapılandırılıyor.`);
       await params.renameAgent?.(reusableAgentId, firstBlueprint.agentName);
       await params.writeAgentFiles(reusableAgentId, firstBlueprint.files);
       params.saveAvatar(reusableAgentId);
@@ -79,7 +79,7 @@ export async function runCompanyBootstrapOperation(params: {
   }
 
   for (const blueprint of remainingBlueprints) {
-    params.setStatusLine(`Creating ${blueprint.agentName}.`);
+    params.setStatusLine(`${blueprint.agentName} oluşturuluyor.`);
     const created = await params.createAgent(blueprint.agentName);
     createdAgents.push({
       agentId: created.id,
@@ -89,7 +89,7 @@ export async function runCompanyBootstrapOperation(params: {
     params.saveAvatar(created.id);
   }
 
-  params.setStatusLine("Syncing the new company into the office.");
+  params.setStatusLine("Yeni şirket ofise senkronize ediliyor.");
   await params.loadAgents();
 
   for (const createdAgent of createdAgents) {
@@ -105,7 +105,7 @@ export async function runCompanyBootstrapOperation(params: {
   if (reusableAgentId && params.resetAgentSession) {
     const reusableAgent = params.findAgentById(reusableAgentId);
     if (reusableAgent?.sessionKey) {
-      params.setStatusLine("Refreshing the first role session.");
+      params.setStatusLine("İlk rol oturumu yenileniyor.");
       await params.resetAgentSession(reusableAgentId, reusableAgent.sessionKey);
     }
   }

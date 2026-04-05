@@ -48,7 +48,7 @@ const createEmptyRole = (index: number): CompanyBuilderRole => ({
   heartbeat: [],
   emoji: "🤖",
   creature: "specialist",
-  vibe: "helpful and focused",
+  vibe: "yardımsever ve odaklı",
   userContext: "",
   commandMode: "ask",
 });
@@ -334,9 +334,9 @@ export function CompanyBuilderModal({
                 </div>
                 {replacesExistingAgents ? (
                   <div className="rounded-md border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs leading-5 text-amber-100/85">
-                    Your current {agentCount === 1 ? "agent will" : `${agentCount} agents will`} be
-                    deleted and replaced by this company when you create it. This action is
-                    irreversible and will delete the old agents&apos; workspaces.
+                    {agentCount === 1
+                      ? t("company.replaceWarningSingle")
+                      : tReplace("company.replaceWarning", { count: String(agentCount) })}
                   </div>
                 ) : null}
                 {!canUseAi ? (
@@ -455,13 +455,13 @@ export function CompanyBuilderModal({
                           </div>
                           <div className="min-w-0">
                             <div className="text-xs uppercase tracking-[0.14em] text-white/45">
-                              Role {index + 1}
+                              Rol {index + 1}
                             </div>
                             <div className="mt-2 text-sm font-semibold text-white">
-                              {role.title || "Untitled role"}
+                              {role.title || "İsimsiz rol"}
                             </div>
                             <div className="mt-1 text-xs text-white/45">
-                              3D avatar preview generated for this role.
+                              {t("company.avatarPreviewHint")}
                             </div>
                           </div>
                         </div>
@@ -479,7 +479,7 @@ export function CompanyBuilderModal({
                             )
                           }
                           disabled={busy || plan.roles.length <= 1}
-                          aria-label={`Remove role ${index + 1}`}
+                          aria-label={tReplace("company.removeRole", { index: String(index + 1) })}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
@@ -487,7 +487,7 @@ export function CompanyBuilderModal({
 
                       <div className="grid gap-4 md:grid-cols-2">
                         <label className="flex flex-col gap-2 text-xs text-white/60">
-                          Name
+                          {t("company.roleName")}
                           <input
                             className={inputClassName}
                             value={role.title}
@@ -509,7 +509,7 @@ export function CompanyBuilderModal({
                           />
                         </label>
                         <label className="flex flex-col gap-2 text-xs text-white/60">
-                          Emoji
+                          {t("company.roleEmoji")}
                           <input
                             className={inputClassName}
                             value={role.emoji}
@@ -534,7 +534,7 @@ export function CompanyBuilderModal({
 
                       <div className="mt-4 grid gap-4 md:grid-cols-2">
                         <label className="flex flex-col gap-2 text-xs text-white/60">
-                          Purpose
+                          {t("company.rolePurpose")}
                           <textarea
                             className={textareaClassName}
                             value={role.purpose}
@@ -556,7 +556,7 @@ export function CompanyBuilderModal({
                           />
                         </label>
                         <label className="flex flex-col gap-2 text-xs text-white/60">
-                          Soul
+                          {t("company.roleSoul")}
                           <textarea
                             className={textareaClassName}
                             value={role.soul}
@@ -581,7 +581,7 @@ export function CompanyBuilderModal({
 
                       <div className="mt-4 grid gap-4 md:grid-cols-2">
                         <label className="flex flex-col gap-2 text-xs text-white/60">
-                          Responsibilities
+                          {t("company.responsibilities")}
                           <input
                             className={inputClassName}
                             value={joinCommaList(role.responsibilities)}
@@ -606,7 +606,7 @@ export function CompanyBuilderModal({
                           />
                         </label>
                         <label className="flex flex-col gap-2 text-xs text-white/60">
-                          Collaborators
+                          {t("company.collaborators")}
                           <input
                             className={inputClassName}
                             value={joinCommaList(role.collaborators)}
@@ -631,7 +631,7 @@ export function CompanyBuilderModal({
                           />
                         </label>
                         <label className="flex flex-col gap-2 text-xs text-white/60">
-                          Tool notes
+                          {t("company.toolNotes")}
                           <input
                             className={inputClassName}
                             value={joinCommaList(role.tools)}
@@ -653,7 +653,7 @@ export function CompanyBuilderModal({
                           />
                         </label>
                         <label className="flex flex-col gap-2 text-xs text-white/60">
-                          Heartbeat checklist
+                          {t("company.heartbeatChecklist")}
                           <input
                             className={inputClassName}
                             value={joinCommaList(role.heartbeat)}
@@ -721,9 +721,9 @@ export function CompanyBuilderModal({
             <div className="space-y-2">
               <p className="text-sm font-semibold text-white">{t("company.replaceAgentsTitle")}</p>
               <p className="text-sm leading-6 text-white/65">
-                Your current {agentCount === 1 ? "agent will" : `${agentCount} agents will`} be
-                deleted and replaced by this new company. This action is irreversible and will
-                delete the old agents&apos; workspaces. Are you sure you want to continue?
+                {agentCount === 1
+                  ? t("company.replaceAgentsDescSingle")
+                  : tReplace("company.replaceAgentsDesc", { count: String(agentCount) })}
               </p>
             </div>
             <div className="mt-6 flex items-center justify-end gap-3">
@@ -799,12 +799,12 @@ export function CompanyBuilderModal({
                         className="h-full w-full"
                       />
                     </div>
-                    <p className="mt-3 text-xs uppercase tracking-[0.14em] text-cyan-100/65">Role 1</p>
+                    <p className="mt-3 text-xs uppercase tracking-[0.14em] text-cyan-100/65">Rol 1</p>
                     <p className="mt-1 text-lg font-semibold text-white">
-                      {plan.roles[0].title || "Untitled role"}
+                      {plan.roles[0].title || "İsimsiz rol"}
                     </p>
                     <p className="mt-1 text-sm text-white/60">
-                      {plan.roles[0].purpose || "No purpose yet."}
+                      {plan.roles[0].purpose || "Henüz amaç belirtilmedi."}
                     </p>
                   </button>
                   {plan.roles.length > 1 ? (
@@ -835,13 +835,13 @@ export function CompanyBuilderModal({
                               />
                             </div>
                             <p className="mt-3 text-xs uppercase tracking-[0.14em] text-white/45">
-                              Role {index + 2}
+                              Rol {index + 2}
                             </p>
                             <p className="mt-1 text-base font-semibold text-white">
-                              {role.title || "Untitled role"}
+                              {role.title || "İsimsiz rol"}
                             </p>
                             <p className="mt-1 text-sm text-white/60">
-                              {role.purpose || "No purpose yet."}
+                              {role.purpose || "Henüz amaç belirtilmedi."}
                             </p>
                           </button>
                         ))}
@@ -854,30 +854,30 @@ export function CompanyBuilderModal({
                     <div className="space-y-4">
                       <div>
                         <p className="text-xs uppercase tracking-[0.14em] text-cyan-100/65">
-                          Active Role
+                          {t("company.activeRole")}
                         </p>
                         <p className="mt-2 text-xl font-semibold text-white">
-                          {hoveredOrgRole.title || "Untitled role"}
+                          {hoveredOrgRole.title || "İsimsiz rol"}
                         </p>
                         <p className="mt-2 text-sm leading-6 text-white/70">
-                          {hoveredOrgRole.soul || "No soul notes yet."}
+                          {hoveredOrgRole.soul || "Henüz kişilik notu yok."}
                         </p>
                       </div>
                       <div className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
                         <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-cyan-100/65">
-                          Purpose
+                          {t("company.rolePurpose")}
                         </p>
                         <p className="mt-2 text-sm leading-6 text-white/75">
-                          {hoveredOrgRole.purpose || "No purpose yet."}
+                          {hoveredOrgRole.purpose || "Henüz amaç belirtilmedi."}
                         </p>
                       </div>
-                      {renderRoleFacts("Responsibilities", hoveredOrgRole.responsibilities)}
-                      {renderRoleFacts("Collaborators", hoveredOrgRole.collaborators)}
-                      {renderRoleFacts("Tools", hoveredOrgRole.tools)}
-                      {renderRoleFacts("Heartbeat", hoveredOrgRole.heartbeat)}
+                      {renderRoleFacts(t("company.responsibilities"), hoveredOrgRole.responsibilities)}
+                      {renderRoleFacts(t("company.collaborators"), hoveredOrgRole.collaborators)}
+                      {renderRoleFacts(t("company.toolNotes"), hoveredOrgRole.tools)}
+                      {renderRoleFacts(t("company.heartbeatChecklist"), hoveredOrgRole.heartbeat)}
                     </div>
                   ) : (
-                    <p className="text-sm text-white/55">Hover a role to inspect it.</p>
+                    <p className="text-sm text-white/55">{t("company.hoverToInspect")}</p>
                   )}
                 </aside>
               </div>

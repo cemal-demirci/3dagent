@@ -125,7 +125,7 @@ const resolveCommandMode = (value: unknown, roleText: string): CommandModeId => 
 const buildRoleIdentity = (role: CompanyBuilderRole) => ({
   emoji: role.emoji || "🤖",
   creature: role.creature || "specialist",
-  vibe: role.vibe || "helpful and focused",
+  vibe: role.vibe || "yardımsever ve odaklı",
 });
 
 const buildRoleAgentsMarkdown = (params: {
@@ -313,52 +313,54 @@ export const buildImproveCompanyBriefPrompt = (businessDescription: string) =>
     "You are helping a user describe the company they want to build inside 3DAgent.",
     "Rewrite their brief so another connected runtime agent can generate a clean org structure from it.",
     "Keep the answer short, concrete, and useful.",
+    "IMPORTANT: Always respond in Turkish. All section content must be in Turkish.",
     "Return markdown with these sections only:",
-    "## Company",
-    "## Goals",
-    "## Constraints",
-    "## Suggested Roles",
+    "## Şirket",
+    "## Hedefler",
+    "## Kısıtlar",
+    "## Önerilen Roller",
     "",
-    "User brief:",
+    "Kullanıcı özeti:",
     businessDescription.trim(),
   ].join("\n");
 
 export const buildGenerateCompanyPlanPrompt = (brief: string) =>
   [
     "You are designing an AI company org structure for 3DAgent.",
+    "IMPORTANT: All text values (companyName, summary, purpose, soul, responsibilities, etc.) MUST be in Turkish.",
+    "Role names should be Turkish words — use creative Turkish names inspired by Turkish mythology, nature, or culture.",
+    "Examples: Asena, Umay, Kayra, Erlik, Tulpar, Bozkurt, Yıldız, Alp, Kaan, Efe, Deniz.",
     "Return only valid JSON with no markdown fence.",
     "Each role name must be one concise word only with no spaces.",
     "Schema:",
     "{",
-    '  "companyName": "string",',
-    '  "summary": "string",',
-    '  "sharedRules": ["string"],',
-    '  "plannerNotes": ["string"],',
+    '  "companyName": "string (Türkçe)",',
+    '  "summary": "string (Türkçe)",',
+    '  "sharedRules": ["string (Türkçe)"],',
+    '  "plannerNotes": ["string (Türkçe)"],',
     '  "roles": [',
     "    {",
-    '      "id": "string",',
-    '      "name": "string",',
-    '      "purpose": "string",',
-    '      "soul": "string",',
-    '      "responsibilities": ["string"],',
-    '      "collaborators": ["string"],',
+    '      "id": "string (lowercase-slug)",',
+    '      "name": "string (Türkçe isim)",',
+    '      "purpose": "string (Türkçe)",',
+    '      "soul": "string (Türkçe kişilik tanımı)",',
+    '      "responsibilities": ["string (Türkçe)"],',
+    '      "collaborators": ["string (Türkçe)"],',
     '      "tools": ["string"],',
-    '      "heartbeat": ["string"],',
+    '      "heartbeat": ["string (Türkçe)"],',
     '      "emoji": "string",',
-    '      "creature": "string",',
-    '      "vibe": "string",',
-    '      "userContext": "string",',
+    '      "creature": "string (Türkçe)",',
+    '      "vibe": "string (Türkçe)",',
+    '      "userContext": "string (Türkçe)",',
     '      "commandMode": "off|ask|auto"',
     "    }",
     "  ]",
     "}",
     "Create between 2 and 6 roles unless the brief clearly needs more or less.",
-    "Prefer silly but useful role titles when it helps the brand, but keep the org practical.",
-    "Role names should be short single words like Builder, Analyst, Closer, Captain, Scout, or Designer.",
     "All role names must be unique.",
     "Make collaborators reference role names.",
     "",
-    "Company brief:",
+    "Şirket özeti:",
     brief.trim(),
   ].join("\n");
 
@@ -417,8 +419,8 @@ export const parseCompanyPlanFromAssistantText = (value: string): CompanyBuilder
     };
   });
   return {
-    companyName: coerceString(parsed.companyName) || "New Company",
-    summary: coerceString(parsed.summary) || "A company plan generated from the user's brief.",
+    companyName: coerceString(parsed.companyName) || "Yeni Şirket",
+    summary: coerceString(parsed.summary) || "Kullanıcının özetinden oluşturulan şirket planı.",
     sharedRules: uniqueStrings(coerceStringArray(parsed.sharedRules)).slice(0, 12),
     plannerNotes: uniqueStrings(coerceStringArray(parsed.plannerNotes)).slice(0, 12),
     roles,
@@ -428,7 +430,7 @@ export const parseCompanyPlanFromAssistantText = (value: string): CompanyBuilder
 export const buildCompanyAgentBlueprints = (plan: CompanyBuilderPlan): CompanyAgentBlueprint[] => {
   const usedNames = new Set<string>();
   return plan.roles.map((role, index) => {
-    const baseName = role.title.trim() || `Agent ${index + 1}`;
+    const baseName = role.title.trim() || `Ajan${index + 1}`;
     let nextName = baseName;
     let dedupe = 2;
     while (usedNames.has(nextName.toLowerCase())) {
