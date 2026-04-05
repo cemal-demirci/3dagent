@@ -104,11 +104,16 @@ Her ajanın kendi tanıtım ekranı, uzmanlık alanları, kişilik dosyaları (S
 - **Custom** — Kendi orchestrator/runtime'ınızı bağlayın
 - Same-origin WebSocket proxy (tarayıcı → Studio → Gateway)
 
-### 💎 Akıllı Auth (Smart Auth)
-Demo gateway, yerel ortamınızdaki mevcut CLI/SDK kurulumlarını otomatik algılar ve ek yapılandırma gerekmeden kullanıma sunar — **ek API maliyeti neredeyse sıfır:**
-- **CLI/SDK Algılama:** Sunucu başlatılırken **Claude Agent SDK** (`@anthropic-ai/claude-agent-sdk`) ve **Google Gemini CLI** (`@google/gemini-cli`) kurulumları kontrol edilir. Algılanan araç varsa ilgili stream fonksiyonu otomatik seçilir.
-- **Neredeyse Sıfır Maliyet:** Gemini CLI ücretsiz kotayla, Claude CLI ise mevcut Pro aboneliğinizle çalışır — ekstra API kredisi satın almanıza gerek kalmaz.
-- **Otomatik Fallback Zinciri:** `selectStreamFunction()` sırasıyla API SDK → CLI/SDK → Mock demo akışını dener. Hiçbir gerçek backend yoksa demo modu devreye girer.
+### 💎 Akıllı Auth — Türkiye'de Bir İlk (Smart Auth)
+
+> **API faturaları tarihe karışıyor.** 3DAgent, Türkiye'de ilk kez mevcut CLI/SDK aboneliklerini otomatik algılayarak AI ajan maliyetini neredeyse sıfıra indiren açık kaynak projedir.
+
+Türkiye'deki geliştiricilerin en büyük AI bariyeri maliyet. ChatGPT Plus $20/ay, Claude Pro $20/ay, API kredileri ayrı fatura… 3DAgent bu denklemi kökünden değiştiriyor:
+
+- **Otomatik CLI/SDK Algılama:** Sunucu başlatılırken **Claude Agent SDK** (`@anthropic-ai/claude-agent-sdk`) ve **Google Gemini CLI** (`@google/gemini-cli`) kurulumları otomatik tespit edilir. Algılanan araç varsa ilgili stream fonksiyonu anında devreye girer — sıfır yapılandırma.
+- **Gemini ile Tamamen Ücretsiz:** Google Gemini CLI'ın ücretsiz kotası sayesinde, hiç para ödemeden tam kapasiteli AI ajan ofisi çalıştırabilirsiniz. Türkiye'de bu imkânı sunan başka açık kaynak proje yok.
+- **Claude Pro Aboneliğini Sonuna Kadar Kullan:** Zaten Claude Pro ödüyorsanız, aynı abonelikle 6 ajanı aynı anda çalıştırın — ekstra API kredisi yok, ekstra fatura yok.
+- **Akıllı Fallback Zinciri:** `selectStreamFunction()` sırasıyla API SDK → CLI/SDK → Demo akışını dener. Hiçbir gerçek backend yoksa demo modu devreye girer — her koşulda çalışır.
 - **Manuel API Key Desteği:** İsterseniz API anahtarlarını ortam değişkenleri veya ayarlar panelinden de girebilirsiniz.
 
 ### 3DAgent'a Özel Özellikler
